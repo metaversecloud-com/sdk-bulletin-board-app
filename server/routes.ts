@@ -10,7 +10,14 @@ import {
   rejectMessages,
 } from "./src/controllers/admin.js";
 
+
+
+
 const router = express.Router();
+
+router.get("/", (req, res) => {
+  res.json({ message: "Health check is working !" });
+});
 
 const userRouter = express.Router();
 const adminRouter = express.Router();
@@ -22,9 +29,7 @@ userRouter.delete("/message/:id", deleteMessage);
 adminRouter.get("/pending", getPendingMessages);
 adminRouter.post("/message/approve/:id", approveMessages);
 adminRouter.delete("/message/reject/:id", rejectMessages);
-// router.get("/", (req, res) => {
-//   res.json({ message: "Hello from server!" });
-// });
+
 
 // delete message
 // approve message
