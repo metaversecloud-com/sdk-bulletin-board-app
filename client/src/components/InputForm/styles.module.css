@@ -1,0 +1,22 @@
+.textarea {
+  display: flex;
+  padding: var(--spacing-2) var(--spacing-3);
+  align-items: center;
+  align-self: stretch;
+  border-radius: 8px;
+  border: 2px solid var(--colors-primary-100);
+  background: var(--colors-primary-0);
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.textarea:focus {
+  border-color: var(--colors-primary-500);
+}
+
+
+.inputWrapper {
+    padding: 1rem;
+    background-color: var(--colors-primary-200);
+    border-radius: 8px;
+}
