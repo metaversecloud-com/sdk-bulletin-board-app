@@ -92,7 +92,7 @@ export const approveMessages = async (req: Request, res: Response) => {
         (a) => a.assetId === "textAsset"
       );
 
-      const mutatableAsset = new DroppedAssetFactory(myTopiaInstance).create(
+      const mutatableAsset = await new DroppedAssetFactory(myTopiaInstance).create(
         justDroppedTextAsset.id,
         credentials.urlSlug
       );

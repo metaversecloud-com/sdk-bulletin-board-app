@@ -37,6 +37,7 @@ export const addNewMessage = async (req: Request, res: Response) => {
       messages,
     };
 
+    console.log(updatedData)
     await writeDataObjectToDroppedAssetId(
       credentials,
       credentials.assetId,
