@@ -38,11 +38,14 @@ export const approveMessages = async (req: Request, res: Response) => {
       uniqueName: "anchor",
     });
 
+    console.log('assets', assets.length)
+
     // const droppedCounter = droppedCounter++ 
     // use lock key nearest 10th second for v2
-    
-    if (placedTextAssets.length !== assets.length) {
-      const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
+    const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
+
+    if (emptySpaces.length > 0) {
+      console.log('emptySpaces', emptySpaces.length)
       const random = Math.floor(Math.random() * emptySpaces.length);
       const asset = emptySpaces[random] as any;
       const sceneIds = ["ObrCYwGpWMjtzRaqBTdw","hlXXIoZi3XvnfXuar8bA","n7E1VtIWl1oEMKbrSdbA"]
@@ -51,7 +54,7 @@ export const approveMessages = async (req: Request, res: Response) => {
 
       const sc = (await world.dropScene({
         sceneId: sceneIds[randomScene],
-        position: asset.position,
+        position: asset?.position,
         assetSuffix: "message",
       })) as any;
 
