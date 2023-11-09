@@ -29,7 +29,10 @@ export const addNewMessage = async (req: Request, res: Response) => {
       approved: false,
     }
 
-    const messages = dataObject.messages || [];
+
+
+    const messages = dataObject?.messages || [];
+    console.log(messages)
     messages.push(messageObj);
 
     const updatedData = {
@@ -37,6 +40,7 @@ export const addNewMessage = async (req: Request, res: Response) => {
       messages,
     };
 
+    console.log(updatedData)
     await writeDataObjectToDroppedAssetId(
       credentials,
       credentials.assetId,
@@ -60,7 +64,7 @@ export const getMyMessages = async (req: Request, res: Response) => {
       credentials
     );
     
-    if (dataObject.messages === undefined) return res.send([]);
+    if (dataObject?.messages === undefined) return res.json({messages: [], isAdmin: userData.isAdmin});
 
     const myMessages = dataObject.messages.filter(
       (message: any) => message.userId === userData.profileId && (message.approved === false)

@@ -35,7 +35,7 @@ export const approveMessages = async (req: Request, res: Response) => {
     );
 
     const assets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: "pointers",
+      uniqueName: "anchor",
     });
 
     // const droppedCounter = droppedCounter++ 
@@ -45,9 +45,12 @@ export const approveMessages = async (req: Request, res: Response) => {
       const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
       const random = Math.floor(Math.random() * emptySpaces.length);
       const asset = emptySpaces[random] as any;
+      const sceneIds = ["ObrCYwGpWMjtzRaqBTdw","hlXXIoZi3XvnfXuar8bA","n7E1VtIWl1oEMKbrSdbA"]
+
+      const randomScene = Math.floor(Math.random() * sceneIds.length);
 
       const sc = (await world.dropScene({
-        sceneId: "Isw4v5H0q4Ez4P9h09nz",
+        sceneId: sceneIds[randomScene],
         position: asset.position,
         assetSuffix: "message",
       })) as any;
@@ -60,10 +63,11 @@ export const approveMessages = async (req: Request, res: Response) => {
         (a) => a.assetId === "textAsset"
       );
 
-      const mutatableAsset = new DroppedAssetFactory(myTopiaInstance).create(
+      const mutatableAsset = await new DroppedAssetFactory(myTopiaInstance).create(
         justDroppedTextAsset.id,
         credentials.urlSlug
       );
+      
       await mutatableAsset.updateCustomTextAsset({}, thisMessage.message);
 
       const newUsedSpaces = [...usedSpaces, asset.id];
@@ -168,7 +172,7 @@ export const getPendingMessages = async (req: Request, res: Response) => {
       credentials
     );
 
-    if (dataObject.messages === undefined) return res.send([]);
+    if (dataObject?.messages === undefined) return res.send([]);
 
     const pendingMEssages = dataObject.messages.filter(
       (message: any) => message.approved === false
