@@ -37,7 +37,6 @@ function addHyphenAndNewline(message) {
 export const approveMessages = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
     const credentials = credentialsFromQuery(req);
 
     const { dataObject } = await getDataObjectFromDroppedAsset(
@@ -47,8 +46,6 @@ export const approveMessages = async (req: Request, res: Response) => {
 
     const { messages, usedSpaces = [], placedTextAssets = [] } = dataObject;
     const thisMessage = messages.find((m) => m.id === id);
-
-
 
     if (!thisMessage) {
       throw new Error("Message not found");
@@ -63,8 +60,6 @@ export const approveMessages = async (req: Request, res: Response) => {
       uniqueName: "anchor",
     });
 
-    console.log('assets', assets.length)
-
     // const droppedCounter = droppedCounter++ 
     // use lock key nearest 10th second for v2
     const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
@@ -73,8 +68,9 @@ export const approveMessages = async (req: Request, res: Response) => {
       console.log('emptySpaces', emptySpaces.length)
       const random = Math.floor(Math.random() * emptySpaces.length);
       const asset = emptySpaces[random] as any;
-      const sceneIds = ["ObrCYwGpWMjtzRaqBTdw","hlXXIoZi3XvnfXuar8bA","n7E1VtIWl1oEMKbrSdbA"]
+      const sceneIds = process.env.SCENES.split(',')
 
+      if (!sceneIds.length) throw new Error("No scenes found");
       const randomScene = Math.floor(Math.random() * sceneIds.length);
 
       const sc = (await world.dropScene({
