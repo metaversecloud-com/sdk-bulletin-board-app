@@ -3,12 +3,12 @@ import InputForm from "../components/InputForm";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { AdminPanelSettings } from "@mui/icons-material";
 
 const getMyMessages = async () => {
   const { data } = await axios.get(
     `/backend/user/pending${window.location.search}`
   );
-  console.log("dt", data);
   return data;
 };
 
@@ -48,24 +48,31 @@ function StudentPage() {
           display: "flex",
           flexDirection: "column",
           height: "96vh",
+          width: "320px",
         }}
       >
         {data.isAdmin && (
-            <Link to={`/admin${window.location.search}`}>Admin Panel</Link>
+          <div style={{display: "flex", justifyContent: "flex-end"}}>
+            <Link to={`/admin${window.location.search}`}>
+              <button>
+                <AdminPanelSettings /> Admin
+              </button>
+            </Link>
+          </div>
         )}
         <div style={{ margin: "0 12px", marginBottom: "48px" }}>
           <h1>Gratitude Garden</h1>
-          <h3>What are you gratefull for today?</h3>
+          <h3>What are you thankful for today?</h3>
           <p>
-            You can submit up-to 3 entires for approval, at a time. Once your
-            message has been aproved it will appear in the world.
+            Enter below and once it’s reviewed and approved it will be added to
+            the Gratitude Garden. You can submit 3 at a time for approval.
           </p>
         </div>
 
         <div>
           <List
             listItems={data.messages}
-            title="Pending Aproval"
+            title="Messages pending approval"
             editable={true}
             onRemove={removeMessage}
           />

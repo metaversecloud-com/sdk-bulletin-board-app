@@ -14,12 +14,12 @@ function ListItem({ message, username, id, editable, onApprove, onRemove, ind })
       {editable && (
         <div className={styles.actions}>
           {onApprove && (
-            <button className="btn-icon" onClick={() => onApprove.mutate(id)} disabled={onApprove.isLoading}>
+            <button className="btn-icon"  style={{marginBottom: "5px", color: "green"}} onClick={() => onApprove.mutate(id)} disabled={onApprove.isLoading}>
               <CheckIcon />
             </button>
           )}
           {onRemove && (
-            <button className="btn-icon" onClick={() => onRemove.mutate(id)} disabled={onRemove.isLoading}>
+            <button className="btn-icon" style={{color: "red"}}onClick={() => onRemove.mutate(id)} disabled={onRemove.isLoading}>
               <ClearIcon />
             </button>
           )}

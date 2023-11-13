@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import List from "../components/List";
 import axios from "axios";
+import { ArrowBack } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const getPendingMessages = async () => {
   const { data } = await axios.get(
@@ -14,7 +16,9 @@ function AdminPage() {
 
   const rejectMessage = useMutation({
     mutationFn: (id: number) =>
-      axios.delete(`/backend/admin/message/reject/${id}${window.location.search}`),
+      axios.delete(
+        `/backend/admin/message/reject/${id}${window.location.search}`
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries("pending-messages");
     },
@@ -22,13 +26,18 @@ function AdminPage() {
 
   const approveMessage = useMutation({
     mutationFn: (id: number) =>
-      axios.post(`/backend/admin/message/approve/${id}${window.location.search}`),
+      axios.post(
+        `/backend/admin/message/approve/${id}${window.location.search}`
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries("pending-messages");
     },
   });
 
-  const { data, isLoading, error } = useQuery("pending-messages", getPendingMessages);
+  const { data, isLoading, error } = useQuery(
+    "pending-messages",
+    getPendingMessages
+  );
 
   if (isLoading) return <div>Loading...</div>;
   if (error)
@@ -40,7 +49,17 @@ function AdminPage() {
     );
 
   return (
-    <div>
+    <div
+      style={{
+        height: "96vh",
+        width: "320px",
+      }}
+    >
+      <Link to={`/${window.location.search}`}>
+        <button className="btn-icon">
+          <ArrowBack />
+        </button>
+      </Link>
       <h1>Admin</h1>
       <p>This is the admin panel. You can approve messages here.</p>
       <div>
