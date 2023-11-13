@@ -56,6 +56,8 @@ export const getDataObjectFromDroppedAsset = async (
 
     const { dataObject } = asset;
 
+    if (Object.keys(dataObject).length === 0) return {};
+
     if (!key) {
       return dataObject;
     }
@@ -63,7 +65,7 @@ export const getDataObjectFromDroppedAsset = async (
     return dataObject[key];
   } catch (error) {
     console.error("getDataObjectFromDroppedAsset: error", error);
-    return {};
+    return null;
   }
 };
 

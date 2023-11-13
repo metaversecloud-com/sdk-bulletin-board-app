@@ -22,7 +22,7 @@ function Input({ formSubmit, isLoading }) {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.inputWrapper}>
-          <label>Write a message:</label>
+          <label>Enter your message here (limit 120 characters):</label>
           <div>
             <textarea
               className={styles.textarea}

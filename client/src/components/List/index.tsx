@@ -25,7 +25,7 @@ function ListComponent({
   return (
     <div className={styles.container}>
       <div className={styles.titleContainer}>
-        <h3>{title}</h3>
+        <h4>{title}</h4>
       </div>
       {listItems.map((item, i) => (
         <ListItem

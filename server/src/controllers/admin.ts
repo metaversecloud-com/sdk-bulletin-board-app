@@ -12,10 +12,31 @@ import {
 } from "@rtsdk/topia";
 import myTopiaInstance from "../../utils/topiaInstance.js";
 
+function addHyphenAndNewline(message) {
+  // Split the message into words
+  let words = message.split(' ');
+
+  // Iterate through each word
+  for (let i = 0; i < words.length; i++) {
+    // Check if the word is longer than 20 characters
+    if (words[i].length > 20) {
+      // Split the word into chunks of 20 characters
+      let chunks = words[i].match(/.{1,20}/g);
+
+      // Join the chunks with a hyphen and add a newline
+      words[i] = chunks.join('-\n');
+    }
+  }
+
+  // Join the words back into a string
+  let result = words.join(' ');
+
+  return result;
+}
+
 export const approveMessages = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
     const credentials = credentialsFromQuery(req);
 
     const { dataObject } = await getDataObjectFromDroppedAsset(
@@ -25,6 +46,7 @@ export const approveMessages = async (req: Request, res: Response) => {
 
     const { messages, usedSpaces = [], placedTextAssets = [] } = dataObject;
     const thisMessage = messages.find((m) => m.id === id);
+
     if (!thisMessage) {
       throw new Error("Message not found");
     }
@@ -35,20 +57,25 @@ export const approveMessages = async (req: Request, res: Response) => {
     );
 
     const assets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: "pointers",
+      uniqueName: "anchor",
     });
 
     // const droppedCounter = droppedCounter++ 
     // use lock key nearest 10th second for v2
-    
-    if (placedTextAssets.length !== assets.length) {
-      const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
+    const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
+
+    if (emptySpaces.length > 0) {
+      console.log('emptySpaces', emptySpaces.length)
       const random = Math.floor(Math.random() * emptySpaces.length);
       const asset = emptySpaces[random] as any;
+      const sceneIds = process.env.SCENES.split(',')
+
+      if (!sceneIds.length) throw new Error("No scenes found");
+      const randomScene = Math.floor(Math.random() * sceneIds.length);
 
       const sc = (await world.dropScene({
-        sceneId: "Isw4v5H0q4Ez4P9h09nz",
-        position: asset.position,
+        sceneId: sceneIds[randomScene],
+        position: asset?.position,
         assetSuffix: "message",
       })) as any;
 
@@ -60,11 +87,12 @@ export const approveMessages = async (req: Request, res: Response) => {
         (a) => a.assetId === "textAsset"
       );
 
-      const mutatableAsset = new DroppedAssetFactory(myTopiaInstance).create(
+      const mutatableAsset = await new DroppedAssetFactory(myTopiaInstance).create(
         justDroppedTextAsset.id,
         credentials.urlSlug
       );
-      await mutatableAsset.updateCustomTextAsset({}, thisMessage.message);
+      
+      await mutatableAsset.updateCustomTextAsset({}, addHyphenAndNewline(thisMessage.message));
 
       const newUsedSpaces = [...usedSpaces, asset.id];
       const newPlacedTextAssets = [
@@ -168,7 +196,7 @@ export const getPendingMessages = async (req: Request, res: Response) => {
       credentials
     );
 
-    if (dataObject.messages === undefined) return res.send([]);
+    if (dataObject?.messages === undefined) return res.send([]);
 
     const pendingMEssages = dataObject.messages.filter(
       (message: any) => message.approved === false
