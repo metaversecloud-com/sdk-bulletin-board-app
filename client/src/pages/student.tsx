@@ -62,9 +62,9 @@ function StudentPage(props: { theme: any }) {
           </div>
         )}
         <div style={{ margin: "0 12px", marginBottom: "48px" }}>
-          <h1>{theme.title}</h1>
-          <h3>{theme.subtitle}</h3>
-          <p>{theme.paragraph}</p>
+          <h1>{theme?.title || "Bulletin Board"}</h1>
+          <h3>{theme?.subtitle || "App not setup"}</h3>
+          <p>{theme?.paragraph || "Please set the theme in the DataObject"}</p>
         </div>
 
         <div>
