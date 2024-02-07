@@ -80,8 +80,6 @@ export const deleteMessage = async (req: Request, res: Response) => {
 
     const { id } = req.params;
 
-    const userData = await getProfile(credentials);
-
     const { dataObject } = await getDataObjectFromDroppedAsset(
       credentials.assetId,
       credentials

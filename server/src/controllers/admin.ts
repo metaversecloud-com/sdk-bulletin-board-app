@@ -134,11 +134,11 @@ export const approveMessages = async (req: Request, res: Response) => {
     } else {
       const random = Math.floor(Math.random() * placedTextAssets.length);
       const assetId = placedTextAssets[random];
-      const mutatableAsset = await new DroppedAssetFactory(
+      const mutatableAsset = new DroppedAssetFactory(
         myTopiaInstance
       ).create(assetId, credentials.urlSlug);
       await mutatableAsset.updateCustomTextAsset({}, thisMessage.message);
-      const updatedMessages = messages.map((m) => {
+      const updatedMessages = messages.map((m: { id: string; }) => {
         if (m.id === id) {
           return {
             ...m,
