@@ -8,6 +8,6 @@ const config = {
 };
 
 // creating instances of Topia
-const myTopiaInstance = await new Topia(config);
+const myTopiaInstance = new Topia(config);
 
 export default myTopiaInstance;

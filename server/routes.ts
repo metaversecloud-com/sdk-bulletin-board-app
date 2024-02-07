@@ -9,15 +9,15 @@ import {
   getPendingMessages,
   rejectMessages,
 } from "./src/controllers/admin.js";
-
-
-
+import { theme } from "./src/controllers/theme.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
   res.json({ message: "Health check is working !" });
 });
+
+router.get("/theme", theme);
 
 const userRouter = express.Router();
 const adminRouter = express.Router();
@@ -29,7 +29,6 @@ userRouter.delete("/message/:id", deleteMessage);
 adminRouter.get("/pending", getPendingMessages);
 adminRouter.post("/message/approve/:id", approveMessages);
 adminRouter.delete("/message/reject/:id", rejectMessages);
-
 
 // delete message
 // approve message

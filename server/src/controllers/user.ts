@@ -15,7 +15,7 @@ export const addNewMessage = async (req: Request, res: Response) => {
     const credentials = credentialsFromQuery(req);
 
     const userData = await getProfile(credentials);
-    const {dataObject} = await getDataObjectFromDroppedAsset(
+    const { dataObject } = await getDataObjectFromDroppedAsset(
       credentials.assetId,
       credentials
     );
@@ -27,12 +27,9 @@ export const addNewMessage = async (req: Request, res: Response) => {
       userId: userData.profileId,
       userName: userData.displayName || userData.username,
       approved: false,
-    }
-
-
+    };
 
     const messages = dataObject?.messages || [];
-    console.log(messages)
     messages.push(messageObj);
 
     const updatedData = {
@@ -40,7 +37,6 @@ export const addNewMessage = async (req: Request, res: Response) => {
       messages,
     };
 
-    console.log(updatedData)
     await writeDataObjectToDroppedAssetId(
       credentials,
       credentials.assetId,
@@ -48,7 +44,6 @@ export const addNewMessage = async (req: Request, res: Response) => {
     );
 
     res.send(updatedData);
-
   } catch (error) {
     console.error("addNewMessageError", JSON.stringify(error));
   }
@@ -59,58 +54,52 @@ export const getMyMessages = async (req: Request, res: Response) => {
     const credentials = credentialsFromQuery(req);
 
     const userData = await getProfile(credentials);
-    const {dataObject} = await getDataObjectFromDroppedAsset(
+    const { dataObject } = await getDataObjectFromDroppedAsset(
       credentials.assetId,
       credentials
     );
-    
-    if (dataObject?.messages === undefined) return res.json({messages: [], isAdmin: userData.isAdmin});
+
+    if (dataObject?.messages === undefined)
+      return res.json({ messages: [], isAdmin: userData.isAdmin });
 
     const myMessages = dataObject.messages.filter(
-      (message: any) => message.userId === userData.profileId && (message.approved === false)
+      (message: any) =>
+        message.userId === userData.profileId && message.approved === false
     );
-    res.json({messages: myMessages, isAdmin: userData.isAdmin});
+    res.json({ messages: myMessages, isAdmin: userData.isAdmin });
   } catch (error) {
-    console.log(error)
     console.error("getMyMessages", JSON.stringify(error));
     res.status(503).send("Error getting messages");
   }
 };
 
-
 export const deleteMessage = async (req: Request, res: Response) => {
-
   try {
     const credentials = credentialsFromQuery(req);
 
     const { id } = req.params;
 
-    const userData = await getProfile(credentials);
-
-    const {dataObject} = await getDataObjectFromDroppedAsset(
+    const { dataObject } = await getDataObjectFromDroppedAsset(
       credentials.assetId,
       credentials
     );
-    
-    const updatedMessages = dataObject.messages.filter((message: any) => message.id !== id);
+
+    const updatedMessages = dataObject.messages.filter(
+      (message: any) => message.id !== id
+    );
     const updatedData = {
       ...dataObject,
       messages: updatedMessages,
     };
-
-    console.log('updatedData', updatedData)
 
     await writeDataObjectToDroppedAssetId(
       credentials,
       credentials.assetId,
       updatedData
     );
-    
-    
+
     res.send(updatedData);
   } catch (error) {
-    console.log(error)
     console.error("deleteMessage", JSON.stringify(error));
   }
-
-}
+};

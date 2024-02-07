@@ -97,10 +97,6 @@ export const writeDataObjectToDroppedAssetId = async (
   droppedAssetId: string,
   dataObject: any = {}
 ) => {
-  // either empty dataObject
-  // or we need to update a key
-  // or we need to delete a key
-
   const writeObject = await new DroppedAssetFactory(myTopiaInstance).create(
     credentials.assetId,
     credentials.urlSlug,
@@ -110,36 +106,4 @@ export const writeDataObjectToDroppedAssetId = async (
   );
 
   await writeObject.updateDataObject({ dataObject });
-};
-
-// GET DROPPED ASSET BY NAME FROM SCENEDROPID
-
-// returns an array where the key is the dropped assets or asset
-export const getDroppedAssetByNameFromSceneDropId = async (
-  name: string[],
-  credentials: InteractiveCredentials
-) => {
-  try {
-    const world = new WorldFactory(myTopiaInstance).create(
-      credentials.urlSlug,
-      { credentials }
-    );
-    const { sceneDropIds } = (await world.fetchSceneDropIds()) as any;
-    // only works for one scene drop id for now
-    const assetsList = (await world.fetchDroppedAssetsBySceneDropId({
-      sceneDropId: sceneDropIds[0],
-    })) as any;
-
-    console.log(sceneDropIds)
-    const assets = name.map((name) => {
-      return {
-        name,
-        assets: assetsList.filter((asset: any) => asset.assetName === name),
-      };
-    });
-
-    return assets;
-  } catch (error) {
-    console.error(error);
-  }
 };
