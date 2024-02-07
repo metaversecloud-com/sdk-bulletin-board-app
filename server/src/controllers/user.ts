@@ -68,7 +68,6 @@ export const getMyMessages = async (req: Request, res: Response) => {
     );
     res.json({ messages: myMessages, isAdmin: userData.isAdmin });
   } catch (error) {
-    console.log(error);
     console.error("getMyMessages", JSON.stringify(error));
     res.status(503).send("Error getting messages");
   }
@@ -101,7 +100,6 @@ export const deleteMessage = async (req: Request, res: Response) => {
 
     res.send(updatedData);
   } catch (error) {
-    console.log(error);
     console.error("deleteMessage", JSON.stringify(error));
   }
 };

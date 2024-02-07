@@ -75,7 +75,6 @@ export const approveMessages = async (req: Request, res: Response) => {
           ? theme.sceneIds
           : process.env.SCENES.split(",");
 
-      console.log('scenes', theme.sceneIds.length)    
       if (!sceneIds.length) throw new Error("No scenes found");
       const randomScene = Math.floor(Math.random() * sceneIds.length);
 
