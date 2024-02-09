@@ -12,7 +12,9 @@ const getMyMessages = async () => {
   return data;
 };
 
-function StudentPage() {
+function StudentPage(props: { theme: any }) {
+  const { theme } = props;
+
   const { data, isLoading, error } = useQuery("messages", getMyMessages);
   const queryClient = useQueryClient();
 
@@ -40,19 +42,18 @@ function StudentPage() {
         asset again.
       </div>
     );
-  console.log(data);
   return (
     <>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          height: "96vh",
-          width: "320px",
+          height: "97vh",
+          width: "95vw",
         }}
       >
         {data.isAdmin && (
-          <div style={{display: "flex", justifyContent: "flex-end"}}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Link to={`/admin${window.location.search}`}>
               <button>
                 <AdminPanelSettings /> Admin
@@ -61,12 +62,9 @@ function StudentPage() {
           </div>
         )}
         <div style={{ margin: "0 12px", marginBottom: "48px" }}>
-          <h1>Gratitude Garden</h1>
-          <h3>What are you thankful for today?</h3>
-          <p>
-            Enter below and once it’s reviewed and approved it will be added to
-            the Gratitude Garden. You can submit 3 at a time for approval.
-          </p>
+          <h1>{theme?.title || "Bulletin Board"}</h1>
+          <h3>{theme?.subtitle || "App not setup"}</h3>
+          <p>{theme?.paragraph || "Please set the theme in the DataObject"}</p>
         </div>
 
         <div>
@@ -77,7 +75,7 @@ function StudentPage() {
             onRemove={removeMessage}
           />
         </div>
-        <div style={{ marginTop: "auto" }}>
+        <div style={{ marginTop: "auto", marginBottom: "10px" }}>
           {data.messages.length < 3 ? (
             <div>
               <InputForm
