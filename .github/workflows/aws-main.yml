@@ -8,38 +8,42 @@ on:
 concurrency:
   group: ${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-  
+
 env:
-  REGISTRY: '368076259134.dkr.ecr.us-east-1.amazonaws.com'
-  REPOSITORY: 'sdk-example'
+  REGISTRY: "368076259134.dkr.ecr.us-east-1.amazonaws.com"
+  REPOSITORY: "sdk-example"
   IMAGE_TAG: ${{ github.event.repository.name }}
   GCP_PROJECT_ID: "topia-gcp" #${{ secrets.GCP_PROJECT_ID }}
   #GCP_ARTIFACTORY: 'us-west1-docker.pkg.dev'
-  GCP_REPOSITORY: 'sdk-apps'
-        
+  GCP_REPOSITORY: "sdk-apps"
+
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read # This is required for actions/checkout
 jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
-        
+
       - uses: actions/setup-node@master
         with:
           node-version: 20.10
-          cache: 'npm'
-        
+          cache: "npm"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
-          
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::368076259134:role/github-actions-role
           aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1.7.1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -56,7 +60,7 @@ jobs:
       - name: Build and  tag
         run: |
           docker build -t ${{ steps.metadata.outputs.tags }} .
-                
+
       - name: push docker image to Amazon ECR
         run: |
           docker push ${{ steps.metadata.outputs.tags }}
@@ -66,7 +70,7 @@ jobs:
       #   with:
       #     workload_identity_provider: 'projects/1095363050582/locations/global/workloadIdentityPools/workload-identity-pool/providers/github-provider'
       #     service_account: 'terraform-99@topia-gcp.iam.gserviceaccount.com'
-  
+
       # - name: 'Set up Cloud SDK'
       #   uses: 'google-github-actions/setup-gcloud@v1'
       #   with:
@@ -80,12 +84,12 @@ jobs:
       #     # password: ${{ steps.auth.outputs.access_token }}
       #     username: _json_key
       #     password: ${{ secrets.GCR_JSON_KEY }}
-          
+
       # - name: Build and push Docker image
       #   run: |
       #     docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG ${{ secrets.GCP_ARTIFACTORY }}/$GCP_PROJECT_ID/$GCP_REPOSITORY/$IMAGE_TAG
       #     docker push ${{ secrets.GCP_ARTIFACTORY }}/$GCP_PROJECT_ID/$GCP_REPOSITORY/$IMAGE_TAG
-  
+
       - name: Publish
         run: |
           aws ecs update-service --service sdk-bulletin-board-dev-topia0-svc --force-new-deployment --cluster SDK-Example-CLS
