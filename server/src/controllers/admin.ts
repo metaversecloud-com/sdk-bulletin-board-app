@@ -8,13 +8,13 @@ import {
 import {
   DroppedAssetFactory,
   DroppedAssetInterface,
-  WorldFactory
+  WorldFactory,
 } from "@rtsdk/topia";
 import myTopiaInstance from "../../utils/topiaInstance.js";
 
 function addHyphenAndNewline(message) {
   // Split the message into words
-  let words = message.split(' ');
+  let words = message.split(" ");
 
   // Iterate through each word
   for (let i = 0; i < words.length; i++) {
@@ -24,12 +24,12 @@ function addHyphenAndNewline(message) {
       let chunks = words[i].match(/.{1,20}/g);
 
       // Join the chunks with a hyphen and add a newline
-      words[i] = chunks.join('-\n');
+      words[i] = chunks.join("-\n");
     }
   }
 
   // Join the words back into a string
-  let result = words.join(' ');
+  let result = words.join(" ");
 
   return result;
 }
@@ -44,8 +44,13 @@ export const approveMessages = async (req: Request, res: Response) => {
       credentials
     );
 
-    const { messages, usedSpaces = [], placedTextAssets = [] } = dataObject;
-    const thisMessage = messages.find((m) => m.id === id);
+    const {
+      messages,
+      usedSpaces = [],
+      placedTextAssets = [],
+      theme,
+    } = dataObject;
+    const thisMessage = messages.find((m: { id: string }) => m.id === id);
 
     if (!thisMessage) {
       throw new Error("Message not found");
@@ -57,18 +62,18 @@ export const approveMessages = async (req: Request, res: Response) => {
     );
 
     const assets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: "anchor",
+      uniqueName: theme.anchors || "anchor",
     });
 
-    // const droppedCounter = droppedCounter++ 
-    // use lock key nearest 10th second for v2
     const emptySpaces = assets.filter((s) => !usedSpaces.includes(s.id));
 
     if (emptySpaces.length > 0) {
-      console.log('emptySpaces', emptySpaces.length)
       const random = Math.floor(Math.random() * emptySpaces.length);
       const asset = emptySpaces[random] as any;
-      const sceneIds = process.env.SCENES.split(',')
+      const sceneIds =
+        theme.sceneIds.length > 0
+          ? theme.sceneIds
+          : process.env.SCENES.split(",");
 
       if (!sceneIds.length) throw new Error("No scenes found");
       const randomScene = Math.floor(Math.random() * sceneIds.length);
@@ -87,12 +92,15 @@ export const approveMessages = async (req: Request, res: Response) => {
         (a) => a.assetId === "textAsset"
       );
 
-      const mutatableAsset = await new DroppedAssetFactory(myTopiaInstance).create(
+      const mutatableAsset = new DroppedAssetFactory(myTopiaInstance).create(
         justDroppedTextAsset.id,
         credentials.urlSlug
       );
-      
-      await mutatableAsset.updateCustomTextAsset({}, addHyphenAndNewline(thisMessage.message));
+
+      await mutatableAsset.updateCustomTextAsset(
+        {},
+        addHyphenAndNewline(thisMessage.message)
+      );
 
       const newUsedSpaces = [...usedSpaces, asset.id];
       const newPlacedTextAssets = [
@@ -125,12 +133,11 @@ export const approveMessages = async (req: Request, res: Response) => {
     } else {
       const random = Math.floor(Math.random() * placedTextAssets.length);
       const assetId = placedTextAssets[random];
-      const mutatableAsset = await new DroppedAssetFactory(myTopiaInstance).create(
-        assetId,
-        credentials.urlSlug
-      );
+      const mutatableAsset = new DroppedAssetFactory(
+        myTopiaInstance
+      ).create(assetId, credentials.urlSlug);
       await mutatableAsset.updateCustomTextAsset({}, thisMessage.message);
-      const updatedMessages = messages.map((m) => {
+      const updatedMessages = messages.map((m: { id: string; }) => {
         if (m.id === id) {
           return {
             ...m,
@@ -168,7 +175,9 @@ export const rejectMessages = async (req: Request, res: Response) => {
       credentials
     );
 
-    const updatedMessages = dataObject.messages.filter((message: any) => message.id !== id);
+    const updatedMessages = dataObject.messages.filter(
+      (message: any) => message.id !== id
+    );
 
     const updatedData = {
       ...dataObject,
