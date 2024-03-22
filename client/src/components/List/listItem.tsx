@@ -1,30 +1,46 @@
-import styles from "./styles.module.css";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-
-function ListItem({ message, username, id, editable, onApprove, onRemove, ind }) {
+export const ListItem = ({
+  id,
+  message,
+  isUpdating,
+  onApprove,
+  onRemove,
+  username,
+}: {
+  id: string;
+  isUpdating: boolean;
+  message: string;
+  onApprove: any;
+  onRemove: any;
+  username: string;
+}) => {
   return (
-    <div className={styles.listItem} key={ind}>
-      <div className={styles.rightInfo}>{ind+1}</div>
-
-      <div className={styles.info}>
-        <div className={styles.message}>{message}</div>
-        <div className={styles.posted}>from {username}</div>
-      </div>
-      {editable && (
-        <div className={styles.actions}>
+    <div className="card horizontal" key={id}>
+      <div className="card-details">
+        <p className="card-description p2">{message}</p>
+        <p className="card-description p3">from {username}</p>
+        <div className="card-actions">
           {onApprove && (
-            <button className="btn-icon"  style={{marginBottom: "5px", color: "green"}} onClick={() => onApprove.mutate(id)} disabled={onApprove.isLoading}>
-              <CheckIcon />
+            <button
+              className="btn-icon"
+              style={{ marginBottom: "5px", color: "green" }}
+              onClick={() => onApprove(id)}
+              disabled={isUpdating}
+            >
+              &#x2713;
             </button>
           )}
           {onRemove && (
-            <button className="btn-icon" style={{color: "red"}}onClick={() => onRemove.mutate(id)} disabled={onRemove.isLoading}>
-              <ClearIcon />
+            <button
+              className="btn-icon"
+              style={{ color: "red" }}
+              onClick={() => onRemove(id)}
+              disabled={isUpdating}
+            >
+              X
             </button>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

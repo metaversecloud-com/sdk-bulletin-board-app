@@ -1,51 +1,46 @@
 import express from "express";
 import {
-  getMyMessages,
-  addNewMessage,
-  deleteMessage,
-} from "./src/controllers/user.js";
-import {
-  approveMessages,
-  getPendingMessages,
-  rejectMessages,
-} from "./src/controllers/admin.js";
-import { theme } from "./src/controllers/theme.js";
-
-
-
+  handleAddNewMessage,
+  handleApproveMessages,
+  handleCheckInteractiveCredentials, handleDeleteMessage,
+  handleGetMyMessages,
+  handleGetPendingMessages,
+  handleGetTheme,
+  handleGetVisitor,
+  handleRejectMessages,
+} from "./controllers";
+import { getVersion } from "./utils/getVersion"
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.json({ message: "Health check is working !" });
+  res.json({ message: "Hello from server!" });
 });
 
-router.get("/theme", theme);
+router.get("/system/health", (req, res) => {
+  return res.json({
+    appVersion: getVersion(),
+    status: "OK",
+    envs: {
+      NODE_ENV: process.env.NODE_ENV,
+      INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
+      INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+    },
+  });
+});
 
-const userRouter = express.Router();
-const adminRouter = express.Router();
+router.get("/system/interactive-credentials", handleCheckInteractiveCredentials);
 
-userRouter.get("/pending", getMyMessages);
-userRouter.post("/message", addNewMessage);
-userRouter.delete("/message/:id", deleteMessage);
+router.get("/theme", handleGetTheme);
 
-adminRouter.get("/pending", getPendingMessages);
-adminRouter.post("/message/approve/:id", approveMessages);
-adminRouter.delete("/message/reject/:id", rejectMessages);
+router.get("/visitor", handleGetVisitor);
 
-// delete message
-// approve message
-// mypending messages
-// post message
+router.post("/user/message", handleAddNewMessage);
+router.get("/user/pending", handleGetMyMessages);
+router.delete("/user/message/:id", handleDeleteMessage);
 
-// get pending message
-
-router.use("/user", userRouter);
-router.use("/admin", adminRouter);
-
-// router.get("/user", (req, res) => getMyMessages)
-// router.get("/user/approved", (req, res) => {})
-
-// router.post("/user/message", (req, res) => {})
+router.get("/admin/pending", handleGetPendingMessages);
+router.post("/admin/message/approve/:id", handleApproveMessages);
+router.delete("/admin/message/reject/:id", handleRejectMessages);
 
 export default router;
