@@ -1,43 +1,95 @@
 import { useContext, useEffect, useState } from "react";
 
 // components
-import List from "../components/List/List";
+import Accordion from "@/components/Accordion";
+import AdminForm from "@/components/AdminForm";
+import ListItem from "./ListItem";
 import Loading from "@/components/Loading";
 
 // context
-import { GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { MessageI } from "@/types";
 
 function Admin() {
-  const { hasSetupBackend } = useContext(GlobalStateContext);
+  const { hasSetupBackend, theme } = useContext(GlobalStateContext);
+  const dispatch = useContext(GlobalDispatchContext);
 
-  const [messages, setMessages] = useState({});
+  const [currentTheme, setTheme] = useState(theme);
+  const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
+  const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    backendAPI.get(`/admin/pending`).then((result) => {
-      setMessages(result.data.messages)
+    backendAPI.get(`/messages/pending`).then((result) => {
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
   }, [])
 
-  const approveMessage = (id: string) => {
+  const handleOnSubmit = (data: any) => {
+    console.log("🚀 ~ file: Admin.tsx:35 ~ data:", data)
     setIsUpdating(true)
-    backendAPI.post(`/admin/message/approve/${id}`).then((result) => {
-      setMessages(result.data.messages)
+    setTheme(data)
+    backendAPI.post("/theme", data).then(() => {
+      console.log("🚀 ~ file: Admin.tsx:43 ~ data:", data)
+      dispatch!({
+        type: SET_THEME,
+        payload: { ...data },
+      });
+      setTheme(data)
+    }).catch((error) => console.log(error)).finally(() => { setIsUpdating(false) })
+  };
+
+  const approveMessage = (messageId: string) => {
+    setIsUpdating(true)
+    backendAPI.post(`/message/approve/${messageId}`).then((result) => {
+      console.log("🚀 ~ file: Admin.tsx:52 ~ result.data:", result.data)
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
   };
 
-  const rejectMessage = (id: string) => {
+  const rejectMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.delete(`/admin/message/reject/${id}`).then((result) => {
-      setMessages(result.data.messages)
+    backendAPI.post(`/message/reject/${messageId}`).then((result) => {
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
+    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+  };
+
+  const deleteMessage = (messageId: string) => {
+    setIsUpdating(true)
+    backendAPI.delete(`/message/${messageId}`).then((result) => {
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
   };
 
   if (isLoading || !hasSetupBackend) return <Loading />;
+
+  const getMessagesList = () => {
+    return (
+      <div>
+        {Object.values(messages).map((item, index) => (
+          <ListItem
+            id={item.id}
+            hasDivider={index < messagesLength - 1}
+            isUpdating={isUpdating}
+            message={item.message}
+            onApprove={approveMessage}
+            onDeny={rejectMessage}
+            onDelete={theme.id === "CHALK" && deleteMessage}
+            username={item.userName}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -45,17 +97,19 @@ function Admin() {
         <h1 className="h3">Admin</h1>
         <p className="p1">This is the admin panel. You can approve messages here.</p>
       </div>
-      {Object.keys(messages).length > 0 &&
-        <List
-          listItems={messages}
-          title="Pending Approval"
-          isUpdating={isUpdating}
-          onApprove={approveMessage}
-          onRemove={rejectMessage}
-        />
+      <Accordion title="Settings">
+        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={isUpdating} theme={currentTheme} />
+      </Accordion>
+      {messages && messagesLength > 0 &&
+        <div className="mt-4">
+          <Accordion title="Pending Approval">
+            {getMessagesList()}
+          </Accordion>
+        </div>
       }
     </>
   );
 }
 
 export default Admin;
+

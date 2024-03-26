@@ -6,7 +6,7 @@ import {
 import { Request, Response } from "express";
 import { DataObjectType } from "../types";
 
-export const handleGetMyMessages = async (req: Request, res: Response) => {
+export const handleGetUserMessages = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, profileId } = credentials
@@ -25,7 +25,7 @@ export const handleGetMyMessages = async (req: Request, res: Response) => {
   } catch (error) {
     return errorHandler({
       error,
-      functionName: "handleGetMyMessages",
+      functionName: "handleGetUserMessages",
       message: "Error getting my messages.",
       req,
       res,

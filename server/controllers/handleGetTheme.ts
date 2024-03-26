@@ -6,7 +6,6 @@ export const handleGetTheme = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { dataObject } = await getDroppedAssetDataObject(credentials.assetId, credentials);
 
-    console.log("🚀 ~ file: handleGetTheme.ts:16 ~ dataObject:", dataObject)
     const theme = dataObject?.theme || {};
 
     return res.send({ theme });

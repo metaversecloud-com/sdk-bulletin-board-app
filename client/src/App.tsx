@@ -4,6 +4,7 @@ import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 // pages
 import Home from "./pages/Home";
 import Error from "./pages/Error";
+import Loading from "./components/Loading";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
@@ -21,12 +22,13 @@ import { backendAPI } from "@/utils/backendAPI";
 import "./index.css";
 
 const App = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
-  const [background, setBackground] = useState<string>("white");
 
-  const dispatch = useContext(GlobalDispatchContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState<string>("white");
 
   const interactiveParams: InteractiveParams = useMemo(() => {
     return {
@@ -96,16 +98,13 @@ const App = () => {
   };
 
   const getTheme = async () => {
-    try {
-      const { data } = await backendAPI.get("/theme");
-      setBackground(data.backgroundColor)
+    backendAPI.get("/theme").then((result) => {
+      setBackgroundColor(result.data.theme.backgroundColor)
       dispatch!({
         type: SET_THEME,
-        payload: data.theme,
+        payload: result.data.theme,
       });
-    } catch (error) {
-      console.log(error);
-    }
+    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
   };
 
   useEffect(() => {
@@ -121,10 +120,13 @@ const App = () => {
     else getTheme();
   }, [hasInitBackendAPI, interactiveParams]);
 
+
+  if (isLoading || !hasInitBackendAPI) return <Loading />;
+
   return (
     <div
       className="app"
-      style={{ background }}
+      style={{ backgroundColor, height: "100vh" }}
     >
       <Routes>
         <Route path="/" element={<Home />} />

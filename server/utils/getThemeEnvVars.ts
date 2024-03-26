@@ -7,7 +7,6 @@ enum ThemeIds {
 }
 
 export const getThemeEnvVars = (id: ThemeIds) => {
-  console.log("🚀 ~ file: getThemeEnvVars.ts:8 ~ id:", id)
   try {
     if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw "Theme id not found"
 

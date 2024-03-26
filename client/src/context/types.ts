@@ -19,9 +19,11 @@ export interface InitialState {
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
   theme: {
-      title: string,
-      subtitle: string,
-      paragraph: string,
+    id: string;
+    backgroundColor: string;
+    description: string;
+    subtitle: string;
+    title: string;
   };
 }
 
@@ -29,3 +31,9 @@ export type ActionType = {
   type: string;
   payload?: any;
 };
+
+export const ThemeIds: { [key: string]: string } = {
+  "GRATITUDE": 'Gratitude Garden',
+  "FRIENDSHIP": 'Friendship Garden',
+  "CHALK": 'Chalk the Block'
+}

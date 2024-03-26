@@ -12,10 +12,10 @@ export const initializeDroppedAssetDataObject = async (droppedAsset: any) => {
           placedTextAssets: [],
           theme: {
             id: "GRATITUDE",
-            title: "Gratitude Garden",
+            backgroundColor: "white",
+            description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
             subtitle: "Leave a message about something you're thankful for.",
-            paragraph: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
-            color: ""
+            title: "Gratitude Garden",
           },
           usedSpaces: [],
         },

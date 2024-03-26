@@ -12,25 +12,26 @@ export interface Credentials {
 
 export type MessageType = {
   id: string,
-  message: string,
+  approved: boolean,
+  imageUrl?: string,
+  message?: string,
   userId: string,
   userName: string,
-  approved: boolean,
 }
 
 
 export type DataObjectType = {
-  messages: {
+  messages?: {
     [key: string]: MessageType
   },
-  placedTextAssets: string[],
-  theme: {
+  placedTextAssets?: string[],
+  theme?: {
     id: string,
+    backgroundColor: string
+    description: string,
     title: string,
     subtitle: string,
-    paragraph: string,
-    color: string
   },
-  usedSpaces: string[],
+  usedSpaces?: string[],
 }
 

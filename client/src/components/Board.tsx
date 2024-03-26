@@ -1,66 +1,87 @@
 import { useContext, useState, useEffect } from 'react';
 
 // components
-import List from "@/components/List/List";
+import Accordion from "@/components/Accordion";
+import ListItem from "@/components/ListItem";
 import Loading from "@/components/Loading";
-import Form from "@/components/Form";
+import MessageForm from "@/components/MessageForm";
 
 // context
 import { GlobalStateContext } from "@/context/GlobalContext";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { MessageI } from '@/types';
 
 function Board() {
-  const [messages, setMessages] = useState({});
+  const { hasSetupBackend, theme } = useContext(GlobalStateContext);
+
+  const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
+  const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const { hasSetupBackend, theme } = useContext(GlobalStateContext);
 
   useEffect(() => {
-    backendAPI.get("/user/pending").then((result) => {
-      console.log("🚀 ~ file: Board.tsx:25 ~ result.data:", result.data.messages)
-      setMessages(result.data.messages)
+    backendAPI.get("/messages/pending").then((result) => {
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
   }, [])
 
-  const addMessage = (message: string) => {
+  const addMessage = async (data: any) => {
     setIsUpdating(true)
-    backendAPI.post("/user/message", { message }).then((result) => {
-      setMessages(result.data.messages)
+    let imageUrl
+    if (data.images) {
+      const file = URL.createObjectURL(data.images[0]);
+      imageUrl = file;
+      console.log("🚀 ~ file: Board.tsx:43 ~ imageUrl:", imageUrl)
+    }
+    const payload = { image: imageUrl, message: data.message }
+    console.log("🚀 ~ file: Board.tsx:37 ~ payload:", JSON.stringify(payload))
+    backendAPI.post("/message", payload).then((result) => {
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
   };
 
-  const removeMessage = (id: string) => {
+  const removeMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.delete(`/user/message/${id}`).then((result) => {
-      setMessages(result.data.messages)
+    backendAPI.delete(`/message/${messageId}`).then((result) => {
+      console.log("🚀 ~ file: Board.tsx:54 ~ result.data:", result.data)
+      setMessages(result.data)
+      setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
   };
 
-  if (isLoading || !hasSetupBackend || !theme.title) return <Loading />;
+  if (isLoading || !hasSetupBackend || !theme.id) return <Loading />;
 
-  console.log("🚀 ~ file: Board.tsx:72 ~ Object.keys(messages).length:", Object.keys(messages).length)
+  const getMessagesList = () => {
+    return (
+      Object.values(messages).map((item, index) => (
+        <ListItem
+          id={item.id}
+          hasDivider={index < messagesLength - 1}
+          imageUrl={item.imageUrl}
+          isUpdating={isUpdating}
+          message={item.message}
+          onDelete={removeMessage}
+          username={item.userName}
+        />
+      ))
+    );
+  };
 
   return (
     <>
-      <div className="flex flex-col pb-6">
+      <div className="flex flex-col">
         <h1 className="h3">{theme.title}</h1>
         <h4 className="h4 pb-4 pt-4">{theme.subtitle}</h4>
-        <p className="p1">{theme.paragraph}</p>
+        <p className="p1">{theme.description}</p>
       </div>
-      {messages && Object.keys(messages).length > 0 &&
-        <List
-          listItems={messages}
-          title="Messages pending approval"
-          isUpdating={isUpdating}
-          onRemove={removeMessage}
-        />
-      }
-      <div className="flex flex-col mb-6 mt-6">
-        {Object.keys(messages).length < 3 ? (
-          <Form handleSubmitForm={addMessage} isLoading={isUpdating} />
+      <div className="flex flex-col mb-8 mt-10">
+        {messagesLength < 3 ? (
+          <MessageForm handleSubmitForm={addMessage} isLoading={isUpdating} themeId={theme.id} />
         ) : (
           <p>
             You have reached the limit of maximum messages you can submit for
@@ -69,6 +90,11 @@ function Board() {
           </p>
         )}
       </div>
+      {messages && messagesLength > 0 &&
+        <Accordion title="Pending Approval">
+          {getMessagesList()}
+        </Accordion>
+      }
     </>
   );
 }

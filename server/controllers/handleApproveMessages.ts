@@ -6,13 +6,14 @@ import {
   errorHandler,
   getCredentials,
   getDroppedAssetDataObject,
+  getPendingMessages,
   getThemeEnvVars,
   World,
 } from "../utils";
 
 export const handleApproveMessages = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { messageId } = req.params;
     const credentials = getCredentials(req.query);
     const { assetId, urlSlug } = credentials
 
@@ -25,7 +26,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       theme,
     } = droppedAsset.dataObject;
 
-    const thisMessage = messages[id];
+    const thisMessage = messages[messageId];
     if (!thisMessage) throw new Error("Message not found");
 
     const world = await World.create(urlSlug, { credentials });
@@ -55,24 +56,20 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         sceneDropId: sc.data.sceneDropId,
       })) as DroppedAssetInterface[];
 
-      const justDroppedTextAsset = assetsList.find((a) => a.assetId === "textAsset");
-      console.log("🚀 ~ file: handleApproveMessages.ts:60 ~ justDroppedTextAsset:", justDroppedTextAsset)
-      placedTextAssets.push(justDroppedTextAsset)
+      const textAsset = assetsList.find((a) => a.assetId === "textAsset");
+      placedTextAssets.push(textAsset)
 
-      const textAsset = await DroppedAsset.create(
-        justDroppedTextAsset.id,
-        urlSlug
-      );
       await textAsset.updateCustomTextAsset(
         {},
         addHyphenAndNewline(thisMessage.message)
       );
 
+      const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
       await droppedAsset.updateDataObject({
-        [`messages[${id}].approved`]: true,
+        [`messages.${messageId}.approved`]: true,
         placedTextAssets,
         usedSpaces,
-      });
+      }, { lock: { lockId, releaseLock: true } });
     } else {
       // if all spaces are taken then update text for randomly selected already dropped text asset
       const random = Math.floor(Math.random() * placedTextAssets.length);
@@ -81,10 +78,11 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       const textAsset = DroppedAsset.create(assetId, urlSlug);
       await textAsset.updateCustomTextAsset({}, thisMessage.message);
 
-      await droppedAsset.updateDataObject({ [`messages[${id}].approved`]: true });
+      const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+      await droppedAsset.updateDataObject({ [`messages.${messageId}.approved`]: true }, { lock: { lockId, releaseLock: true } });
     }
 
-    return res.send(await droppedAsset.fetchDataObject().messages);
+    return res.send(await getPendingMessages(droppedAsset.dataObject.messages));
   } catch (error) {
     return errorHandler({
       error,

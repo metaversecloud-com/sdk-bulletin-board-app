@@ -21,7 +21,6 @@ function Home() {
   useEffect(() => {
     if (hasSetupBackend) {
       backendAPI.get("/visitor").then((result) => {
-        console.log("🚀 ~ file: Home.tsx:27 ~ result.data:", result.data)
         setIsAdmin(result.data.visitor.isAdmin)
       }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
     }
