@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getDroppedAssetDataObject } from "../utils";
+import { errorHandler, getCredentials, getWorldDataObject } from "../utils";
+import { DataObjectType } from '../types';
 
 export const handleGetTheme = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { dataObject } = await getDroppedAssetDataObject(credentials.assetId, credentials);
 
-    const theme = dataObject?.theme || {};
+    const { dataObject } = await getWorldDataObject(credentials);
+    const { theme } = dataObject as DataObjectType;
 
-    return res.send({ theme });
+    return res.send(theme);
   } catch (error) {
     return errorHandler({
       error,

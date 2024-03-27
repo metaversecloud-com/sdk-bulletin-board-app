@@ -19,12 +19,12 @@ export type MessageType = {
   userName: string,
 }
 
-
 export type DataObjectType = {
+  anchorAssets?: string[],
   messages?: {
     [key: string]: MessageType
   },
-  placedTextAssets?: string[],
+  placedAssets?: string[],
   theme?: {
     id: string,
     backgroundColor: string

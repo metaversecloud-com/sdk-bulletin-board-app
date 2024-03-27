@@ -1,13 +1,14 @@
-import { DroppedAssetInterface } from "@rtsdk/topia";
 import { Request, Response } from "express";
+import { DataObjectType } from '../types';
 import {
-  addHyphenAndNewline,
   DroppedAsset,
+  dropScene,
   errorHandler,
   getCredentials,
-  getDroppedAssetDataObject,
   getPendingMessages,
   getThemeEnvVars,
+  getWorldDataObject,
+  updateWebImage,
   World,
 } from "../utils";
 
@@ -15,74 +16,60 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
   try {
     const { messageId } = req.params;
     const credentials = getCredentials(req.query);
-    const { assetId, urlSlug } = credentials
+    const { sceneDropId, urlSlug } = credentials
 
-    const droppedAsset = await getDroppedAssetDataObject(assetId, credentials);
-
+    const { dataObject, world } = await getWorldDataObject(credentials);
     const {
+      anchorAssets,
       messages,
       usedSpaces,
-      placedTextAssets,
+      placedAssets,
       theme,
-    } = droppedAsset.dataObject;
+    } = dataObject as DataObjectType;
 
-    const thisMessage = messages[messageId];
-    if (!thisMessage) throw new Error("Message not found");
+    const message = messages[messageId];
+    if (!message) throw new Error("Message not found");
+    const lockId = `${sceneDropId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
-    const world = await World.create(urlSlug, { credentials });
-
-    const { anchors, droppableSceneIds } = getThemeEnvVars(theme.id)
-    const anchorAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: anchors,
-    });
-
-    const emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset.id));
+    const emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset));
 
     if (emptySpaces.length > 0) {
       const random = Math.floor(Math.random() * emptySpaces.length);
-      const asset = emptySpaces[random] as any;
-      usedSpaces.push[asset.id];
+      const emptySpaceId = emptySpaces[random];
+      const droppedAsset = await DroppedAsset.get(emptySpaceId, urlSlug, { credentials })
+      usedSpaces.push[emptySpaceId];
 
-      if (!droppableSceneIds.length) throw new Error("No scenes found");
-      const randomScene = Math.floor(Math.random() * droppableSceneIds.length);
+      let droppedAssetId
+      if (message.imageUrl) {
+        droppedAssetId = await updateWebImage({ droppedAsset, message, urlSlug })
+      } else {
+        const world = await World.create(urlSlug, { credentials });
+        const { droppableSceneIds } = getThemeEnvVars(theme.id)
+        droppedAssetId = await dropScene({ droppedAsset, droppableSceneIds, message, world })
+      }
+      placedAssets.push(droppedAssetId)
 
-      const sc = (await world.dropScene({
-        sceneId: droppableSceneIds[randomScene],
-        position: asset?.position,
-        assetSuffix: "message",
-      })) as any;
-
-      const assetsList = (await world.fetchDroppedAssetsBySceneDropId({
-        sceneDropId: sc.data.sceneDropId,
-      })) as DroppedAssetInterface[];
-
-      const textAsset = assetsList.find((a) => a.assetId === "textAsset");
-      placedTextAssets.push(textAsset)
-
-      await textAsset.updateCustomTextAsset(
-        {},
-        addHyphenAndNewline(thisMessage.message)
-      );
-
-      const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-      await droppedAsset.updateDataObject({
-        [`messages.${messageId}.approved`]: true,
-        placedTextAssets,
+      await world.updateDataObject({
+        [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true,
+        placedAssets,
         usedSpaces,
       }, { lock: { lockId, releaseLock: true } });
     } else {
-      // if all spaces are taken then update text for randomly selected already dropped text asset
-      const random = Math.floor(Math.random() * placedTextAssets.length);
-      const assetId = placedTextAssets[random];
+      // if all spaces are taken then update randomly selected already dropped asset
+      const random = Math.floor(Math.random() * placedAssets.length);
+      const assetId = placedAssets[random];
 
-      const textAsset = DroppedAsset.create(assetId, urlSlug);
-      await textAsset.updateCustomTextAsset({}, thisMessage.message);
+      if (message.imageUrl) {
+        await updateWebImage({ droppedAssetId: assetId, message, urlSlug })
+      } else {
+        const textAsset = DroppedAsset.create(assetId, urlSlug);
+        await textAsset.updateCustomTextAsset({}, message.message);
+      }
 
-      const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-      await droppedAsset.updateDataObject({ [`messages.${messageId}.approved`]: true }, { lock: { lockId, releaseLock: true } });
+      await world.updateDataObject({ [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true }, { lock: { lockId, releaseLock: true } });
     }
 
-    return res.send(await getPendingMessages(droppedAsset.dataObject.messages));
+    return res.json(await getPendingMessages({ sceneDropId, world }));
   } catch (error) {
     return errorHandler({
       error,

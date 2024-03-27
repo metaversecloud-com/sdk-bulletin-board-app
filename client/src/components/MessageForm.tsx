@@ -17,12 +17,12 @@ export function MessageForm({
   } = useForm();
 
   const onSubmit = (data: any) => {
-    if (data.images && data.images[0].size > 1048576) {
-      alert("File is too big!");
-    } else {
-      handleSubmitForm(data);
-      reset();
+    const file = data.images ? data.images[0] : null
+    if (file?.size > 1048576) {
+      return alert("File is too big!");
     }
+    handleSubmitForm(data);
+    reset();
   };
 
   return (

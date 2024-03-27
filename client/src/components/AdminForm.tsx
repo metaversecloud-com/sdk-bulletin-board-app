@@ -17,7 +17,6 @@ export function AdminForm({
   };
 }) {
   const {
-
     formState: { errors },
     handleSubmit,
     register,
@@ -32,7 +31,7 @@ export function AdminForm({
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Theme:</label>
         <select className="input mb-4" {...register("id", { required: true, value: theme.id })}>
-          {Object.keys(ThemeIds).map((id) => <option value={id}>{ThemeIds[id]}</option>)}
+          {Object.keys(ThemeIds).map((id) => <option key={id} value={id}>{ThemeIds[id]}</option>)}
         </select>
         <label>Title:</label>
         <input

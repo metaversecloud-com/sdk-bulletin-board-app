@@ -1,7 +1,14 @@
 import { errorHandler } from "../utils";
 
-export const getPendingMessages = async (messages: object) => {
+export const getPendingMessages = async ({ messages, sceneDropId, world }: { messages?: object, sceneDropId?: string, world?: any }) => {
   try {
+    if (world) {
+      await world.fetchDataObject();
+      messages = world.dataObject.scenes[sceneDropId].messages
+    }
+
+    if (!messages) return {}
+
     const pendingMessages = Object.entries(messages).reduce((approvedMessages, [key, message]) => {
       if (message.approved === false) {
         approvedMessages[key] = message;

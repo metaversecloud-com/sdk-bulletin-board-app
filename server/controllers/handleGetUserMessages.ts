@@ -1,7 +1,7 @@
 import {
   errorHandler,
   getCredentials,
-  getDroppedAssetDataObject,
+  getWorldDataObject,
 } from "../utils";
 import { Request, Response } from "express";
 import { DataObjectType } from "../types";
@@ -9,13 +9,12 @@ import { DataObjectType } from "../types";
 export const handleGetUserMessages = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId } = credentials
 
-    const { dataObject } = await getDroppedAssetDataObject(assetId, credentials);
-    const { messages } = dataObject as DataObjectType
+    const { dataObject } = await getWorldDataObject(credentials);
+    const { messages } = dataObject as DataObjectType;
 
     const myMessages = Object.entries(messages).reduce((myMessages, [key, message]) => {
-      if (message.userId === profileId && message.approved === false) {
+      if (message.userId === credentials.profileId && message.approved === false) {
         myMessages[key] = message;
       }
       return myMessages;

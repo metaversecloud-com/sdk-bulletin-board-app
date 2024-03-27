@@ -3,22 +3,14 @@ import { errorHandler } from "./errorHandler";
 
 export async function uploadToS3(file, fileName) {
   try {
-    console.log("🚀 ~ file: uploadToS3.ts:5 ~ file:", file)
     const Body = new File([file], fileName);
 
-    const credentials = {
-      region: "us-east-1",
-      // credentials: {
-      //   accessKeyId: process.env.S3_KEY,
-      //   secretAccessKey: process.env.S3_SECRET
-      // }
-    };
+    const credentials = { region: "us-east-1" };
     const client = new S3Client(credentials);
 
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET,
       Key: fileName,
-      // Body: "hello world!",
       Body,
       ContentType: "image/png",
     });

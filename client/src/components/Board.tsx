@@ -35,10 +35,8 @@ function Board() {
     if (data.images) {
       const file = URL.createObjectURL(data.images[0]);
       imageUrl = file;
-      console.log("🚀 ~ file: Board.tsx:43 ~ imageUrl:", imageUrl)
     }
     const payload = { image: imageUrl, message: data.message }
-    console.log("🚀 ~ file: Board.tsx:37 ~ payload:", JSON.stringify(payload))
     backendAPI.post("/message", payload).then((result) => {
       setMessages(result.data)
       setMessagesLength(Object.keys(result.data).length)
@@ -48,25 +46,24 @@ function Board() {
   const removeMessage = (messageId: string) => {
     setIsUpdating(true)
     backendAPI.delete(`/message/${messageId}`).then((result) => {
-      console.log("🚀 ~ file: Board.tsx:54 ~ result.data:", result.data)
       setMessages(result.data)
       setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
   };
 
-  if (isLoading || !hasSetupBackend || !theme.id) return <Loading />;
+  if (isLoading || !hasSetupBackend || !theme?.id) return <Loading />;
 
   const getMessagesList = () => {
     return (
       Object.values(messages).map((item, index) => (
         <ListItem
+          key={item.id}
           id={item.id}
           hasDivider={index < messagesLength - 1}
           imageUrl={item.imageUrl}
           isUpdating={isUpdating}
           message={item.message}
           onDelete={removeMessage}
-          username={item.userName}
         />
       ))
     );

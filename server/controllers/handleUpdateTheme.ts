@@ -1,23 +1,18 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getCredentials } from "../utils";
+import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils";
 import { DataObjectType } from '../types';
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, urlSlug } = credentials
+    const { sceneDropId } = credentials
 
-    const droppedAsset = await DroppedAsset.create(
-      assetId,
-      urlSlug,
-      { credentials }
-    );
+    const { world } = await getWorldDataObject(credentials);
 
-    const lockId = `${assetId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-    await droppedAsset.updateDataObject({ "theme": req.body }, { lock: { lockId, releaseLock: true } });
+    const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+    await world.updateDataObject({ [`scenes.${sceneDropId}.theme`]: req.body }, { lock: { lockId, releaseLock: true } });
 
-    const dataObject: DataObjectType = droppedAsset.dataObject
-    return res.send(dataObject.theme);
+    return res.send(req.body);
   } catch (error) {
     return errorHandler({
       error,

@@ -17,7 +17,7 @@ export const ListItem = ({
   onApprove?: any;
   onDelete?: any;
   onDeny?: any;
-  username: string;
+  username?: string;
 }) => {
   return (
     <div className="mt-4" key={id}>
@@ -28,7 +28,7 @@ export const ListItem = ({
             :
             <p className="p2">{message}</p>
           }
-          <div className="p3">from {username}</div>
+          {username && <div className="p3">from {username}</div>}
         </div>
         <div className="card-actions pt-4">
           {onApprove && (
@@ -57,7 +57,7 @@ export const ListItem = ({
           )}
           {onDelete && (
             <div className="tooltip">
-              <span className="tooltip-content">Permanently Delete</span>
+              <span className="tooltip-content">Delete</span>
               <button
                 className="btn btn-icon btn-danger ml-2"
                 onClick={() => onDelete(id)}

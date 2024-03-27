@@ -32,11 +32,9 @@ function Admin() {
   }, [])
 
   const handleOnSubmit = (data: any) => {
-    console.log("🚀 ~ file: Admin.tsx:35 ~ data:", data)
     setIsUpdating(true)
     setTheme(data)
     backendAPI.post("/theme", data).then(() => {
-      console.log("🚀 ~ file: Admin.tsx:43 ~ data:", data)
       dispatch!({
         type: SET_THEME,
         payload: { ...data },
@@ -48,7 +46,6 @@ function Admin() {
   const approveMessage = (messageId: string) => {
     setIsUpdating(true)
     backendAPI.post(`/message/approve/${messageId}`).then((result) => {
-      console.log("🚀 ~ file: Admin.tsx:52 ~ result.data:", result.data)
       setMessages(result.data)
       setMessagesLength(Object.keys(result.data).length)
     }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
@@ -77,13 +74,15 @@ function Admin() {
       <div>
         {Object.values(messages).map((item, index) => (
           <ListItem
+            key={item.id}
             id={item.id}
             hasDivider={index < messagesLength - 1}
+            imageUrl={item.imageUrl}
             isUpdating={isUpdating}
             message={item.message}
             onApprove={approveMessage}
-            onDeny={rejectMessage}
-            onDelete={theme.id === "CHALK" && deleteMessage}
+            onDeny={theme.id === "CHALK" && rejectMessage}
+            onDelete={deleteMessage}
             username={item.userName}
           />
         ))}

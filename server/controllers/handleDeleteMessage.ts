@@ -1,29 +1,29 @@
 import {
   errorHandler,
   getCredentials,
-  getDroppedAssetDataObject,
   getPendingMessages,
+  getWorldDataObject,
 } from "../utils";
 import { Request, Response } from "express";
+import { DataObjectType } from "../types";
 
 export const handleDeleteMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-
+    const { sceneDropId } = credentials
     const { messageId } = req.params;
 
-    const droppedAsset = await getDroppedAssetDataObject(credentials.assetId, credentials);
+    const { dataObject, world } = await getWorldDataObject(credentials);
+    const { messages } = dataObject as DataObjectType;
 
-    const { messages } = droppedAsset.dataObject;
-
-    console.log("🚀 ~ file: handleDeleteMessage.ts:33 ~ messages[id]:", messages[messageId])
     delete messages[messageId]
 
-    console.log("🚀 ~ file: handleDeleteMessage.ts:21 ~ messages:", messages)
-    const lockId = `${credentials.assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-    await droppedAsset.updateDataObject({ messages }, { lock: { lockId, releaseLock: true } });
+    const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+    await world.updateDataObject({
+      [`scenes.${sceneDropId}.messages`]: messages
+    }, { lock: { lockId, releaseLock: true } });
 
-    return res.send(await getPendingMessages(droppedAsset.dataObject.messages));
+    return res.json(await getPendingMessages({ sceneDropId, world }));
   } catch (error) {
     return errorHandler({
       error,

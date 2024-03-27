@@ -2,22 +2,18 @@ import { Request, Response } from "express";
 import {
   errorHandler,
   getCredentials,
-  getDroppedAssetDataObject,
   getPendingMessages,
 } from "../utils";
+import { getWorldDataObject } from "../utils/getWorldDataObject";
 import { uploadToS3 } from "../utils/uploadToS3";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, displayName, profileId, username } = credentials
+    const { displayName, profileId, sceneDropId, username } = credentials
     const { image, message } = req.body
-    console.log("🚀 ~ file: handleAddNewMessage.ts:14 ~ req.body:", req.body)
 
-    const droppedAsset = await getDroppedAssetDataObject(
-      assetId,
-      credentials
-    );
+    const { world } = await getWorldDataObject(credentials);
 
     const newMessage = {
       id: `${profileId}-${Date.now()}`,
@@ -33,9 +29,11 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       newMessage.imageUrl = result
     }
 
-    await droppedAsset.updateDataObject({ [`messages.${newMessage.id}`]: newMessage });
+    await world.updateDataObject({
+      [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
+    });
 
-    return res.send(await getPendingMessages(droppedAsset.dataObject.messages));
+    return res.json(await getPendingMessages({ sceneDropId, world }));
   } catch (error) {
     return errorHandler({
       error,

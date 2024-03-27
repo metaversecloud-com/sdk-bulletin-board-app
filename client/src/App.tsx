@@ -99,12 +99,13 @@ const App = () => {
 
   const getTheme = async () => {
     backendAPI.get("/theme").then((result) => {
-      setBackgroundColor(result.data.theme.backgroundColor)
+      setBackgroundColor(result.data?.backgroundColor)
       dispatch!({
         type: SET_THEME,
-        payload: result.data.theme,
+        payload: result.data,
       });
-    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
+    }).catch((error) => console.error(error)).finally(() => setIsLoading(false))
+    // }).catch(() => navigate("*")).finally(() => setIsLoading(false))
   };
 
   useEffect(() => {
