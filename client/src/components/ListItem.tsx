@@ -35,36 +35,36 @@ export const ListItem = ({
             <div className="tooltip">
               <span className="tooltip-content">Approve</span>
               <button
-                className="btn btn-icon btn-success"
+                className="btn btn-icon"
                 onClick={() => onApprove(id)}
                 disabled={isUpdating}
               >
-                &#x2713;
-            </button>
+                <img src="https://sdk-style.s3.amazonaws.com/icons/check.svg" />
+              </button>
             </div>
           )}
           {onDeny && (
             <div className="tooltip">
               <span className="tooltip-content">Deny</span>
               <button
-                className="btn btn-icon btn-danger ml-2"
+                className="btn btn-icon ml-2"
                 onClick={() => onDeny(id)}
                 disabled={isUpdating}
               >
-                X
-            </button>
+                <img src="https://sdk-style.s3.amazonaws.com/icons/x.svg" />
+              </button>
             </div>
           )}
           {onDelete && (
             <div className="tooltip">
               <span className="tooltip-content">Delete</span>
               <button
-                className="btn btn-icon btn-danger ml-2"
+                className="btn btn-icon ml-2"
                 onClick={() => onDelete(id)}
                 disabled={isUpdating}
               >
-                XX
-            </button>
+                <img src="https://sdk-style.s3.amazonaws.com/icons/delete.svg" />
+              </button>
             </div>
           )}
         </div>
