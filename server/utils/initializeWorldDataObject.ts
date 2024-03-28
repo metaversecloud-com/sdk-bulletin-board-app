@@ -1,9 +1,18 @@
+import { DroppedAssetInterface } from "@rtsdk/topia";
 import { errorHandler } from "./errorHandler.js";
 import { getThemeEnvVars } from './getThemeEnvVars.js';
 import { Credentials } from "../types.js";
+import { DroppedAsset } from "./topiaInit.js";
 
-export const initializeWorldDataObject = async ({ credentials, sceneDropId, world }: { credentials: Credentials, sceneDropId: string, world: any }) => {
+interface DroppedAssetInterfaceI extends DroppedAssetInterface {
+  dataObject: {
+    themeId?: string
+  }
+}
+
+export const initializeWorldDataObject = async ({ credentials, world }: { credentials: Credentials, world: any }) => {
   try {
+    const { assetId, sceneDropId, urlSlug } = credentials
     await world.fetchDataObject();
 
     const payload = {
@@ -15,7 +24,10 @@ export const initializeWorldDataObject = async ({ credentials, sceneDropId, worl
     };
 
     if (!world.dataObject || !world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
-      const { theme } = getThemeEnvVars(process.env.DEFAULT_THEME)
+      const keyAsset = await DroppedAsset.create(assetId, urlSlug, { credentials }) as DroppedAssetInterfaceI
+      await keyAsset.fetchDataObject();
+      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME
+      const { theme } = await getThemeEnvVars(themeId)
       payload.theme = theme
 
       const assetsList = await world.fetchDroppedAssetsBySceneDropId({

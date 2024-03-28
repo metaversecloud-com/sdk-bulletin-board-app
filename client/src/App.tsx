@@ -90,22 +90,22 @@ const App = () => {
     [dispatch]
   );
 
-  const setupBackend = async () => {
-    const setupResult = await setupBackendAPI(interactiveParams);
-    setHasSetupBackend(setupResult.success);
-    if (!setupResult.success) navigate("*");
-    else setHasInitBackendAPI(true);
+  const setupBackend = () => {
+    setupBackendAPI(interactiveParams).then((result) => {
+      setHasSetupBackend(result.success);
+      if (!result.success) navigate("*");
+      else setHasInitBackendAPI(true);
+    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
   };
 
-  const getTheme = async () => {
+  const getTheme = () => {
     backendAPI.get("/theme").then((result) => {
       setBackgroundColor(result.data?.backgroundColor)
       dispatch!({
         type: SET_THEME,
         payload: result.data,
       });
-    }).catch((error) => console.error(error)).finally(() => setIsLoading(false))
-    // }).catch(() => navigate("*")).finally(() => setIsLoading(false))
+    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
   };
 
   useEffect(() => {
