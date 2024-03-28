@@ -1,6 +1,6 @@
-import { errorHandler } from "./errorHandler";
-import { getThemeEnvVars } from './getThemeEnvVars';
-import { Credentials } from "../types";
+import { errorHandler } from "./errorHandler.js";
+import { getThemeEnvVars } from './getThemeEnvVars.js';
+import { Credentials } from "../types.js";
 
 export const initializeWorldDataObject = async ({ credentials, sceneDropId, world }: { credentials: Credentials, sceneDropId: string, world: any }) => {
   try {

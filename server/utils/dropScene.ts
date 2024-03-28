@@ -1,6 +1,6 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { MessageType } from "../types";
-import { addHyphenAndNewline, errorHandler } from "../utils";
+import { MessageType } from "../types.js";
+import { addHyphenAndNewline, errorHandler } from "../utils/index.js";
 
 export const dropScene = async ({ droppedAsset, droppableSceneIds, message, world }: { droppedAsset: any, droppableSceneIds: string[], message: MessageType, world: any }) => {
   try {

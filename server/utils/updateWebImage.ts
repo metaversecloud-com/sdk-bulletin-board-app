@@ -1,6 +1,6 @@
-import { MessageType } from "../types";
-import { errorHandler } from "../utils";
-import { DroppedAsset } from "./topiaInit";
+import { MessageType } from "../types.js";
+import { errorHandler } from "../utils/index.js";
+import { DroppedAsset } from "./topiaInit.js";
 
 export const updateWebImage = async ({ droppedAsset, droppedAssetId, message, urlSlug }: { droppedAsset?: any, droppedAssetId?: string, message: MessageType, urlSlug: string }) => {
   try {

@@ -10,8 +10,8 @@ import {
   handleGetVisitor,
   handleRejectMessages,
   handleUpdateTheme,
-} from "./controllers";
-import { getVersion } from "./utils/getVersion"
+} from "./controllers/index.js";
+import { getVersion } from "./utils/getVersion.js"
 
 const router = express.Router();
 

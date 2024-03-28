@@ -1,4 +1,4 @@
-import { errorHandler } from "../utils";
+import { errorHandler } from "../utils/index.js";
 
 export const getPendingMessages = async ({ messages, sceneDropId, world }: { messages?: object, sceneDropId?: string, world?: any }) => {
   try {

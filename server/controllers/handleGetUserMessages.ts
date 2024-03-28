@@ -2,9 +2,9 @@ import {
   errorHandler,
   getCredentials,
   getWorldDataObject,
-} from "../utils";
+} from "../utils/index.js";
 import { Request, Response } from "express";
-import { DataObjectType } from "../types";
+import { DataObjectType } from "../types.js";
 
 export const handleGetUserMessages = async (req: Request, res: Response) => {
   try {

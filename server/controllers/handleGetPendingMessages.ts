@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DataObjectType } from "../types";
-import { errorHandler, getCredentials, getPendingMessages, getWorldDataObject } from "../utils";
+import { DataObjectType } from "../types.js";
+import { errorHandler, getCredentials, getPendingMessages, getWorldDataObject } from "../utils/index.js";
 
 export const handleGetPendingMessages = async (req: Request, res: Response) => {
   try {

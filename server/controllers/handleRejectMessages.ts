@@ -4,7 +4,7 @@ import {
   getCredentials,
   getPendingMessages,
   getWorldDataObject,
-} from "../utils";
+} from "../utils/index.js";
 
 export const handleRejectMessages = async (req: Request, res: Response) => {
   try {

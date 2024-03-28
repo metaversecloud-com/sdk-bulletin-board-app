@@ -1,5 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./errorHandler.js";
 
 export async function uploadToS3(file, fileName) {
   try {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils";
-import { DataObjectType } from '../types';
+import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { DataObjectType } from '../types.js';
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {
