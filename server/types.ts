@@ -19,19 +19,22 @@ export type MessageType = {
   userName: string,
 }
 
+export type ThemeType = {
+  [key: string]: {
+    id: string,
+    description: string,
+    title: string,
+    subtitle: string,
+  }
+}
+
 export type DataObjectType = {
   anchorAssets?: string[],
   messages?: {
     [key: string]: MessageType
   },
   placedAssets?: string[],
-  theme?: {
-    id: string,
-    backgroundColor: string
-    description: string,
-    title: string,
-    subtitle: string,
-  },
+  theme?: ThemeType,
   usedSpaces?: string[],
 }
 

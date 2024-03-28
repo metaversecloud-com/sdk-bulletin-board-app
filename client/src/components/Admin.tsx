@@ -23,48 +23,64 @@ function Admin() {
   const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   useEffect(() => {
-    backendAPI.get(`/messages/pending`).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
+    backendAPI.get(`/messages/pending`)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsLoading(false))
   }, [])
 
   const handleOnSubmit = (data: any) => {
     setIsUpdating(true)
     setTheme(data)
-    backendAPI.post("/theme", data).then(() => {
-      dispatch!({
-        type: SET_THEME,
-        payload: { ...data },
-      });
-      setTheme(data)
-    }).catch((error) => console.log(error)).finally(() => { setIsUpdating(false) })
+    backendAPI.post("/theme", data)
+      .then(() => {
+        dispatch!({
+          type: SET_THEME,
+          payload: { ...data },
+        });
+        setTheme(data)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => { setIsUpdating(false) })
   };
 
   const approveMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.post(`/message/approve/${messageId}`).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+    backendAPI.post(`/message/approve/${messageId}`)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsUpdating(false))
   };
 
   const rejectMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.post(`/message/reject/${messageId}`).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+    backendAPI.post(`/message/reject/${messageId}`)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsUpdating(false))
   };
 
   const deleteMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.delete(`/message/${messageId}`).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+    backendAPI.delete(`/message/${messageId}`)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsUpdating(false))
   };
 
   if (isLoading || !hasSetupBackend) return <Loading />;
@@ -105,6 +121,9 @@ function Admin() {
             {getMessagesList()}
           </Accordion>
         </div>
+      }
+      {errorMessage &&
+        <p className="p3 text-error">{errorMessage}</p>
       }
     </>
   );

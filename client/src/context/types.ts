@@ -20,7 +20,6 @@ export interface InitialState {
   hasSetupBackend: boolean;
   theme: {
     id: string;
-    backgroundColor: string;
     description: string;
     subtitle: string;
     title: string;

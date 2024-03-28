@@ -26,6 +26,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
 
     if (image) {
       const result = await uploadToS3(image, `${profileId}-${Date.now()}`)
+      if (result.error) throw "Error uploading image."
       newMessage.imageUrl = result
     }
 

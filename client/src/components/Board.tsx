@@ -20,13 +20,16 @@ function Board() {
   const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    backendAPI.get("/messages/pending").then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
+    backendAPI.get("/messages/pending")
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsLoading(false))
   }, [])
 
   const addMessage = async (data: any) => {
@@ -37,21 +40,27 @@ function Board() {
       imageUrl = file;
     }
     const payload = { image: imageUrl, message: data.message }
-    backendAPI.post("/message", payload).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+    backendAPI.post("/message", payload)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsUpdating(false))
   };
 
   const removeMessage = (messageId: string) => {
     setIsUpdating(true)
-    backendAPI.delete(`/message/${messageId}`).then((result) => {
-      setMessages(result.data)
-      setMessagesLength(Object.keys(result.data).length)
-    }).catch((error) => console.log(error)).finally(() => setIsUpdating(false))
+    backendAPI.delete(`/message/${messageId}`)
+      .then((result) => {
+        setMessages(result.data)
+        setMessagesLength(Object.keys(result.data).length)
+      })
+      .catch((error) => setErrorMessage(error))
+      .finally(() => setIsUpdating(false))
   };
 
-  if (isLoading || !hasSetupBackend || !theme?.id) return <Loading />;
+  if (isLoading || !hasSetupBackend) return <Loading />;
 
   const getMessagesList = () => {
     return (
@@ -91,6 +100,9 @@ function Board() {
         <Accordion title="Pending Approval">
           {getMessagesList()}
         </Accordion>
+      }
+      {errorMessage &&
+        <p className="p3 text-error">{errorMessage}</p>
       }
     </>
   );

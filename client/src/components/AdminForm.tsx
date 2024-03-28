@@ -10,7 +10,6 @@ export function AdminForm({
   isLoading: boolean;
   theme: {
     id: string;
-    backgroundColor: string;
     description: string;
     subtitle: string;
     title: string;
@@ -47,13 +46,6 @@ export function AdminForm({
         <textarea
           className="input mb-4"
           {...register("description", { value: theme.description })}
-        />
-        <label>Color:</label>
-        <input
-          className="input"
-          style={{ height: 50 }}
-          type="color"
-          {...register("backgroundColor", { value: theme.backgroundColor })}
         />
         {errors.message && (
           <span className="text-error">{`${errors.message}`}</span>

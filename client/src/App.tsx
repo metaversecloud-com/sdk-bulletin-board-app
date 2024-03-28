@@ -28,7 +28,6 @@ const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
-  const [backgroundColor, setBackgroundColor] = useState<string>("white");
 
   const interactiveParams: InteractiveParams = useMemo(() => {
     return {
@@ -91,21 +90,26 @@ const App = () => {
   );
 
   const setupBackend = () => {
-    setupBackendAPI(interactiveParams).then((result) => {
-      setHasSetupBackend(result.success);
-      if (!result.success) navigate("*");
-      else setHasInitBackendAPI(true);
-    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
+    setupBackendAPI(interactiveParams)
+      .then((result) => {
+        setHasSetupBackend(result.success);
+        if (!result.success) navigate("*");
+        else setHasInitBackendAPI(true);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false))
   };
 
   const getTheme = () => {
-    backendAPI.get("/theme").then((result) => {
-      setBackgroundColor(result.data?.backgroundColor)
-      dispatch!({
-        type: SET_THEME,
-        payload: result.data,
-      });
-    }).catch(() => navigate("*")).finally(() => setIsLoading(false))
+    backendAPI.get("/theme")
+      .then((result) => {
+        dispatch!({
+          type: SET_THEME,
+          payload: result.data,
+        });
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false))
   };
 
   useEffect(() => {
@@ -121,14 +125,10 @@ const App = () => {
     else getTheme();
   }, [hasInitBackendAPI, interactiveParams]);
 
-
   if (isLoading || !hasInitBackendAPI) return <Loading />;
 
   return (
-    <div
-      className="app"
-      style={{ backgroundColor, height: "100vh" }}
-    >
+    <div className="app">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Error />} />

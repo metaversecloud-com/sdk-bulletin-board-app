@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 // components
 import Admin from '@/components/Admin';
@@ -12,6 +13,7 @@ import { GlobalStateContext } from "@/context/GlobalContext";
 import { backendAPI } from "@/utils/backendAPI";
 
 function Home() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("board");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,9 +22,12 @@ function Home() {
 
   useEffect(() => {
     if (hasSetupBackend) {
-      backendAPI.get("/visitor").then((result) => {
-        setIsAdmin(result.data.visitor.isAdmin)
-      }).catch((error) => console.log(error)).finally(() => setIsLoading(false))
+      backendAPI.get("/visitor")
+        .then((result) => {
+          setIsAdmin(result.data.visitor.isAdmin)
+        })
+        .catch(() => navigate("*"))
+        .finally(() => setIsLoading(false));
     }
   }, [hasSetupBackend])
 
