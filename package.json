@@ -9,7 +9,7 @@
     "build": "npm run build -w client",
     "link-sdk": "yalc link @rtsdk/topia",
     "unlink-sdk": "yalc remove @rtsdk/topia",
-    "server": "npm run start --prefix server",
+    "server": "npm run start -w server",
     "client": "npm start --prefix client",
     "start": "npm start --workspace=server",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
