@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { errorHandler } from "./errorHandler.js";
 
 export async function deleteFromS3(id: string) {
@@ -6,13 +6,12 @@ export async function deleteFromS3(id: string) {
     const credentials = { region: "us-east-1" };
     const client = new S3Client(credentials);
 
-    const deleteObject = new PutObjectCommand({
+    const deleteObject = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET,
       Key: `userUploads/${id}`,
     });
 
-    const result = await client.send(deleteObject);
-    console.log("🚀 ~ file: uploadToS3.ts:17 ~ result:", result)
+    await client.send(deleteObject);
 
     return { success: true };
   } catch (error) {

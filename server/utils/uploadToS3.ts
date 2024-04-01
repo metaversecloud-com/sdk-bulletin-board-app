@@ -16,10 +16,9 @@ export async function uploadToS3(imageData: any, fileName: string) {
       ContentType: "image/png",
     });
 
-    const result = await client.send(putObjectCommand);
-    console.log("🚀 ~ file: uploadToS3.ts:17 ~ result:", result)
+    await client.send(putObjectCommand);
 
-    return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`;
+    return { imageUrl: `https://${process.env.S3_BUCKET}.s3.amazonaws.com/userUploads/${fileName}`, success: true };
   } catch (error) {
     return errorHandler({
       error,

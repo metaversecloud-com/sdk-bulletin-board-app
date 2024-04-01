@@ -21,9 +21,8 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
     if (!message) throw new Error("Message not found");
 
     if (message.imageUrl) {
-      const result = await deleteFromS3(message.id)
-      console.log("🚀 ~ file: handleDeleteMessage.ts:24 ~ result:", result)
-      if (result.error) throw "Error deleting image."
+      const { success } = await deleteFromS3(message.id)
+      if (!success) throw "Error deleting image."
     }
 
     delete messages[messageId]

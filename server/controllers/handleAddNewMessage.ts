@@ -26,10 +26,9 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
     };
 
     if (imageData) {
-      const result = await uploadToS3(imageData, id)
-      console.log("🚀 ~ file: handleAddNewMessage.ts:30 ~ result:", result)
-      if (result.error) throw "Error uploading image."
-      newMessage.imageUrl = result
+      const { imageUrl, success } = await uploadToS3(imageData, id)
+      if (!success) throw "Error uploading image."
+      newMessage.imageUrl = imageUrl
     }
 
     await world.updateDataObject({
