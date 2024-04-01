@@ -31,9 +31,10 @@ export function MessageForm({
           canvas.width = 141;
           canvas.height = 123;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataURL = canvas.toDataURL('image/png');
+          handleSubmitForm(JSON.stringify({ imageData: dataURL }));
         };
         img.src = event.target.result;
-        handleSubmitForm(JSON.stringify({ imageData: img.src }));
       };
       reader.readAsDataURL(file);
     } else {
