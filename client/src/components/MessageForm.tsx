@@ -38,6 +38,10 @@ export function MessageForm({
             const image = URL.createObjectURL(blob);
 
             const client = new S3Client({
+              credentials: {
+                accessKeyId: '',
+                secretAccessKey: ''
+              },
               region: "us-east-2"
             });
             const upload = new Upload({
@@ -51,7 +55,7 @@ export function MessageForm({
             });
             const result = await upload.done();
             console.log("🚀 ~ file: uploadToS3.ts:17 ~ result:", result)
-            handleSubmitForm({ image: result.Location });
+            handleSubmitForm({ imageUrl: result.Location });
           }, 'image/png');
         };
         img.src = event.target.result;
