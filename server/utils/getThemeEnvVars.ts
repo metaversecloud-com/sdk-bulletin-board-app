@@ -7,7 +7,11 @@ enum ThemeIds {
   CHALK = 'CHALK'
 }
 
-const defaultThemes: ThemeType = {
+type DefaultThemesType = {
+  [key: string]: ThemeType
+}
+
+const defaultThemes: DefaultThemesType = {
   "GRATITUDE": {
     id: "GRATITUDE",
     description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",

@@ -91,13 +91,9 @@ const App = () => {
 
   const setupBackend = () => {
     setupBackendAPI(interactiveParams)
-      .then((result) => {
-        setHasSetupBackend(result.success);
-        if (!result.success) navigate("*");
-        else setHasInitBackendAPI(true);
-      })
+      .then((result) => setHasSetupBackend(result.success))
       .catch(() => navigate("*"))
-      .finally(() => setIsLoading(false))
+      .finally(() => setHasInitBackendAPI(true))
   };
 
   const getTheme = () => {

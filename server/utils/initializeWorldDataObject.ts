@@ -26,13 +26,14 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
     if (!world.dataObject || !world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
       const keyAsset = await DroppedAsset.create(assetId, urlSlug, { credentials }) as DroppedAssetInterfaceI
       await keyAsset.fetchDataObject();
-      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME
+      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK"
       const { theme } = await getThemeEnvVars(themeId)
       payload.theme = theme
 
-      const assetsList = await world.fetchDroppedAssetsBySceneDropId({
+      const assetsList: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
         sceneDropId: credentials.sceneDropId,
       })
+      // @ts-ignore
       payload.anchorAssets = assetsList
         .filter(a => a.uniqueName === "anchor")
         .map(({ id }) => (id));
