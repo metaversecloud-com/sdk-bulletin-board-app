@@ -33,7 +33,6 @@ function Board() {
   }, [])
 
   const addMessage = async (data: any) => {
-    console.log("🚀 ~ file: Board.tsx:36 ~ data:", data)
     setAreButtonsDisabled(true)
     backendAPI.post("/message", data)
       .then((result) => {

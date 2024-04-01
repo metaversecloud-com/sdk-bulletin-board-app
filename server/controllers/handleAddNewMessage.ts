@@ -6,31 +6,30 @@ import {
   uploadToS3,
 } from "../utils/index.js";
 import { getWorldDataObject } from "../utils/getWorldDataObject.js";
+import { MessageType } from "../types.js";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { displayName, profileId, sceneDropId, username } = credentials
-    const { imageUrl, message } = req.body
-    console.log("🚀 ~ file: handleAddNewMessage.ts:15 ~ req.body:", req.body)
+    const { imageDataUrl, message } = req.body
 
     const { world } = await getWorldDataObject(credentials);
 
     const id = `${profileId}-${Date.now()}`
-    const newMessage = {
+    const newMessage: MessageType = {
       id,
       message,
-      imageUrl,
       userId: profileId,
       userName: displayName || username,
       approved: false,
     };
 
-    // if (image) {
-    //   const result = await uploadToS3(image, id)
-    //   if (result.error) throw "Error uploading image."
-    //   newMessage.imageUrl = result
-    // }
+    if (imageDataUrl) {
+      const result = await uploadToS3(imageDataUrl, id)
+      if (result.error) throw "Error uploading image."
+      newMessage.imageUrl = result
+    }
 
     await world.updateDataObject({
       [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,

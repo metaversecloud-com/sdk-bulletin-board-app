@@ -33,32 +33,9 @@ export function MessageForm({
           canvas.width = 141;
           canvas.height = 123;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-          canvas.toBlob(async (blob: any) => {
-            const image = URL.createObjectURL(blob);
-
-            const client = new S3Client({
-              credentials: {
-                accessKeyId: '',
-                secretAccessKey: ''
-              },
-              region: "us-east-2"
-            });
-            const upload = new Upload({
-              client: client,
-              params: {
-                Bucket: "topia-dev-test",
-                Key: `userUploads/test01.png`,
-                Body: image,
-                ContentType: "image/png",
-              }
-            });
-            const result = await upload.done();
-            console.log("🚀 ~ file: uploadToS3.ts:17 ~ result:", result)
-            handleSubmitForm({ imageUrl: result.Location });
-          }, 'image/png');
         };
         img.src = event.target.result;
+        handleSubmitForm(JSON.stringify({ imageDataUrl: img.src }));
       };
       reader.readAsDataURL(file);
     } else {
