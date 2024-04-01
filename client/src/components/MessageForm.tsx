@@ -22,6 +22,7 @@ export function MessageForm({
     if (file?.size > 1048576) {
       return alert("File is too big!");
     } else if (file) {
+      let dataURL
       const reader = new FileReader();
       reader.onload = (event: any) => {
         const img: any = new Image();
@@ -31,7 +32,7 @@ export function MessageForm({
           canvas.width = 141;
           canvas.height = 123;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const dataURL = canvas.toDataURL('image/png');
+          dataURL = canvas.toDataURL('image/png');
           handleSubmitForm(JSON.stringify({ imageData: dataURL }));
         };
         img.src = event.target.result;
