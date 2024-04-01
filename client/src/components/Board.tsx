@@ -32,8 +32,9 @@ function Board() {
       .finally(() => setIsLoading(false))
   }, [])
 
-  const addMessage = async (data: any) => {
+  const addMessage = async (data: { imageData?: string, message?: string }) => {
     setAreButtonsDisabled(true)
+    setErrorMessage("")
     backendAPI.post("/message", data)
       .then((result) => {
         setMessages(result.data)
@@ -45,6 +46,7 @@ function Board() {
 
   const removeMessage = (messageId: string) => {
     setAreButtonsDisabled(true)
+    setErrorMessage("")
     backendAPI.delete(`/message/${messageId}`)
       .then((result) => {
         setMessages(result.data)

@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
-import { S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export function MessageForm({
   handleSubmitForm,
@@ -29,13 +28,12 @@ export function MessageForm({
         img.onload = function () {
           const canvas = document.createElement('canvas');
           const ctx: any = canvas.getContext('2d');
-
           canvas.width = 141;
           canvas.height = 123;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         };
         img.src = event.target.result;
-        handleSubmitForm(JSON.stringify({ imageDataUrl: img.src }));
+        handleSubmitForm(JSON.stringify({ imageData: img.src }));
       };
       reader.readAsDataURL(file);
     } else {

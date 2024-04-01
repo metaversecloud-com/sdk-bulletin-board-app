@@ -12,7 +12,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { displayName, profileId, sceneDropId, username } = credentials
-    const { imageDataUrl, message } = req.body
+    const { imageData, message } = req.body
 
     const { world } = await getWorldDataObject(credentials);
 
@@ -25,8 +25,9 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       approved: false,
     };
 
-    if (imageDataUrl) {
-      const result = await uploadToS3(imageDataUrl, id)
+    if (imageData) {
+      const result = await uploadToS3(imageData, id)
+      console.log("🚀 ~ file: handleAddNewMessage.ts:30 ~ result:", result)
       if (result.error) throw "Error uploading image."
       newMessage.imageUrl = result
     }

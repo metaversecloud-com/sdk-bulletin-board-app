@@ -1,9 +1,9 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { errorHandler } from "./errorHandler.js";
 
-export async function uploadToS3(imageDataUrl: any, fileName: string) {
+export async function uploadToS3(imageData: any, fileName: string) {
   try {
-    const base64Data = imageDataUrl.split(',')[1];
+    const base64Data = imageData.split(',')[1];
     const binaryData = atob(base64Data);
     const buffer = Buffer.from(binaryData, 'binary');
 
