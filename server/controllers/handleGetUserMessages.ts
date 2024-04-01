@@ -4,7 +4,7 @@ import {
   getWorldDataObject,
 } from "../utils/index.js";
 import { Request, Response } from "express";
-import { DataObjectType } from "../types.js";
+import { DataObjectType, MessagesType } from "../types.js";
 
 export const handleGetUserMessages = async (req: Request, res: Response) => {
   try {
@@ -13,7 +13,7 @@ export const handleGetUserMessages = async (req: Request, res: Response) => {
     const { dataObject } = await getWorldDataObject(credentials);
     const { messages } = dataObject as DataObjectType;
 
-    const myMessages = Object.entries(messages).reduce((myMessages, [key, message]) => {
+    const myMessages = Object.entries(messages).reduce((myMessages: MessagesType, [key, message]) => {
       if (message.userId === credentials.profileId && message.approved === false) {
         myMessages[key] = message;
       }

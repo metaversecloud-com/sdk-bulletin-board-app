@@ -1,4 +1,5 @@
 import {
+  deleteFromS3,
   errorHandler,
   getCredentials,
   getPendingMessages,
@@ -15,6 +16,15 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
 
     const { dataObject, world } = await getWorldDataObject(credentials);
     const { messages } = dataObject as DataObjectType;
+
+    const message = messages[messageId];
+    if (!message) throw new Error("Message not found");
+
+    if (message.imageUrl) {
+      const result = await deleteFromS3(message.id)
+      console.log("🚀 ~ file: handleDeleteMessage.ts:24 ~ result:", result)
+      if (result.error) throw "Error deleting image."
+    }
 
     delete messages[messageId]
 

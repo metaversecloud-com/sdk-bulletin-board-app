@@ -22,7 +22,7 @@ function Admin() {
   const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
   const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function Admin() {
   }, [])
 
   const handleOnSubmit = (data: any) => {
-    setIsUpdating(true)
+    setAreButtonsDisabled(true)
     setTheme(data)
     backendAPI.post("/theme", data)
       .then(() => {
@@ -47,40 +47,40 @@ function Admin() {
         setTheme(data)
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => { setIsUpdating(false) })
+      .finally(() => { setAreButtonsDisabled(false) })
   };
 
   const approveMessage = (messageId: string) => {
-    setIsUpdating(true)
+    setAreButtonsDisabled(true)
     backendAPI.post(`/message/approve/${messageId}`)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => setIsUpdating(false))
+      .finally(() => setAreButtonsDisabled(false))
   };
 
   const rejectMessage = (messageId: string) => {
-    setIsUpdating(true)
+    setAreButtonsDisabled(true)
     backendAPI.post(`/message/reject/${messageId}`)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => setIsUpdating(false))
+      .finally(() => setAreButtonsDisabled(false))
   };
 
   const deleteMessage = (messageId: string) => {
-    setIsUpdating(true)
+    setAreButtonsDisabled(true)
     backendAPI.delete(`/message/${messageId}`)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => setIsUpdating(false))
+      .finally(() => setAreButtonsDisabled(false))
   };
 
   if (isLoading || !hasSetupBackend) return <Loading />;
@@ -94,7 +94,7 @@ function Admin() {
             id={item.id}
             hasDivider={index < messagesLength - 1}
             imageUrl={item.imageUrl}
-            isUpdating={isUpdating}
+            areButtonsDisabled={areButtonsDisabled}
             message={item.message}
             onApprove={approveMessage}
             onDeny={theme.id === "CHALK" && rejectMessage}
@@ -113,7 +113,7 @@ function Admin() {
         <p className="p1">This is the admin panel. You can approve messages here.</p>
       </div>
       <Accordion title="Settings">
-        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={isUpdating} theme={currentTheme} />
+        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={areButtonsDisabled} theme={currentTheme} />
       </Accordion>
       {messages && messagesLength > 0 &&
         <div className="mt-4">

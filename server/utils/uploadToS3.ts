@@ -8,7 +8,7 @@ export async function uploadToS3(file: any, fileName: string) {
 
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET,
-      Key: fileName,
+      Key: `userUploads/${fileName}`,
       Body: file,
       ContentType: "image/png",
     });

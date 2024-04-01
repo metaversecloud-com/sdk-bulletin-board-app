@@ -3,9 +3,9 @@ import {
   errorHandler,
   getCredentials,
   getPendingMessages,
+  uploadToS3,
 } from "../utils/index.js";
 import { getWorldDataObject } from "../utils/getWorldDataObject.js";
-import { uploadToS3 } from "../utils/uploadToS3.js";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
@@ -15,8 +15,9 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
 
     const { world } = await getWorldDataObject(credentials);
 
+    const id = `${profileId}-${Date.now()}`
     const newMessage = {
-      id: `${profileId}-${Date.now()}`,
+      id,
       message,
       imageUrl: "",
       userId: profileId,
@@ -25,7 +26,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
     };
 
     if (image) {
-      const result = await uploadToS3(image, `${profileId}-${Date.now()}`)
+      const result = await uploadToS3(image, id)
       if (result.error) throw "Error uploading image."
       newMessage.imageUrl = result
     }

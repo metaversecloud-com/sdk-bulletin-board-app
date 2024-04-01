@@ -20,8 +20,30 @@ export function MessageForm({
     const file = data.images ? data.images[0] : null
     if (file?.size > 1048576) {
       return alert("File is too big!");
+    } else if (file) {
+      const reader = new FileReader();
+      reader.onload = function (event: any) {
+        const img: any = new Image();
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const ctx: any = canvas.getContext('2d');
+
+          canvas.width = 141;
+          canvas.height = 123;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Convert the canvas content to a Blob object
+          canvas.toBlob(function (blob: any) {
+            const image = URL.createObjectURL(blob);
+            handleSubmitForm({ image });
+          }, 'image/png');
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      handleSubmitForm(data);
     }
-    handleSubmitForm(data);
     reset();
   };
 

@@ -2,7 +2,7 @@ export const ListItem = ({
   id,
   hasDivider = true,
   imageUrl,
-  isUpdating,
+  areButtonsDisabled,
   message,
   onApprove,
   onDelete,
@@ -12,7 +12,7 @@ export const ListItem = ({
   id: string;
   hasDivider?: boolean;
   imageUrl?: string;
-  isUpdating: boolean;
+  areButtonsDisabled: boolean;
   message?: string;
   onApprove?: any;
   onDelete?: any;
@@ -37,7 +37,7 @@ export const ListItem = ({
               <button
                 className="btn btn-icon"
                 onClick={() => onApprove(id)}
-                disabled={isUpdating}
+                disabled={areButtonsDisabled}
               >
                 <img src="https://sdk-style.s3.amazonaws.com/icons/check.svg" />
               </button>
@@ -49,7 +49,7 @@ export const ListItem = ({
               <button
                 className="btn btn-icon ml-2"
                 onClick={() => onDeny(id)}
-                disabled={isUpdating}
+                disabled={areButtonsDisabled}
               >
                 <img src="https://sdk-style.s3.amazonaws.com/icons/x.svg" />
               </button>
@@ -61,7 +61,7 @@ export const ListItem = ({
               <button
                 className="btn btn-icon ml-2"
                 onClick={() => onDelete(id)}
-                disabled={isUpdating}
+                disabled={areButtonsDisabled}
               >
                 <img src="https://sdk-style.s3.amazonaws.com/icons/delete.svg" />
               </button>

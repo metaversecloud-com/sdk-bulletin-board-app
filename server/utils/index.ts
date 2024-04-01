@@ -1,5 +1,6 @@
 export * from "./addHyphenAndNewline.js"
 export * from "./cleanReturnPayload.js"
+export * from "./deleteFromS3.js"
 export * from "./dropScene.js"
 export * from "./errorHandler.js"
 export * from "./getCredentials.js"

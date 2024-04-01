@@ -37,7 +37,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       const random = Math.floor(Math.random() * emptySpaces.length);
       const emptySpaceId = emptySpaces[random];
       const droppedAsset = await DroppedAsset.get(emptySpaceId, urlSlug, { credentials })
-      usedSpaces.push[emptySpaceId];
+      usedSpaces.push(emptySpaceId);
 
       let droppedAssetId
       if (message.imageUrl) {

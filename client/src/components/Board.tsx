@@ -19,7 +19,7 @@ function Board() {
   const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
   const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -33,31 +33,26 @@ function Board() {
   }, [])
 
   const addMessage = async (data: any) => {
-    setIsUpdating(true)
-    let imageUrl
-    if (data.images) {
-      const file = URL.createObjectURL(data.images[0]);
-      imageUrl = file;
-    }
-    const payload = { image: imageUrl, message: data.message }
-    backendAPI.post("/message", payload)
+    console.log("🚀 ~ file: Board.tsx:36 ~ data:", data.image)
+    setAreButtonsDisabled(true)
+    backendAPI.post("/message", data)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
       })
-      .catch((error) => setErrorMessage(error))
-      .finally(() => setIsUpdating(false))
+      .catch(() => setErrorMessage("An error has occurred while trying to submit your message for approval. Please try again later."))
+      .finally(() => setAreButtonsDisabled(false))
   };
 
   const removeMessage = (messageId: string) => {
-    setIsUpdating(true)
+    setAreButtonsDisabled(true)
     backendAPI.delete(`/message/${messageId}`)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => setIsUpdating(false))
+      .finally(() => setAreButtonsDisabled(false))
   };
 
   if (isLoading || !hasSetupBackend) return <Loading />;
@@ -70,7 +65,7 @@ function Board() {
           id={item.id}
           hasDivider={index < messagesLength - 1}
           imageUrl={item.imageUrl}
-          isUpdating={isUpdating}
+          areButtonsDisabled={areButtonsDisabled}
           message={item.message}
           onDelete={removeMessage}
         />
@@ -87,7 +82,7 @@ function Board() {
       </div>
       <div className="flex flex-col mb-8 mt-10">
         {messagesLength < 3 ? (
-          <MessageForm handleSubmitForm={addMessage} isLoading={isUpdating} themeId={theme.id} />
+          <MessageForm handleSubmitForm={addMessage} isLoading={areButtonsDisabled} themeId={theme.id} />
         ) : (
           <p>
             You have reached the limit of maximum messages you can submit for
@@ -102,7 +97,7 @@ function Board() {
         </Accordion>
       }
       {errorMessage &&
-        <p className="p3 text-error">{errorMessage}</p>
+        <p className="p3 text-error">{`${errorMessage}`}</p>
       }
     </>
   );
