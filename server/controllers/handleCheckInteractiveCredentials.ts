@@ -1,5 +1,5 @@
-import { errorHandler, getCredentials, User } from "../utils/index.js"
 import { Request, Response } from "express";
+import { errorHandler, getCredentials, User } from "../utils/index.js"
 
 export const handleCheckInteractiveCredentials = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {

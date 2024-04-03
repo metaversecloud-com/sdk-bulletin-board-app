@@ -4,7 +4,7 @@ import { DroppedAsset } from "./topiaInit.js";
 
 export const updateWebImage = async ({ droppedAsset, droppedAssetId, message, urlSlug }: { droppedAsset?: any, droppedAssetId?: string, message: MessageType, urlSlug: string }) => {
   try {
-    if (!droppedAsset) droppedAsset = await DroppedAsset.create(droppedAssetId, urlSlug)
+    if (!droppedAsset && droppedAssetId) droppedAsset = await DroppedAsset.create(droppedAssetId, urlSlug)
     droppedAsset.updateWebImageLayers(message.imageUrl, "")
 
     return droppedAsset.id;

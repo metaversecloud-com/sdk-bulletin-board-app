@@ -1,4 +1,4 @@
-export function addHyphenAndNewline(message) {
+export function addHyphenAndNewline(message: string) {
   // Split the message into words
   let words = message.split(" ");
 
@@ -10,7 +10,7 @@ export function addHyphenAndNewline(message) {
       let chunks = words[i].match(/.{1,20}/g);
 
       // Join the chunks with a hyphen and add a newline
-      words[i] = chunks.join("-\n");
+      words[i] = chunks!.join("-\n");
     }
   }
 

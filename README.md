@@ -15,7 +15,7 @@ Bulletin Board is a message board style application. Users can submit messages a
 
 - Access: Click on the key asset to open the drawer and then select the Admin tab. Any changes you make here will only affect this instance of the application and will not impact other instances dropped in this or other worlds.
 - Settings: Use the dropdown to select a theme and update the Title, Subtitle, and Description that all users will see when they open the drawer.
-- Pending Messages: Review pending messages and approve, deny, or delete accordingly. Approving will immediately drop the message/image in the world within the scene. Denying will only mark the message/image as unapproved. Delete will delete the message from the data object and permanently delete any image that has been upload to S3.
+- Pending Messages: Review pending messages and approve or delete accordingly. Approving will immediately drop the message/image in the world within the scene. Delete will delete the message from the data object and permanently delete any image that has been upload to S3.
 
 ### Themes description
 
@@ -28,7 +28,7 @@ Bulletin Board is a message board style application. Users can submit messages a
 - Key Asset: the data object attached to the dropped key asset can optionally store a theme id if you'd like the initial setup to be something other than Chalk the Block i.e. `{ themeId: "GRATITUDE" }
 - World: the data object attached to the world will store all information for each dropped scene indexed by `dropSceneId`. Data structure:
   - anchorAssets: an array of all of the dropped asset ids populated the first time the Key Asset is clicked,
-  - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and userName`,
+  - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and username`,
   - placedAssets: an array of all of the dropped asset ids added to the scene once a message has been approved,
   - theme: theme settings which include `id ("CHALK", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,
   - usedSpaces: an array of all of the anchorAssets that have been used to place an approved message thus far

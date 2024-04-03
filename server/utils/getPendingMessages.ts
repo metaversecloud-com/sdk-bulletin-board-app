@@ -1,6 +1,7 @@
+import { MessageType } from "../types.js";
 import { errorHandler } from "../utils/index.js";
 
-export const getPendingMessages = async ({ messages, sceneDropId, world }: { messages?: object, sceneDropId?: string, world?: any }) => {
+export const getPendingMessages = async ({ messages, sceneDropId, world }: { messages?: object, sceneDropId: string, world?: any }) => {
   try {
     if (world) {
       await world.fetchDataObject();
@@ -9,11 +10,9 @@ export const getPendingMessages = async ({ messages, sceneDropId, world }: { mes
 
     if (!messages) return {}
 
-    const pendingMessages = Object.entries(messages).reduce((approvedMessages, [key, message]) => {
-      if (message.approved === false) {
-        approvedMessages[key] = message;
-      }
-      return approvedMessages;
+    const pendingMessages = Object.entries(messages).reduce((pendingMessages: { [key: string]: MessageType }, [key, message]) => {
+      if (message.approved === false) pendingMessages[key] = message;
+      return pendingMessages;
     }, {})
 
     return pendingMessages;

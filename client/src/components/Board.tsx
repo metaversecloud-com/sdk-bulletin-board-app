@@ -83,7 +83,7 @@ function Board() {
       </div>
       <div className="flex flex-col mb-8 mt-10">
         {messagesLength < 3 ? (
-          <MessageForm handleSubmitForm={addMessage} isLoading={areButtonsDisabled} themeId={theme.id} />
+          <MessageForm handleSubmitForm={addMessage} isLoading={areButtonsDisabled} setErrorMessage={setErrorMessage} themeId={theme.id} />
         ) : (
           <p>
             You have reached the limit of maximum messages you can submit for

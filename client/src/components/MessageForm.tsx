@@ -1,13 +1,17 @@
 import { useForm } from "react-hook-form";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// utils
+import { backendAPI } from '@/utils/backendAPI';
 
 export function MessageForm({
   handleSubmitForm,
   isLoading,
+  setErrorMessage,
   themeId
 }: {
   handleSubmitForm: any;
   isLoading: boolean;
+  setErrorMessage: any;
   themeId: string
 }) {
   const {
@@ -20,7 +24,7 @@ export function MessageForm({
   const onSubmit = async (data: any) => {
     const file = data.images ? data.images[0] : null
     if (file?.size > 1048576) {
-      return alert("File is too big!");
+      setErrorMessage("File is too big!");
     } else if (file) {
       let dataURL
       const reader = new FileReader();

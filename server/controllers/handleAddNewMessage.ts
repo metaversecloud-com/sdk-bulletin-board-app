@@ -21,7 +21,8 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       id,
       message,
       userId: profileId,
-      userName: displayName || username,
+      displayName,
+      username,
       approved: false,
     };
 

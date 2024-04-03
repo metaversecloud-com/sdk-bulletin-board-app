@@ -1,9 +1,9 @@
+import { Request, Response } from "express";
 import {
   errorHandler,
   getCredentials,
   getWorldDataObject,
 } from "../utils/index.js";
-import { Request, Response } from "express";
 import { DataObjectType, MessagesType } from "../types.js";
 
 export const handleGetUserMessages = async (req: Request, res: Response) => {

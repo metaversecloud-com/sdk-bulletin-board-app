@@ -99,13 +99,15 @@ const App = () => {
   const getTheme = () => {
     backendAPI.get("/theme")
       .then((result) => {
-        dispatch!({
-          type: SET_THEME,
-          payload: result.data,
-        });
+        if (result.data) {
+          dispatch!({
+            type: SET_THEME,
+            payload: result.data,
+          });
+          setIsLoading(false)
+        }
       })
       .catch(() => navigate("*"))
-      .finally(() => setIsLoading(false))
   };
 
   useEffect(() => {

@@ -11,7 +11,7 @@ export async function uploadToS3(imageData: any, fileName: string) {
     const client = new S3Client(credentials);
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET,
-      Key: `userUploads/${fileName}`,
+      Key: `userUploads/${fileName}.png`,
       Body: buffer,
       ContentType: "image/png",
     });

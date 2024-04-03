@@ -8,7 +8,6 @@ import {
   handleGetPendingMessages,
   handleGetTheme,
   handleGetVisitor,
-  handleRejectMessages,
   handleUpdateTheme,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js"
@@ -43,8 +42,6 @@ router.get("/messages", handleGetUserMessages);
 router.get("/messages/pending", handleGetPendingMessages);
 router.post("/message", handleAddNewMessage);
 router.post("/message/approve/:messageId", handleApproveMessages);
-router.post("/message/reject/:messageId", handleRejectMessages);
 router.delete("/message/:messageId", handleDeleteMessage);
-
 
 export default router;

@@ -8,7 +8,7 @@ export async function deleteFromS3(id: string) {
 
     const deleteObject = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET,
-      Key: `userUploads/${id}`,
+      Key: `userUploads/${id}.png`,
     });
 
     await client.send(deleteObject);

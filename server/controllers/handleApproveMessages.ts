@@ -27,8 +27,10 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       theme,
     } = dataObject as DataObjectType;
 
-    const message = messages[messageId];
-    if (!message) throw new Error("Message not found");
+    const thisMessage = messages[messageId];
+    if (!thisMessage) throw new Error("Message not found");
+    const { imageUrl, message } = thisMessage
+
     const lockId = `${sceneDropId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     const emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset));
@@ -40,9 +42,9 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       usedSpaces.push(emptySpaceId);
 
       let droppedAssetId
-      if (message.imageUrl) {
-        droppedAssetId = await updateWebImage({ droppedAsset, message, urlSlug })
-      } else {
+      if (imageUrl) {
+        droppedAssetId = await updateWebImage({ droppedAsset, message: thisMessage, urlSlug })
+      } else if (message) {
         const world = await World.create(urlSlug, { credentials });
         const { droppableSceneIds } = getThemeEnvVars(theme.id)
         droppedAssetId = await dropScene({ droppedAsset, droppableSceneIds, message, world })
@@ -59,11 +61,11 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       const random = Math.floor(Math.random() * placedAssets.length);
       const assetId = placedAssets[random];
 
-      if (message.imageUrl) {
-        await updateWebImage({ droppedAssetId: assetId, message, urlSlug })
+      if (imageUrl) {
+        await updateWebImage({ droppedAssetId: assetId, message: thisMessage, urlSlug })
       } else {
         const textAsset = DroppedAsset.create(assetId, urlSlug);
-        await textAsset.updateCustomTextAsset({}, message.message);
+        await textAsset.updateCustomTextAsset({}, message);
       }
 
       await world.updateDataObject({ [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true }, { lock: { lockId, releaseLock: true } });

@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import {
   deleteFromS3,
   errorHandler,
@@ -5,7 +6,6 @@ import {
   getPendingMessages,
   getWorldDataObject,
 } from "../utils/index.js";
-import { Request, Response } from "express";
 import { DataObjectType } from "../types.js";
 
 export const handleDeleteMessage = async (req: Request, res: Response) => {

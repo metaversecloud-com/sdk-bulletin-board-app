@@ -1,22 +1,22 @@
 export const ListItem = ({
   id,
+  displayName,
   hasDivider = true,
   imageUrl,
   areButtonsDisabled,
   message,
   onApprove,
   onDelete,
-  onDeny,
   username,
 }: {
   id: string;
+  displayName?: string;
   hasDivider?: boolean;
   imageUrl?: string;
   areButtonsDisabled: boolean;
   message?: string;
   onApprove?: any;
   onDelete?: any;
-  onDeny?: any;
   username?: string;
 }) => {
   return (
@@ -28,6 +28,7 @@ export const ListItem = ({
             :
             <p className="p2">{message}</p>
           }
+          {displayName && <div className="p3">from {displayName}</div>}
           {username && <div className="p3">from {username}</div>}
         </div>
         <div className="card-actions pt-4">
@@ -40,18 +41,6 @@ export const ListItem = ({
                 disabled={areButtonsDisabled}
               >
                 <img src="https://sdk-style.s3.amazonaws.com/icons/check.svg" />
-              </button>
-            </div>
-          )}
-          {onDeny && (
-            <div className="tooltip">
-              <span className="tooltip-content">Deny</span>
-              <button
-                className="btn btn-icon ml-2"
-                onClick={() => onDeny(id)}
-                disabled={areButtonsDisabled}
-              >
-                <img src="https://sdk-style.s3.amazonaws.com/icons/x.svg" />
               </button>
             </div>
           )}

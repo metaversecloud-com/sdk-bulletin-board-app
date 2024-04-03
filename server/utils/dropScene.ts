@@ -1,8 +1,7 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { MessageType } from "../types.js";
 import { addHyphenAndNewline, errorHandler } from "../utils/index.js";
 
-export const dropScene = async ({ droppedAsset, droppableSceneIds, message, world }: { droppedAsset: any, droppableSceneIds: string[], message: MessageType, world: any }) => {
+export const dropScene = async ({ droppedAsset, droppableSceneIds, message, world }: { droppedAsset: any, droppableSceneIds: string[], message: string, world: any }) => {
   try {
     const randomScene = Math.floor(Math.random() * droppableSceneIds.length);
     const sceneId = droppableSceneIds[randomScene]
@@ -19,9 +18,11 @@ export const dropScene = async ({ droppedAsset, droppableSceneIds, message, worl
 
     const textAsset = assetsList.find((a) => a.assetId === "textAsset");
 
+    if (!textAsset) throw "No text asset found."
+
     await textAsset.updateCustomTextAsset(
       {},
-      addHyphenAndNewline(message.message)
+      addHyphenAndNewline(message)
     );
 
     return textAsset.id;

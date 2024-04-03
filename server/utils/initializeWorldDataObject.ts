@@ -23,7 +23,7 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
       usedSpaces: [],
     };
 
-    if (!world.dataObject || !world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
+    if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
       const keyAsset = await DroppedAsset.create(assetId, urlSlug, { credentials }) as DroppedAssetInterfaceI
       await keyAsset.fetchDataObject();
       const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK"
@@ -40,7 +40,7 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
     }
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    if (!world.dataObject || !world.dataObject?.scenes) {
+    if (!world.dataObject?.scenes) {
       await world.setDataObject(
         {
           scenes: {

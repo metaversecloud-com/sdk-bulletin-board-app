@@ -17,9 +17,14 @@ export const getWorldDataObject = async (credentials: Credentials) => {
 
     await initializeWorldDataObject({ credentials, world });
 
-    const dataObject = world.dataObject as WorldDataObject;
+    let dataObject = world.dataObject as WorldDataObject;
 
-    return { dataObject: dataObject.scenes[sceneDropId], world };
+    if (!dataObject?.scenes?.[sceneDropId]) {
+      await world.fetchDataObject();
+      dataObject = world.dataObject as WorldDataObject;
+    }
+
+    return { dataObject: dataObject?.scenes?.[sceneDropId], world };
   } catch (error) {
     return errorHandler({ error, functionName: "getWorldDataObject", message: "Error getting world details" });
   }

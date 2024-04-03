@@ -40,8 +40,6 @@ export const getThemeEnvVars = (id: string) => {
     const droppableSceneIds = process.env[`DROPPABLE_SCENE_IDS_${id}`] ? process.env[`DROPPABLE_SCENE_IDS_${id}`]!.split(",") : []
 
     const sceneId = process.env[`SCENE_ID_${id}`]
-    // will be required when we're ready to let admins replace entire scenes
-    // if (!sceneId) throw `Missing required SCENE_ID_${id} theme environment variables in the .env file`;
 
     const theme = defaultThemes[id]
 
