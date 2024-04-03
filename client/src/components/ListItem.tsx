@@ -28,8 +28,7 @@ export const ListItem = ({
             :
             <p className="p2">{message}</p>
           }
-          {displayName && <div className="p3">from {displayName}</div>}
-          {username && <div className="p3">from {username}</div>}
+          {displayName && <div className="p3">from {displayName} {username && username !== displayName && `(${username})`}</div>}
         </div>
         <div className="card-actions pt-4">
           {onApprove && (
