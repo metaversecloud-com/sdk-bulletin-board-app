@@ -2,14 +2,15 @@ import express from "express";
 import {
   handleAddNewMessage,
   handleApproveMessages,
-  handleCheckInteractiveCredentials,
   handleDeleteMessage,
   handleGetUserMessages,
   handleGetPendingMessages,
   handleGetTheme,
   handleGetVisitor,
+  handleRemoveSceneFromWorld,
   handleUpdateTheme,
 } from "./controllers/index.js";
+import { checkInteractiveCredentials } from "./middleware/checkInteractiveCredentials.js";
 import { getVersion } from "./utils/getVersion.js"
 
 const router = express.Router();
@@ -31,17 +32,17 @@ router.get("/system/health", (req, res) => {
   });
 });
 
-router.get("/system/interactive-credentials", handleCheckInteractiveCredentials);
+router.get("/theme", checkInteractiveCredentials, handleGetTheme);
+router.post("/theme", checkInteractiveCredentials, handleUpdateTheme);
 
-router.get("/theme", handleGetTheme);
-router.post("/theme", handleUpdateTheme);
+router.get("/visitor", checkInteractiveCredentials, handleGetVisitor);
 
-router.get("/visitor", handleGetVisitor);
+router.get("/messages", checkInteractiveCredentials, handleGetUserMessages);
+router.get("/messages/pending", checkInteractiveCredentials, handleGetPendingMessages);
+router.post("/message", checkInteractiveCredentials, handleAddNewMessage);
+router.post("/message/approve/:messageId", checkInteractiveCredentials, handleApproveMessages);
+router.delete("/message/:messageId", checkInteractiveCredentials, handleDeleteMessage);
 
-router.get("/messages", handleGetUserMessages);
-router.get("/messages/pending", handleGetPendingMessages);
-router.post("/message", handleAddNewMessage);
-router.post("/message/approve/:messageId", handleApproveMessages);
-router.delete("/message/:messageId", handleDeleteMessage);
+router.delete("/scene", checkInteractiveCredentials, handleRemoveSceneFromWorld);
 
 export default router;

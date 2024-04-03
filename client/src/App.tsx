@@ -91,7 +91,7 @@ const App = () => {
 
   const setupBackend = () => {
     setupBackendAPI(interactiveParams)
-      .then((result) => setHasSetupBackend(result.success))
+      .then(() => setHasSetupBackend(true))
       .catch(() => navigate("*"))
       .finally(() => setHasInitBackendAPI(true))
   };
