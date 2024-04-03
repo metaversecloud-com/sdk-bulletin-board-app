@@ -7,7 +7,6 @@ import {
   handleGetPendingMessages,
   handleGetTheme,
   handleGetVisitor,
-  handleRemoveSceneFromWorld,
   handleUpdateTheme,
 } from "./controllers/index.js";
 import { checkInteractiveCredentials } from "./middleware/checkInteractiveCredentials.js";
@@ -42,7 +41,5 @@ router.get("/messages/pending", checkInteractiveCredentials, handleGetPendingMes
 router.post("/message", checkInteractiveCredentials, handleAddNewMessage);
 router.post("/message/approve/:messageId", checkInteractiveCredentials, handleApproveMessages);
 router.delete("/message/:messageId", checkInteractiveCredentials, handleDeleteMessage);
-
-router.delete("/scene", checkInteractiveCredentials, handleRemoveSceneFromWorld);
 
 export default router;

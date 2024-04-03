@@ -23,7 +23,7 @@ function Admin() {
   const [messagesLength, setMessagesLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     backendAPI.get(`/messages/pending`)
@@ -52,18 +52,8 @@ function Admin() {
 
   const approveMessage = (messageId: string) => {
     setAreButtonsDisabled(true)
+    setErrorMessage("")
     backendAPI.post(`/message/approve/${messageId}`)
-      .then((result) => {
-        setMessages(result.data)
-        setMessagesLength(Object.keys(result.data).length)
-      })
-      .catch((error) => setErrorMessage(error))
-      .finally(() => setAreButtonsDisabled(false))
-  };
-
-  const rejectMessage = (messageId: string) => {
-    setAreButtonsDisabled(true)
-    backendAPI.post(`/message/reject/${messageId}`)
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
@@ -74,6 +64,7 @@ function Admin() {
 
   const deleteMessage = (messageId: string) => {
     setAreButtonsDisabled(true)
+    setErrorMessage("")
     backendAPI.delete(`/message/${messageId}`)
       .then((result) => {
         setMessages(result.data)
@@ -92,14 +83,14 @@ function Admin() {
           <ListItem
             key={item.id}
             id={item.id}
+            displayName={item.displayName}
             hasDivider={index < messagesLength - 1}
             imageUrl={item.imageUrl}
             areButtonsDisabled={areButtonsDisabled}
             message={item.message}
             onApprove={approveMessage}
-            onDeny={theme.id === "CHALK" && rejectMessage}
             onDelete={deleteMessage}
-            username={item.userName}
+            username={item.username}
           />
         ))}
       </div>
@@ -123,7 +114,7 @@ function Admin() {
         </div>
       }
       {errorMessage &&
-        <p className="p3 text-error">{errorMessage}</p>
+        <p className="p3 text-error">{`${errorMessage}`}</p>
       }
     </>
   );
