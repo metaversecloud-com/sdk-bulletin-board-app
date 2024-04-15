@@ -2,7 +2,7 @@ export const Accordion = ({
   children,
   title,
 }: {
-  children: any;
+  children: React.ReactNode;
   title: string;
 }) => {
   return (

@@ -7,3 +7,15 @@ export interface MessageI {
   userId: string,
   username?: string,
 }
+
+export type AdminFormValues = {
+  id: string,
+  title: string,
+  subtitle: string,
+  description: string,
+}
+
+export type MessageFormValues = {
+  images: Blob[],
+  message: string,
+}

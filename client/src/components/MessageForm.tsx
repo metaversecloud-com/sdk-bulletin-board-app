@@ -1,7 +1,5 @@
 import { useForm } from "react-hook-form";
-
-// utils
-import { backendAPI } from '@/utils/backendAPI';
+import { MessageFormValues } from "@/types";
 
 export function MessageForm({
   handleSubmitForm,
@@ -9,48 +7,49 @@ export function MessageForm({
   setErrorMessage,
   themeId
 }: {
-  handleSubmitForm: any;
+  handleSubmitForm: ({ imageData, message }: { imageData?: string, message?: string }) => void;
   isLoading: boolean;
-  setErrorMessage: any;
+  setErrorMessage: (value: string) => void;
   themeId: string
 }) {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm();
+  } = useForm<MessageFormValues>()
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = handleSubmit(async (data) => {
     const file = data.images ? data.images[0] : null
-    if (file?.size > 1048576) {
+    if (file?.size && file?.size > 1048576) {
       setErrorMessage("File is too big!");
     } else if (file) {
       let dataURL
       const reader = new FileReader();
-      reader.onload = (event: any) => {
-        const img: any = new Image();
-        img.onload = function () {
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const img: HTMLImageElement = new Image();
+
+        img.onload = () => {
           const canvas = document.createElement('canvas');
-          const ctx: any = canvas.getContext('2d');
+          const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
           canvas.width = 141;
           canvas.height = 123;
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           dataURL = canvas.toDataURL('image/png');
-          handleSubmitForm(JSON.stringify({ imageData: dataURL }));
+          handleSubmitForm({ imageData: dataURL });
         };
-        img.src = event.target.result;
+
+        img.src = event.target?.result?.toString() || "";
       };
       reader.readAsDataURL(file);
     } else {
       handleSubmitForm(data);
     }
     reset();
-  };
+  });
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         {themeId === "CHALK" ?
           <>
             <label>Upload your image:</label>
@@ -72,9 +71,6 @@ export function MessageForm({
               maxLength={120}
               {...register("message", { required: true, maxLength: 120 })}
             />
-            {errors.message && (
-              <span className="text-error">Please enter a message</span>
-            )}
           </>
           )}
         <button className="btn mt-4" type="submit" disabled={isLoading}>

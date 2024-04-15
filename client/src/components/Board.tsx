@@ -11,6 +11,8 @@ import { GlobalStateContext } from "@/context/GlobalContext";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+
+// types
 import { MessageI } from '@/types';
 
 function Board() {
@@ -58,7 +60,7 @@ function Board() {
 
   if (isLoading || !hasSetupBackend) return <Loading />;
 
-  const getMessagesList = () => {
+  const getMessagesList = (): React.ReactNode[] => {
     return (
       Object.values(messages).map((item, index) => (
         <ListItem

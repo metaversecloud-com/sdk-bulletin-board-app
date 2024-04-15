@@ -12,7 +12,9 @@ import { SET_THEME } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
-import { MessageI } from "@/types";
+
+// types
+import { AdminFormValues, MessageI } from "@/types";
 
 function Admin() {
   const { hasSetupBackend, theme } = useContext(GlobalStateContext);
@@ -35,7 +37,7 @@ function Admin() {
       .finally(() => setIsLoading(false))
   }, [])
 
-  const handleOnSubmit = (data: any) => {
+  const handleOnSubmit = (data: AdminFormValues) => {
     setAreButtonsDisabled(true)
     setTheme(data)
     backendAPI.post("/theme", data)

@@ -15,8 +15,8 @@ export const ListItem = ({
   imageUrl?: string;
   areButtonsDisabled: boolean;
   message?: string;
-  onApprove?: any;
-  onDelete?: any;
+  onApprove?: (id: string) => void;
+  onDelete?: (id: string) => void;
   username?: string;
 }) => {
   return (

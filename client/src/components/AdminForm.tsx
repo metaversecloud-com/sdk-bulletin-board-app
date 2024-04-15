@@ -1,12 +1,13 @@
 import { useForm } from "react-hook-form";
-import { ThemeIds } from '../context/types';
+import { ThemeIds } from '@context/types';
+import { AdminFormValues } from "@/types";
 
 export function AdminForm({
   handleSubmitForm,
   isLoading,
   theme,
 }: {
-  handleSubmitForm: any;
+  handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
   theme: {
     id: string;
@@ -16,18 +17,15 @@ export function AdminForm({
   };
 }) {
   const {
-    formState: { errors },
     handleSubmit,
     register,
-  } = useForm();
+  } = useForm<AdminFormValues>()
 
-  const onSubmit = (data: any) => {
-    handleSubmitForm(data);
-  };
+  const onSubmit = handleSubmit((data) => handleSubmitForm(data))
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <label>Theme:</label>
         <select className="input mb-4" {...register("id", { required: true, value: theme.id })}>
           {Object.keys(ThemeIds).map((id) => <option key={id} value={id}>{ThemeIds[id]}</option>)}
@@ -47,9 +45,6 @@ export function AdminForm({
           className="input mb-4"
           {...register("description", { value: theme.description })}
         />
-        {errors.message && (
-          <span className="text-error">{`${errors.message}`}</span>
-        )}
         <button className="btn mt-4" type="submit" disabled={isLoading}>
           Submit
         </button>
