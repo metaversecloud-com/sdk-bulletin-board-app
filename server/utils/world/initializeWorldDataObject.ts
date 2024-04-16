@@ -1,8 +1,6 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { errorHandler } from "./errorHandler.js";
-import { getThemeEnvVars } from './getThemeEnvVars.js';
-import { Credentials } from "../types.js";
-import { DroppedAsset } from "./topiaInit.js";
+import { DroppedAsset, errorHandler, getThemeEnvVars } from '../index.js';
+import { Credentials } from "../../types.js";
 
 interface DroppedAssetInterfaceI extends DroppedAssetInterface {
   dataObject: {

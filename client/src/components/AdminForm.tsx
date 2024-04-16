@@ -1,12 +1,22 @@
+import { useState } from 'react';
 import { useForm } from "react-hook-form";
-import { ThemeIds } from '@context/types';
+
+// components
+import Modal from './Modal';
+
+// context
+import { ThemeIds } from "@/context/types";
+
+// types
 import { AdminFormValues } from "@/types";
 
 export function AdminForm({
+  handleResetScene,
   handleSubmitForm,
   isLoading,
   theme,
 }: {
+  handleResetScene: (shouldHardReset: boolean) => void;
   handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
   theme: {
@@ -21,7 +31,15 @@ export function AdminForm({
     register,
   } = useForm<AdminFormValues>()
 
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [shouldHardReset, setShouldHardReset] = useState(false);
+
   const onSubmit = handleSubmit((data) => handleSubmitForm(data))
+
+  const onResetScene = () => {
+    setShowResetModal(false);
+    handleResetScene(shouldHardReset);
+  }
 
   return (
     <>
@@ -45,10 +63,22 @@ export function AdminForm({
           className="input mb-4"
           {...register("description", { value: theme.description })}
         />
-        <button className="btn mt-4" type="submit" disabled={isLoading}>
+        <button className="btn my-2" type="submit" disabled={isLoading}>
           Submit
         </button>
+        <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
+          Reset
+        </button>
       </form>
+
+      {showResetModal && (
+        <Modal buttonText="Reset" onConfirm={onResetScene} setShowModal={setShowResetModal} text="This will reset this instance of the Bulletin Board and optionally remove all remove associated data permanently. Are you sure you'd like to continue?" title="Reset Scene">
+          <label className="label p3 text-left">
+            <input checked={shouldHardReset} className="input-checkbox input-error" type="checkbox" onChange={(event) => setShouldHardReset(event.target.checked)} />
+            Remove all dropped and pending messages?
+          </label>
+        </Modal>
+      )}
     </>
   );
 }

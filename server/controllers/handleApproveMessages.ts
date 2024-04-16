@@ -8,8 +8,6 @@ import {
   getPendingMessages,
   getThemeEnvVars,
   getWorldDataObject,
-  updateWebImage,
-  World,
 } from "../utils/index.js";
 
 export const handleApproveMessages = async (req: Request, res: Response) => {
@@ -35,41 +33,39 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
 
     const emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset));
 
+    let droppedAssetId
+    // if all spaces are taken then update randomly selected already dropped asset
     if (emptySpaces.length > 0) {
-      const random = Math.floor(Math.random() * emptySpaces.length);
-      const emptySpaceId = emptySpaces[random];
-      const droppedAsset = await DroppedAsset.get(emptySpaceId, urlSlug, { credentials })
-      usedSpaces.push(emptySpaceId);
-
-      let droppedAssetId
-      if (imageUrl) {
-        droppedAssetId = await updateWebImage({ droppedAsset, message: thisMessage, urlSlug })
-      } else if (message) {
-        const world = await World.create(urlSlug, { credentials });
-        const { droppableSceneIds } = getThemeEnvVars(theme.id)
-        droppedAssetId = await dropScene({ droppedAsset, droppableSceneIds, message, world })
-      }
-      placedAssets.push(droppedAssetId)
-
-      await world.updateDataObject({
-        [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true,
-        placedAssets,
-        usedSpaces,
-      }, { lock: { lockId, releaseLock: true } });
+      droppedAssetId = emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
     } else {
-      // if all spaces are taken then update randomly selected already dropped asset
-      const random = Math.floor(Math.random() * placedAssets.length);
-      const assetId = placedAssets[random];
+      droppedAssetId = placedAssets[Math.floor(Math.random() * placedAssets.length)];
+    }
+    const droppedAsset = await DroppedAsset.get(droppedAssetId, urlSlug, { credentials })
 
-      if (imageUrl) {
-        await updateWebImage({ droppedAssetId: assetId, message: thisMessage, urlSlug })
+    const promises = [];
+
+    if (emptySpaces.length > 0) usedSpaces.push(droppedAssetId);
+
+    if (imageUrl) {
+      promises.push(droppedAsset.updateWebImageLayers(imageUrl, ""));
+    } else if (message) {
+      if (emptySpaces.length > 0) {
+        const { droppableSceneIds } = getThemeEnvVars(theme.id)
+        const droppedAssetId = await dropScene({ droppedAsset, droppableSceneIds, message, world })
+        placedAssets.push(droppedAssetId)
       } else {
-        const textAsset = DroppedAsset.create(assetId, urlSlug);
+        const textAsset = DroppedAsset.create(droppedAssetId, urlSlug);
         await textAsset.updateCustomTextAsset({}, message);
       }
-
-      await world.updateDataObject({ [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true }, { lock: { lockId, releaseLock: true } });
     }
+
+    promises.push(world.updateDataObject({
+      [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true,
+      [`scenes.${sceneDropId}.placedAssets`]: placedAssets,
+      [`scenes.${sceneDropId}.usedSpaces`]: usedSpaces,
+    }, { lock: { lockId, releaseLock: true } }));
+
+    await Promise.all(promises);
 
     return res.json(await getPendingMessages({ sceneDropId, world }));
   } catch (error) {

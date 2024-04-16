@@ -1,5 +1,5 @@
-import { MessageType } from "../types.js";
-import { errorHandler } from "../utils/index.js";
+import { MessageType } from "../../types.js";
+import { errorHandler } from "../index.js";
 
 export const getPendingMessages = async ({ messages, sceneDropId, world }: { messages?: object, sceneDropId: string, world?: any }) => {
   try {

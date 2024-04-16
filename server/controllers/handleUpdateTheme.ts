@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
-import { DataObjectType } from '../types.js';
+import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {
@@ -16,8 +15,8 @@ export const handleUpdateTheme = async (req: Request, res: Response) => {
   } catch (error) {
     return errorHandler({
       error,
-      functionName: "handleAddNewMessage",
-      message: "Error adding new message.",
+      functionName: "handleUpdateTheme",
+      message: "Error updating theme.",
       req,
       res,
     });

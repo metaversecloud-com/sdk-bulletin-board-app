@@ -8,6 +8,10 @@ export interface MessageI {
   username?: string,
 }
 
+export type MessagesType = {
+  [key: string]: MessageI
+}
+
 export type AdminFormValues = {
   id: string,
   title: string,

@@ -32,10 +32,11 @@ const defaultThemes: DefaultThemesType = {
   }
 }
 
-
 export const getThemeEnvVars = (id: string) => {
   try {
     if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw "Theme id not found"
+
+    const anchorAssetImage = process.env[`ANCHOR_ASSET_IMAGE_${id}`]
 
     const droppableSceneIds = process.env[`DROPPABLE_SCENE_IDS_${id}`] ? process.env[`DROPPABLE_SCENE_IDS_${id}`]!.split(",") : []
 
@@ -43,7 +44,7 @@ export const getThemeEnvVars = (id: string) => {
 
     const theme = defaultThemes[id]
 
-    return { droppableSceneIds, sceneId, theme }
+    return { anchorAssetImage, droppableSceneIds, sceneId, theme }
   } catch (error) {
     return errorHandler({
       error,

@@ -7,6 +7,7 @@ import {
   handleGetPendingMessages,
   handleGetTheme,
   handleGetVisitor,
+  handleResetScene,
   handleUpdateTheme,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js"
@@ -31,7 +32,8 @@ router.get("/system/health", (req, res) => {
 });
 
 router.get("/theme", handleGetTheme);
-router.post("/theme", handleUpdateTheme);
+router.post("/admin/theme", handleUpdateTheme);
+router.post("/admin/reset", handleResetScene);
 
 router.get("/visitor", handleGetVisitor);
 

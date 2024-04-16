@@ -14,7 +14,7 @@ import { SET_THEME } from "@/context/types";
 import { backendAPI } from "@/utils/backendAPI";
 
 // types
-import { AdminFormValues, MessageI } from "@/types";
+import { AdminFormValues, MessageI, MessagesType } from "@/types";
 
 function Admin() {
   const { hasSetupBackend, theme } = useContext(GlobalStateContext);
@@ -37,10 +37,15 @@ function Admin() {
       .finally(() => setIsLoading(false))
   }, [])
 
+  const updateState = (data: MessagesType) => {
+    setMessages(data)
+    setMessagesLength(Object.keys(data).length || 0)
+  }
+
   const handleOnSubmit = (data: AdminFormValues) => {
     setAreButtonsDisabled(true)
     setTheme(data)
-    backendAPI.post("/theme", data)
+    backendAPI.post("/admin/theme", data)
       .then(() => {
         dispatch!({
           type: SET_THEME,
@@ -56,10 +61,7 @@ function Admin() {
     setAreButtonsDisabled(true)
     setErrorMessage("")
     backendAPI.post(`/message/approve/${messageId}`)
-      .then((result) => {
-        setMessages(result.data)
-        setMessagesLength(Object.keys(result.data).length)
-      })
+      .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
       .finally(() => setAreButtonsDisabled(false))
   };
@@ -68,11 +70,17 @@ function Admin() {
     setAreButtonsDisabled(true)
     setErrorMessage("")
     backendAPI.delete(`/message/${messageId}`)
-      .then((result) => {
-        setMessages(result.data)
-        setMessagesLength(Object.keys(result.data).length)
-      })
+      .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
+      .finally(() => setAreButtonsDisabled(false))
+  };
+
+  const handleResetScene = async (shouldHardReset: boolean) => {
+    setAreButtonsDisabled(true)
+    setErrorMessage("");
+    backendAPI.post("/admin/reset", { shouldHardReset })
+      .then((result) => updateState(result.data))
+      .catch((error) => setErrorMessage(error?.response?.data?.message || error.message))
       .finally(() => setAreButtonsDisabled(false))
   };
 
@@ -106,7 +114,7 @@ function Admin() {
         <p className="p1">This is the admin panel. You can approve messages here.</p>
       </div>
       <Accordion title="Settings">
-        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={areButtonsDisabled} theme={currentTheme} />
+        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={areButtonsDisabled} handleResetScene={handleResetScene} theme={currentTheme} />
       </Accordion>
       {messages && messagesLength > 0 &&
         <div className="mt-4">
