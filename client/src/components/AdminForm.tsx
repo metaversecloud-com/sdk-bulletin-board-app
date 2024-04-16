@@ -66,9 +66,9 @@ export function AdminForm({
         <button className="btn my-2" type="submit" disabled={isLoading}>
           Submit
         </button>
-        <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
+        {/* <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
           Reset
-        </button>
+        </button> */}
       </form>
 
       {showResetModal && (

@@ -22,6 +22,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     if (shouldHardReset) {
+      // TODO: decide if this should delete from s3 
       const { anchorAssetImage } = getThemeEnvVars(theme.id)
 
       const promises = []
