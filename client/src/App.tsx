@@ -121,7 +121,7 @@ const App = () => {
   useEffect(() => {
     if (!hasInitBackendAPI) setupBackend();
     else getTheme();
-  }, [hasInitBackendAPI, interactiveParams]);
+  }, [hasInitBackendAPI]);
 
   if (isLoading || !hasInitBackendAPI) return <Loading />;
 

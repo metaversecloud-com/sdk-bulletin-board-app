@@ -5,9 +5,9 @@ import { Credentials, DataObjectType } from "../../types.js";
 
 type WorldDataObject = {
   scenes: {
-    [key: string]: DataObjectType
-  },
-}
+    [key: string]: DataObjectType;
+  };
+};
 
 export const getWorldDataObject = async (credentials: Credentials) => {
   try {

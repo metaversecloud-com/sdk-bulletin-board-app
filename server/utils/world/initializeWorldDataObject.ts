@@ -30,10 +30,10 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
 
       const assetsList: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
         sceneDropId: credentials.sceneDropId,
+        uniqueName: "anchor",
       })
       // @ts-ignore
       payload.anchorAssets = assetsList
-        .filter(a => a.uniqueName === "anchor")
         .map(({ id }) => (id));
     }
 

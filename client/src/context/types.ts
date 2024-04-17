@@ -13,7 +13,7 @@ export type InteractiveParams = {
   urlSlug: string;
   username: string;
   visitorId: string;
-}
+};
 
 export interface InitialState {
   hasInteractiveParams: boolean;
@@ -28,11 +28,11 @@ export interface InitialState {
 
 export type ActionType = {
   type: string;
-  payload?: any;
+  payload?: object;
 };
 
 export const ThemeIds: { [key: string]: string } = {
-  "GRATITUDE": 'Gratitude Garden',
-  "FRIENDSHIP": 'Friendship Garden',
-  "CHALK": 'Chalk the Block'
-}
+  GRATITUDE: "Gratitude Garden",
+  FRIENDSHIP: "Friendship Garden",
+  CHALK: "Chalk the Block",
+};

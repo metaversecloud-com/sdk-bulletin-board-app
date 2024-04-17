@@ -3,9 +3,9 @@ import { errorHandler } from "./errorHandler.js";
 
 export async function uploadToS3(imageData: any, fileName: string) {
   try {
-    const base64Data = imageData.split(',')[1];
+    const base64Data = imageData.split(",")[1];
     const binaryData = atob(base64Data);
-    const buffer = Buffer.from(binaryData, 'binary');
+    const buffer = Buffer.from(binaryData, "binary");
 
     const credentials = { region: "us-east-1" };
     const client = new S3Client(credentials);
@@ -26,4 +26,4 @@ export async function uploadToS3(imageData: any, fileName: string) {
       message: "Error uploading image to S3",
     });
   }
-};
+}

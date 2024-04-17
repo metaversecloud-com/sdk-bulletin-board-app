@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { InteractiveParams } from '../context/types';
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import { InteractiveParams } from "../context/types";
 
 let backendAPI: AxiosInstance = axios;
 

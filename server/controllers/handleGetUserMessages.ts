@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-import {
-  errorHandler,
-  getCredentials,
-  getWorldDataObject,
-} from "../utils/index.js";
+import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
 import { DataObjectType, MessagesType } from "../types.js";
 
 export const handleGetUserMessages = async (req: Request, res: Response) => {
@@ -18,7 +14,7 @@ export const handleGetUserMessages = async (req: Request, res: Response) => {
         myMessages[key] = message;
       }
       return myMessages;
-    }, {})
+    }, {});
 
     return res.json({ messages: myMessages });
   } catch (error) {

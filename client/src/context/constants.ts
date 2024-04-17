@@ -3,4 +3,4 @@ export const defaultTheme = {
   description: "",
   subtitle: "",
   title: "",
-}
+};

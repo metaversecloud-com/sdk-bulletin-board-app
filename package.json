@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.540.0",
-    "@rtsdk/topia": "^0.9.1",
+    "@rtsdk/topia": "^0.9.2",
     "axios": "^1.6.7",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",

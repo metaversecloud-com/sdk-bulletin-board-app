@@ -21,4 +21,4 @@ export async function deleteFromS3(id: string) {
       message: "Error deleting image from S3",
     });
   }
-};
+}

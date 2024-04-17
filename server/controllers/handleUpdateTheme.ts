@@ -4,12 +4,15 @@ import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials
+    const { sceneDropId } = credentials;
 
     const { world } = await getWorldDataObject(credentials);
 
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-    await world.updateDataObject({ [`scenes.${sceneDropId}.theme`]: req.body }, { lock: { lockId, releaseLock: true } });
+    await world.updateDataObject(
+      { [`scenes.${sceneDropId}.theme`]: req.body },
+      { lock: { lockId, releaseLock: true } },
+    );
 
     return res.send(req.body);
   } catch (error) {
