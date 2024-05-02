@@ -94,11 +94,11 @@ function Board() {
           </p>
         )}
       </div>
-      {/* {messages && messagesLength > 0 &&
+      {messages && messagesLength > 0 &&
         <Accordion title="Pending Approval">
           {getMessagesList()}
         </Accordion>
-      } */}
+      }
       {errorMessage &&
         <p className="p3 text-error">{`${errorMessage}`}</p>
       }
