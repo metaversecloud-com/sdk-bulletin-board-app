@@ -9,6 +9,7 @@ import {
   handleGetVisitor,
   handleResetScene,
   handleUpdateTheme,
+  handleDeleteUserMessage,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -44,6 +45,6 @@ router.delete("/admin/message/:messageId", handleDeleteMessage);
 // users
 router.get("/messages", handleGetUserMessages);
 router.post("/message", handleAddNewMessage);
-router.delete("/message/:messageId", handleDeleteMessage);
+router.delete("/message/:messageId", handleDeleteUserMessage);
 
 export default router;
