@@ -25,7 +25,7 @@ function Board() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    backendAPI.get("/messages/pending")
+    backendAPI.get("/messages")
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)
@@ -94,11 +94,11 @@ function Board() {
           </p>
         )}
       </div>
-      {/* {messages && messagesLength > 0 &&
+      {messages && messagesLength > 0 &&
         <Accordion title="Pending Approval">
           {getMessagesList()}
         </Accordion>
-      } */}
+      }
       {errorMessage &&
         <p className="p3 text-error">{`${errorMessage}`}</p>
       }

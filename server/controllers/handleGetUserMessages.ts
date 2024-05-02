@@ -9,14 +9,14 @@ export const handleGetUserMessages = async (req: Request, res: Response) => {
     const { dataObject } = await getWorldDataObject(credentials);
     const { messages } = dataObject as DataObjectType;
 
-    const myMessages = Object.entries(messages).reduce((myMessages: MessagesType, [key, message]) => {
+    const myMessages = await Object.entries(messages).reduce((myMessages: MessagesType, [key, message]) => {
       if (message.userId === credentials.profileId && message.approved === false) {
         myMessages[key] = message;
       }
       return myMessages;
     }, {});
 
-    return res.json({ messages: myMessages });
+    return res.json(myMessages);
   } catch (error) {
     return errorHandler({
       error,
