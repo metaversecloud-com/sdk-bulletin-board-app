@@ -1,15 +1,19 @@
-import { Request, Response } from "express";
-import { deleteFromS3, errorHandler, getCredentials, getPendingMessages, getWorldDataObject } from "../utils/index.js";
-import { DataObjectType } from "../types.js";
+import { deleteFromS3, errorHandler } from "./index.js";
+import { Credentials, MessagesType } from "../types.js";
 
-export const handleDeleteMessage = async (req: Request, res: Response) => {
+export const deleteMessage = async ({
+  credentials,
+  messageId,
+  messages,
+  world,
+}: {
+  credentials: Credentials;
+  messageId: string;
+  messages: MessagesType;
+  world: any;
+}) => {
   try {
-    const credentials = getCredentials(req.query);
     const { sceneDropId } = credentials;
-    const { messageId } = req.params;
-
-    const { dataObject, world } = await getWorldDataObject(credentials);
-    const { messages } = dataObject as DataObjectType;
 
     const message = messages[messageId];
     if (!message) throw new Error("Message not found");
@@ -29,14 +33,12 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
       { lock: { lockId, releaseLock: true } },
     );
 
-    return res.json(await getPendingMessages({ sceneDropId, world }));
+    return { success: true };
   } catch (error) {
     return errorHandler({
       error,
-      functionName: "handleDeleteMessage",
+      functionName: "deleteMessage",
       message: "Error deleting message.",
-      req,
-      res,
     });
   }
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DataObjectType } from "../types.js";
+import { DataObjectType } from "../../types.js";
 import {
   DroppedAsset,
   dropScene,
@@ -8,7 +8,7 @@ import {
   getPendingMessages,
   getThemeEnvVars,
   getWorldDataObject,
-} from "../utils/index.js";
+} from "../../utils/index.js";
 
 export const handleApproveMessages = async (req: Request, res: Response) => {
   try {
