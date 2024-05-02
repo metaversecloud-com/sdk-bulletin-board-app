@@ -25,7 +25,7 @@ function Board() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    backendAPI.get("/messages/pending")
+    backendAPI.get("/messages")
       .then((result) => {
         setMessages(result.data)
         setMessagesLength(Object.keys(result.data).length)

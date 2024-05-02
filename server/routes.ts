@@ -10,7 +10,7 @@ import {
   handleResetScene,
   handleUpdateTheme,
 } from "./controllers/index.js";
-import { getVersion } from "./utils/getVersion.js"
+import { getVersion } from "./utils/getVersion.js";
 
 const router = express.Router();
 
@@ -34,11 +34,11 @@ router.get("/system/health", (req, res) => {
 router.get("/theme", handleGetTheme);
 router.post("/admin/theme", handleUpdateTheme);
 router.post("/admin/reset", handleResetScene);
+router.get("/admin/messages", handleGetPendingMessages);
 
 router.get("/visitor", handleGetVisitor);
 
 router.get("/messages", handleGetUserMessages);
-router.get("/messages/pending", handleGetPendingMessages);
 router.post("/message", handleAddNewMessage);
 router.post("/message/approve/:messageId", handleApproveMessages);
 router.delete("/message/:messageId", handleDeleteMessage);

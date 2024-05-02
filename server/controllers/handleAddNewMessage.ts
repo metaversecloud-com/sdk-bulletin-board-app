@@ -31,7 +31,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
     });
 
-    return res.json(await getPendingMessages({ sceneDropId, world }));
+    return res.json(await getPendingMessages({ profileId, sceneDropId, world }));
   } catch (error) {
     return errorHandler({
       error,
