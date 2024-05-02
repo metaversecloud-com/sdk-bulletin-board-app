@@ -1,20 +1,16 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
-import { DataObjectType, MessagesType } from "../types.js";
+import { errorHandler, getCredentials, getPendingMessages, getWorldDataObject } from "../utils/index.js";
+import { DataObjectType } from "../types.js";
 
 export const handleGetUserMessages = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
+    const { profileId, sceneDropId } = credentials;
 
     const { dataObject } = await getWorldDataObject(credentials);
     const { messages } = dataObject as DataObjectType;
 
-    const myMessages = await Object.entries(messages).reduce((myMessages: MessagesType, [key, message]) => {
-      if (message.userId === credentials.profileId && message.approved === false) {
-        myMessages[key] = message;
-      }
-      return myMessages;
-    }, {});
+    const myMessages = await getPendingMessages({ messages, profileId, sceneDropId });
 
     return res.json(myMessages);
   } catch (error) {
