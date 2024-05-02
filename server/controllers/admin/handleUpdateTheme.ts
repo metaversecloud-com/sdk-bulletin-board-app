@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { errorHandler, getCredentials, getWorldDataObject } from "../../utils/index.js";
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {

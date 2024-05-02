@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getPendingMessages, uploadToS3 } from "../utils/index.js";
-import { getWorldDataObject } from "../utils/index.js";
-import { MessageType } from "../types.js";
+import { errorHandler, getCredentials, getPendingMessages, uploadToS3 } from "../../utils/index.js";
+import { getWorldDataObject } from "../../utils/index.js";
+import { MessageType } from "../../types.js";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {

@@ -60,7 +60,7 @@ function Admin() {
   const approveMessage = (messageId: string) => {
     setAreButtonsDisabled(true)
     setErrorMessage("")
-    backendAPI.post(`/message/approve/${messageId}`)
+    backendAPI.post(`/admin/message/approve/${messageId}`)
       .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
       .finally(() => setAreButtonsDisabled(false))
@@ -69,7 +69,7 @@ function Admin() {
   const deleteMessage = (messageId: string) => {
     setAreButtonsDisabled(true)
     setErrorMessage("")
-    backendAPI.delete(`/message/${messageId}`)
+    backendAPI.delete(`/admin/message/${messageId}`)
       .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
       .finally(() => setAreButtonsDisabled(false))

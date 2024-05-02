@@ -32,15 +32,18 @@ router.get("/system/health", (req, res) => {
 });
 
 router.get("/theme", handleGetTheme);
+router.get("/visitor", handleGetVisitor);
+
+// admin
 router.post("/admin/theme", handleUpdateTheme);
 router.post("/admin/reset", handleResetScene);
 router.get("/admin/messages", handleGetPendingMessages);
+router.post("/admin/message/approve/:messageId", handleApproveMessages);
+router.delete("/admin/message/:messageId", handleDeleteMessage);
 
-router.get("/visitor", handleGetVisitor);
-
+// users
 router.get("/messages", handleGetUserMessages);
 router.post("/message", handleAddNewMessage);
-router.post("/message/approve/:messageId", handleApproveMessages);
 router.delete("/message/:messageId", handleDeleteMessage);
 
 export default router;

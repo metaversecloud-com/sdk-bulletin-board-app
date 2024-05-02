@@ -5,8 +5,8 @@ import {
   getPendingMessages,
   getThemeEnvVars,
   getWorldDataObject,
-} from "../utils/index.js";
-import { DataObjectType } from "../types.js";
+} from "../../utils/index.js";
+import { DataObjectType } from "../../types.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetScene = async (req: Request, res: Response) => {
