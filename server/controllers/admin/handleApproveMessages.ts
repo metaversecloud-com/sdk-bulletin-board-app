@@ -60,9 +60,14 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           [`scenes.${sceneDropId}.placedAssets`]: placedAssets,
           [`scenes.${sceneDropId}.usedSpaces`]: usedSpaces,
         },
-        { lock: { lockId, releaseLock: true } },
+        {
+          analytics: [{ analyticName: `${theme.id}-messageApprovals` }],
+          lock: { lockId, releaseLock: true },
+        },
       ),
     );
+
+    promises.push(world.triggerParticle({ position: droppedAsset.position, name: "Flame" }));
 
     await Promise.all(promises);
 

@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, getPendingMessages, uploadToS3 } from "../../utils/index.js";
 import { getWorldDataObject } from "../../utils/index.js";
-import { MessageType } from "../../types.js";
+import { DataObjectType, MessageType } from "../../types.js";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { displayName, profileId, sceneDropId, username } = credentials;
+    const { displayName, profileId, sceneDropId, urlSlug, username } = credentials;
     const { imageData, message } = req.body;
 
-    const { world } = await getWorldDataObject(credentials);
+    const { dataObject, world } = await getWorldDataObject(credentials);
+    const { theme } = dataObject as DataObjectType;
 
     const id = `${profileId}-${Date.now()}`;
     const newMessage: MessageType = {
@@ -27,9 +28,14 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       newMessage.imageUrl = imageUrl;
     }
 
-    await world.updateDataObject({
-      [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
-    });
+    await world.updateDataObject(
+      {
+        [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
+      },
+      {
+        analytics: [{ analyticName: `${theme.id}-newMessages`, profileId, urlSlug, uniqueKey: profileId }],
+      },
+    );
 
     return res.json(await getPendingMessages({ profileId, sceneDropId, world }));
   } catch (error) {
