@@ -10,9 +10,16 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
     const { messageId } = req.params;
 
     const { dataObject, world } = await getWorldDataObject(credentials);
-    const { messages } = dataObject as DataObjectType;
+    const { messages, theme } = dataObject as DataObjectType;
 
     await deleteMessage({ credentials, messageId, messages, world });
+
+    world.updateDataObject(
+      {},
+      {
+        analytics: [{ analyticName: `${theme.id}-messageRejects` }],
+      },
+    );
 
     return res.json(await getPendingMessages({ sceneDropId, world }));
   } catch (error) {
