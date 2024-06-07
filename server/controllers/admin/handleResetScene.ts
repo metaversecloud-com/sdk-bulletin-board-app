@@ -47,7 +47,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
           [`scenes.${sceneDropId}.usedSpaces`]: [],
         },
         {
-          analytics: [{ analyticName: `${theme.id}-resets` }],
+          analytics: [{ analyticName: `resets` }, { analyticName: `${theme.id}-resets` }],
           lock: { lockId, releaseLock: true },
         },
       );

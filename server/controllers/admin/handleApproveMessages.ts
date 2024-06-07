@@ -61,7 +61,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           [`scenes.${sceneDropId}.usedSpaces`]: usedSpaces,
         },
         {
-          analytics: [{ analyticName: `${theme.id}-messageApprovals` }],
+          analytics: [{ analyticName: `messageApprovals` }, { analyticName: `${theme.id}-messageApprovals` }],
           lock: { lockId, releaseLock: true },
         },
       ),

@@ -33,7 +33,10 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
         [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
       },
       {
-        analytics: [{ analyticName: `${theme.id}-newMessages`, profileId, urlSlug, uniqueKey: profileId }],
+        analytics: [
+          { analyticName: `newMessages`, profileId, urlSlug, uniqueKey: profileId },
+          { analyticName: `${theme.id}-newMessages`, profileId, urlSlug, uniqueKey: profileId },
+        ],
       },
     );
 
