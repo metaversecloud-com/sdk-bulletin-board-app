@@ -17,7 +17,7 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
     world.updateDataObject(
       {},
       {
-        analytics: [{ analyticName: `${theme.id}-messageRejects` }],
+        analytics: [{ analyticName: `messageRejects` }, { analyticName: `${theme.id}-messageRejects` }],
       },
     );
 
