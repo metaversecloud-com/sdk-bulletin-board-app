@@ -15,8 +15,10 @@ export const dropScene = async ({
   try {
     const randomScene = Math.floor(Math.random() * droppableSceneIds.length);
     const sceneId = droppableSceneIds[randomScene];
+    console.log("🚀 ~ file: dropScene.ts:18 ~ sceneId:", sceneId);
 
     const scene = (await world.dropScene({
+      allowNonAdmins: true,
       sceneId,
       position: droppedAsset?.position,
       assetSuffix: "message",
@@ -30,6 +32,7 @@ export const dropScene = async ({
 
     if (!textAsset) throw "No text asset found.";
 
+    // text asset is missing public key and therefore can't be edited.
     await textAsset.updateCustomTextAsset({}, addHyphenAndNewline(message));
 
     return textAsset.id;

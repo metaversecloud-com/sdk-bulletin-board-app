@@ -1,4 +1,4 @@
-export const Modal = ({ buttonText, children, onConfirm, setShowModal, text, title }: { buttonText: string, children: React.ReactNode, onConfirm: () => void, setShowModal: (value: boolean) => void, text: string, title: string }) => {
+export const Modal = ({ buttonText, children, onConfirm, setShowModal, text, title }: { buttonText: string, children?: React.ReactNode, onConfirm: () => void, setShowModal: (value: boolean) => void, text: string, title: string }) => {
   return (
     <div className="modal-container">
       <div className="modal">

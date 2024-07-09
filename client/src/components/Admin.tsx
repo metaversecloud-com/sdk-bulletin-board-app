@@ -43,18 +43,21 @@ function Admin() {
   }
 
   const handleOnSubmit = (data: AdminFormValues) => {
+    console.log("🚀 ~ file: Admin.tsx:39 ~ data:", data)
     setAreButtonsDisabled(true)
-    setTheme(data)
-    backendAPI.post("/admin/theme", data)
-      .then(() => {
+    setErrorMessage("")
+    backendAPI.post("/admin/theme", { ...data, existingThemeId: theme.id })
+      .then((result) => {
         dispatch!({
           type: SET_THEME,
           payload: { ...data },
         });
-        setTheme(data)
+        setTheme(result.data);
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => { setAreButtonsDisabled(false) })
+      .finally(() => {
+        setAreButtonsDisabled(false);
+      })
   };
 
   const approveMessage = (messageId: string) => {
@@ -114,7 +117,7 @@ function Admin() {
         <p className="p1">This is the admin panel. You can approve messages here.</p>
       </div>
       <Accordion title="Settings">
-        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={areButtonsDisabled} handleResetScene={handleResetScene} theme={currentTheme} />
+        <AdminForm handleSubmitForm={handleOnSubmit} handleResetScene={handleResetScene} isLoading={areButtonsDisabled} setErrorMessage={setErrorMessage} theme={currentTheme} />
       </Accordion>
       {messages && messagesLength > 0 &&
         <div className="mt-4">
