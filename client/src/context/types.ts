@@ -5,6 +5,7 @@ export const SET_THEME = "SET_THEME";
 export type InteractiveParams = {
   assetId: string;
   displayName: string;
+  identityId: string;
   interactiveNonce: string;
   interactivePublicKey: string;
   profileId: string;

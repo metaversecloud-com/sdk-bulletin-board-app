@@ -33,6 +33,7 @@ const App = () => {
     return {
       assetId: searchParams.get("assetId") || "",
       displayName: searchParams.get("displayName") || "",
+      identityId: searchParams.get("identityId") || "",
       interactiveNonce: searchParams.get("interactiveNonce") || "",
       interactivePublicKey: searchParams.get("interactivePublicKey") || "",
       profileId: searchParams.get("profileId") || "",
@@ -48,6 +49,7 @@ const App = () => {
     ({
       assetId,
       displayName,
+      identityId,
       interactiveNonce,
       interactivePublicKey,
       profileId,
@@ -64,6 +66,7 @@ const App = () => {
         payload: {
           assetId,
           displayName,
+          identityId,
           interactiveNonce,
           interactivePublicKey,
           isInteractiveIframe,
@@ -99,13 +102,11 @@ const App = () => {
   const getTheme = () => {
     backendAPI.get("/theme")
       .then((result) => {
-        if (result.data) {
-          dispatch!({
-            type: SET_THEME,
-            payload: result.data,
-          });
-          setIsLoading(false)
-        }
+        dispatch!({
+          type: SET_THEME,
+          payload: result.data,
+        });
+        setIsLoading(false)
       })
       .catch(() => navigate("*"))
   };
