@@ -1,16 +1,16 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { DroppedAsset, errorHandler, getThemeEnvVars } from '../index.js';
+import { DroppedAsset, errorHandler, getThemeEnvVars } from "../index.js";
 import { Credentials } from "../../types.js";
 
 interface DroppedAssetInterfaceI extends DroppedAssetInterface {
   dataObject: {
-    themeId?: string
-  }
+    themeId?: string;
+  };
 }
 
-export const initializeWorldDataObject = async ({ credentials, world }: { credentials: Credentials, world: any }) => {
+export const initializeWorldDataObject = async ({ credentials, world }: { credentials: Credentials; world: any }) => {
   try {
-    const { assetId, sceneDropId, urlSlug } = credentials
+    const { assetId, sceneDropId, urlSlug } = credentials;
     await world.fetchDataObject();
 
     const payload = {
@@ -22,19 +22,18 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
     };
 
     if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
-      const keyAsset = await DroppedAsset.create(assetId, urlSlug, { credentials }) as DroppedAssetInterfaceI
+      const keyAsset = (await DroppedAsset.create(assetId, urlSlug, { credentials })) as DroppedAssetInterfaceI;
       await keyAsset.fetchDataObject();
-      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK"
-      const { theme } = await getThemeEnvVars(themeId)
-      payload.theme = theme
+      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
+      const { theme } = await getThemeEnvVars(themeId);
+      payload.theme = theme;
 
       const assetsList: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
         sceneDropId: credentials.sceneDropId,
         uniqueName: "anchor",
-      })
+      });
       // @ts-ignore
-      payload.anchorAssets = assetsList
-        .map(({ id }) => (id));
+      payload.anchorAssets = assetsList.map(({ id }) => id);
     }
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;

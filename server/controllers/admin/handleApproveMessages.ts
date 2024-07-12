@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { DataObjectType } from "../../types.js";
 import {
+  addNewRowToGoogleSheets,
   DroppedAsset,
   dropScene,
   errorHandler,
@@ -14,7 +15,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
   try {
     const { messageId } = req.params;
     const credentials = getCredentials(req.query);
-    const { sceneDropId, urlSlug } = credentials;
+    const { displayName, identityId, sceneDropId, urlSlug } = credentials;
 
     const { dataObject, world } = await getWorldDataObject(credentials);
     const { anchorAssets, messages, usedSpaces, placedAssets, theme } = dataObject as DataObjectType;
@@ -68,6 +69,15 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     );
 
     promises.push(world.triggerParticle({ position: droppedAsset.position, name: "Flame" }));
+
+    addNewRowToGoogleSheets([
+      {
+        identityId,
+        displayName,
+        event: `${theme.id}-messageApprovals`,
+        urlSlug,
+      },
+    ]);
 
     await Promise.all(promises);
 

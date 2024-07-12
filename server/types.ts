@@ -1,6 +1,7 @@
 export interface Credentials {
   assetId: string;
   displayName: string;
+  identityId: string;
   interactiveNonce: string;
   interactivePublicKey: string;
   profileId: string;
@@ -11,31 +12,30 @@ export interface Credentials {
 }
 
 export type MessageType = {
-  id: string,
-  approved: boolean,
-  displayName: string,
-  imageUrl?: string,
-  message?: string,
-  userId: string,
-  username: string,
-}
+  id: string;
+  approved: boolean;
+  displayName: string;
+  imageUrl?: string;
+  message?: string;
+  userId: string;
+  username: string;
+};
 
 export type MessagesType = {
-  [key: string]: MessageType
-}
+  [key: string]: MessageType;
+};
 
 export type ThemeType = {
-  id: string,
-  description: string,
-  title: string,
-  subtitle: string,
-}
+  id: string;
+  description: string;
+  title: string;
+  subtitle: string;
+};
 
 export type DataObjectType = {
-  anchorAssets: string[],
-  messages: MessagesType,
-  placedAssets: string[],
-  theme: ThemeType,
-  usedSpaces: string[],
-}
-
+  anchorAssets: string[];
+  messages: MessagesType;
+  placedAssets: string[];
+  theme: ThemeType;
+  usedSpaces: string[];
+};
