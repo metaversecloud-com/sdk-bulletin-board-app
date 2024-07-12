@@ -37,9 +37,6 @@ router.get("/system/health", (req, res) => {
       GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL ? "SET" : "NOT SET",
       GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "NOT SET",
       GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY ? "SET" : "NOT SET",
-      SCENE_ID_0: process.env.SCENE_ID_0 ? process.env.SCENE_ID_0 : "NOT SET",
-      DROPPABLE_SCENE_IDS_0: process.env.DROPPABLE_SCENE_IDS_0 ? process.env.DROPPABLE_SCENE_IDS_0 : "NOT SET",
-      ANCHOR_ASSET_IMAGE_0: process.env.ANCHOR_ASSET_IMAGE_0 ? process.env.ANCHOR_ASSET_IMAGE_0 : "NOT SET",
     },
   });
 });
