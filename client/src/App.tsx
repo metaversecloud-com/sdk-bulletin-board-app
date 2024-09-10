@@ -8,12 +8,7 @@ import Loading from "./components/Loading";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
-import {
-  InteractiveParams,
-  SET_HAS_SETUP_BACKEND,
-  SET_INTERACTIVE_PARAMS,
-  SET_THEME,
-} from "./context/types";
+import { InteractiveParams, SET_HAS_SETUP_BACKEND, SET_INTERACTIVE_PARAMS, SET_THEME } from "./context/types";
 
 // utils
 import { setupBackendAPI } from "./utils/backendAPI";
@@ -59,8 +54,7 @@ const App = () => {
       username,
       visitorId,
     }: InteractiveParams) => {
-      const isInteractiveIframe =
-        visitorId && interactiveNonce && interactivePublicKey && assetId;
+      const isInteractiveIframe = visitorId && interactiveNonce && interactivePublicKey && assetId;
       dispatch!({
         type: SET_INTERACTIVE_PARAMS,
         payload: {
@@ -79,7 +73,7 @@ const App = () => {
         },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setHasSetupBackend = useCallback(
@@ -89,26 +83,27 @@ const App = () => {
         payload: { hasSetupBackend: success },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setupBackend = () => {
     setupBackendAPI(interactiveParams)
       .then(() => setHasSetupBackend(true))
       .catch(() => navigate("*"))
-      .finally(() => setHasInitBackendAPI(true))
+      .finally(() => setHasInitBackendAPI(true));
   };
 
   const getTheme = () => {
-    backendAPI.get("/theme")
+    backendAPI
+      .get("/theme")
       .then((result) => {
         dispatch!({
           type: SET_THEME,
           payload: result.data,
         });
-        setIsLoading(false)
+        setIsLoading(false);
       })
-      .catch(() => navigate("*"))
+      .catch(() => navigate("*"));
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Topia, AssetFactory, DroppedAssetFactory, UserFactory, VisitorFactory, WorldFactory } from "@rtsdk/topia";
+import { Topia, AssetFactory, DroppedAssetFactory, VisitorFactory, WorldFactory } from "@rtsdk/topia";
 
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
@@ -15,8 +15,7 @@ const myTopiaInstance = new Topia(config);
 
 const Asset = new AssetFactory(myTopiaInstance);
 const DroppedAsset = new DroppedAssetFactory(myTopiaInstance);
-const User = new UserFactory(myTopiaInstance);
 const Visitor = new VisitorFactory(myTopiaInstance);
 const World = new WorldFactory(myTopiaInstance);
 
-export { Asset, DroppedAsset, myTopiaInstance, User, Visitor, World };
+export { Asset, DroppedAsset, myTopiaInstance, Visitor, World };

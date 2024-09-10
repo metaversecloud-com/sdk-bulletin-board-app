@@ -17,7 +17,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.540.0",
     "@googleapis/sheets": "^9.0.0",
-    "@rtsdk/topia": "^0.11.12",
+    "@rtsdk/topia": "^0.12.4",
     "axios": "^1.6.7",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",

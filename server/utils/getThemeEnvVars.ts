@@ -38,15 +38,17 @@ export const getThemeEnvVars = (id: string) => {
 
     const anchorAssetImage = process.env[`ANCHOR_ASSET_IMAGE_${id}`];
 
-    const droppableSceneIds = process.env[`DROPPABLE_SCENE_IDS_${id}`]
-      ? process.env[`DROPPABLE_SCENE_IDS_${id}`]!.split(",")
-      : [];
+    let droppableAssets;
+    if (process.env[`DROPPABLE_ASSETS_${id}`]) {
+      const unescapedJson = process.env[`DROPPABLE_ASSETS_${id}`]!.replace(/\\"/g, '"');
+      droppableAssets = JSON.parse(unescapedJson);
+    }
 
     const sceneId = process.env[`SCENE_ID_${id}`];
 
     const theme = defaultThemes[id];
 
-    return { anchorAssetImage, droppableSceneIds, sceneId, theme };
+    return { anchorAssetImage, droppableAssets, sceneId, theme };
   } catch (error) {
     return errorHandler({
       error,

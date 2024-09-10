@@ -21,7 +21,8 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
       usedSpaces: [],
     };
 
-    if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
+    // TODO: update so that sceneDropId is new when theme is switched
+    if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]?.theme) {
       const keyAsset = (await DroppedAsset.create(assetId, urlSlug, { credentials })) as DroppedAssetInterfaceI;
       await keyAsset.fetchDataObject();
       const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
@@ -46,7 +47,7 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
         },
         { lock: { lockId, releaseLock: true } },
       );
-    } else if (!world.dataObject?.scenes?.[sceneDropId]) {
+    } else if (!world.dataObject?.scenes?.[sceneDropId]?.theme) {
       await world.updateDataObject(
         {
           [`scenes.${sceneDropId}`]: { ...payload },

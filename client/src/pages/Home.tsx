@@ -1,9 +1,9 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
-import Admin from '@/components/Admin';
-import Board from '@/components/Board';
+import Admin from "@/components/Admin";
+import Board from "@/components/Board";
 import Loading from "@/components/Loading";
 
 // context
@@ -22,14 +22,15 @@ function Home() {
 
   useEffect(() => {
     if (hasSetupBackend) {
-      backendAPI.get("/visitor")
+      backendAPI
+        .get("/visitor")
         .then((result) => {
-          setIsAdmin(result.data.visitor.isAdmin)
+          setIsAdmin(result.data.visitor.isAdmin);
         })
         .catch(() => navigate("*"))
         .finally(() => setIsLoading(false));
     }
-  }, [hasSetupBackend])
+  }, [hasSetupBackend]);
 
   if (isLoading || !hasSetupBackend) return <Loading />;
 
@@ -47,11 +48,7 @@ function Home() {
           </div>
         </div>
       )}
-      {activeTab === "admin" ? (
-        <Admin />
-      ) : (
-        <Board />
-      )}
+      {activeTab === "admin" ? <Admin /> : <Board />}
     </div>
   );
 }

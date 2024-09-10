@@ -6,6 +6,28 @@ export const handleUpdateTheme = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { sceneDropId } = credentials;
 
+    // const { existingThemeId, id } = req.body;
+    // const credentials = getCredentials(req.query);
+    // const { assetId, sceneDropId, urlSlug } = credentials;
+
+    // if (existingThemeId && existingThemeId !== id) {
+    //   const { sceneId } = await getThemeEnvVars(id);
+    //   if (!sceneId) throw `Missing required SCENE_ID_${id} theme environment variables in the .env file`;
+
+    //   const { position } = await DroppedAsset.get(assetId, urlSlug, { credentials });
+
+    //   await removeSceneFromWorld(credentials);
+
+    //   const world = World.create(urlSlug, { credentials });
+    //   await world.dropScene({
+    //     sceneId,
+    //     position: position!,
+    //     assetSuffix: "message",
+    //   });
+
+    //   return res.send({});
+    // }
+
     const { world } = await getWorldDataObject(credentials);
 
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;

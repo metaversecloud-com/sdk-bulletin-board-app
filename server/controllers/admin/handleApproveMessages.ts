@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { DataObjectType } from "../../types.js";
 import {
+  addHyphenAndNewline,
   addNewRowToGoogleSheets,
+  Asset,
   DroppedAsset,
-  dropScene,
   errorHandler,
   getCredentials,
   getPendingMessages,
@@ -15,7 +16,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
   try {
     const { messageId } = req.params;
     const credentials = getCredentials(req.query);
-    const { displayName, identityId, sceneDropId, urlSlug } = credentials;
+    const { displayName, identityId, interactivePublicKey, sceneDropId, urlSlug } = credentials;
 
     const { dataObject, world } = await getWorldDataObject(credentials);
     const { anchorAssets, messages, usedSpaces, placedAssets, theme } = dataObject as DataObjectType;
@@ -45,9 +46,48 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       promises.push(droppedAsset.updateWebImageLayers(imageUrl, ""));
     } else if (message) {
       if (emptySpaces.length > 0) {
-        const { droppableSceneIds } = getThemeEnvVars(theme.id);
-        const droppedAssetId = await dropScene({ droppedAsset, droppableSceneIds, message, world });
-        placedAssets.push(droppedAssetId);
+        const { droppableAssets } = getThemeEnvVars(theme.id);
+
+        const random = Math.floor(Math.random() * droppableAssets.length);
+        const droppableAsset = droppableAssets[random];
+
+        const webImageAsset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+          credentials: { interactivePublicKey, urlSlug },
+        });
+        await DroppedAsset.drop(webImageAsset, {
+          position: {
+            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.imagePositionX) || 0),
+            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.imagePositionY) || 0),
+          },
+          isInteractive: true,
+          interactivePublicKey,
+          layer0: droppableAsset.layer0,
+          layer1: droppableAsset.layer1,
+          sceneDropId,
+          uniqueName: `background`,
+          urlSlug,
+        });
+
+        const textAsset = await Asset.create(process.env.TEXT_ASSET_ID || "textAsset", {
+          credentials: { interactivePublicKey, urlSlug },
+        });
+        await DroppedAsset.drop(textAsset, {
+          position: {
+            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textPositionX) || 0),
+            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.textPositionY) || 0),
+          },
+          isInteractive: true,
+          interactivePublicKey,
+          sceneDropId,
+          text: addHyphenAndNewline(message),
+          textColor: "white",
+          textSize: 16,
+          textWeight: "normal",
+          textWidth: 190,
+          uniqueName: `text`,
+          urlSlug,
+          yOrderAdjust: droppableAsset.yOrderAdjust,
+        });
       } else {
         const textAsset = DroppedAsset.create(droppedAssetId, urlSlug);
         await textAsset.updateCustomTextAsset({}, message);

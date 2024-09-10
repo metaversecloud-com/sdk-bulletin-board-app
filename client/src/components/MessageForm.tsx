@@ -5,36 +5,32 @@ export function MessageForm({
   handleSubmitForm,
   isLoading,
   setErrorMessage,
-  themeId
+  themeId,
 }: {
-  handleSubmitForm: ({ imageData, message }: { imageData?: string, message?: string }) => void;
+  handleSubmitForm: ({ imageData, message }: { imageData?: string; message?: string }) => void;
   isLoading: boolean;
   setErrorMessage: (value: string) => void;
-  themeId: string
+  themeId: string;
 }) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-  } = useForm<MessageFormValues>()
+  const { register, handleSubmit, reset } = useForm<MessageFormValues>();
 
   const onSubmit = handleSubmit(async (data) => {
-    const file = data.images ? data.images[0] : null
+    const file = data.images ? data.images[0] : null;
     if (file?.size && file?.size > 1048576) {
       setErrorMessage("File is too big!");
     } else if (file) {
-      let dataURL
+      let dataURL;
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         const img: HTMLImageElement = new Image();
 
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
+          const canvas = document.createElement("canvas");
+          const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
           canvas.width = 141;
           canvas.height = 123;
           if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          dataURL = canvas.toDataURL('image/png');
+          dataURL = canvas.toDataURL("image/png");
           handleSubmitForm({ imageData: dataURL });
         };
 
@@ -50,19 +46,14 @@ export function MessageForm({
   return (
     <>
       <form onSubmit={onSubmit}>
-        {themeId === "CHALK" ?
+        {themeId === "CHALK" ? (
           <>
             <label>Upload your image:</label>
             <p className="p3">(.png, max file size: ___)</p>
-            <input
-              accept="image/png"
-              className="input"
-              type="file"
-              {...register("images", { required: true })}
-            />
+            <input accept="image/png" className="input" type="file" {...register("images", { required: true })} />
           </>
-          :
-          (<>
+        ) : (
+          <>
             <label>Add your message:</label>
             <p className="p3">(limit 120 characters)</p>
             <textarea
@@ -72,7 +63,7 @@ export function MessageForm({
               {...register("message", { required: true, maxLength: 120 })}
             />
           </>
-          )}
+        )}
         <button className="btn mt-4" type="submit" disabled={isLoading}>
           Submit
         </button>

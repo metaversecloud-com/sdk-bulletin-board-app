@@ -1,10 +1,4 @@
-export const Accordion = ({
-  children,
-  title,
-}: {
-  children: React.ReactNode;
-  title: string;
-}) => {
+export const Accordion = ({ children, title }: { children: React.ReactNode; title: string }) => {
   return (
     <section id="accordion" className="accordion">
       <div className="accordion-container">
@@ -17,13 +11,11 @@ export const Accordion = ({
               src="https://sdk-style.s3.amazonaws.com/icons/chevronDown.svg"
             />
           </summary>
-          <div className="accordion-content mt-4">
-            {children}
-          </div>
+          <div className="accordion-content mt-4">{children}</div>
         </details>
       </div>
     </section>
   );
-}
+};
 
 export default Accordion;
