@@ -56,8 +56,8 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         });
         await DroppedAsset.drop(webImageAsset, {
           position: {
-            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.imagePositionX) || 0),
-            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.imagePositionY) || 0),
+            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.imageOffsetX) || 0),
+            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.imageOffsetY) || 0),
           },
           isInteractive: true,
           interactivePublicKey,
@@ -73,20 +73,21 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         });
         await DroppedAsset.drop(textAsset, {
           position: {
-            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textPositionX) || 0),
-            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.textPositionY) || 0),
+            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textOffsetX) || -0.67),
+            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.textOffsetY) || -26),
           },
           isInteractive: true,
+          isTextTopLayer: true,
           interactivePublicKey,
           sceneDropId,
           text: addHyphenAndNewline(message),
-          textColor: "white",
+          textColor: droppableAsset.textColor || "white",
           textSize: 16,
           textWeight: "normal",
           textWidth: 190,
           uniqueName: `text`,
           urlSlug,
-          yOrderAdjust: droppableAsset.yOrderAdjust,
+          yOrderAdjust: parseInt(droppableAsset.yOrderAdjust) || 1000,
         });
       } else {
         const textAsset = DroppedAsset.create(droppedAssetId, urlSlug);
