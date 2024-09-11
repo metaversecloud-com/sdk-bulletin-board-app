@@ -64,7 +64,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           layer0: droppableAsset.layer0,
           layer1: droppableAsset.layer1,
           sceneDropId,
-          uniqueName: `${droppedAssetId}-background`,
+          uniqueName: `${sceneDropId}-background-${droppedAssetId}`,
           urlSlug,
         });
 
@@ -85,13 +85,13 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           textSize: 16,
           textWeight: "normal",
           textWidth: 190,
-          uniqueName: `${droppedAssetId}-text`,
+          uniqueName: `${sceneDropId}-text-${droppedAssetId}`,
           urlSlug,
           yOrderAdjust: parseInt(droppableAsset.yOrderAdjust) || 1000,
         });
       } else {
         const textAsset = await DroppedAsset.getWithUniqueName(
-          `${droppedAssetId}-text`,
+          `${sceneDropId}-text-${droppedAssetId}`,
           urlSlug,
           process.env.INTERACTIVE_SECRET!,
           credentials,

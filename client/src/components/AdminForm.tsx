@@ -41,8 +41,9 @@ export function AdminForm({
 
   const onSubmit = handleSubmit((data) => {
     setFormData(data);
-    if (data.id !== theme.id) setShowChangeSceneModal(true);
-    else handleSubmitForm(data);
+    // if (data.id !== theme.id) setShowChangeSceneModal(true);
+    // else handleSubmitForm(data);
+    handleSubmitForm(data);
   });
 
   const confirmSubmit = () => {
@@ -81,12 +82,12 @@ export function AdminForm({
         <button className="btn my-2" disabled={isLoading} type="submit">
           Submit
         </button>
-        <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
+        {/* <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
           Reset
-        </button>
-        <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowRemoveModal(true)}>
+        </button> */}
+        {/* <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowRemoveModal(true)}>
           Remove from world
-        </button>
+        </button> */}
       </form>
 
       {showChangeSceneModal && (
@@ -96,16 +97,6 @@ export function AdminForm({
           setShowModal={setShowChangeSceneModal}
           text="This will remove this instance of the Bulletin Board and all associated data permanently and then replace it with your newly selected scene. Are you sure you'd like to continue?"
           title="Replace Scene in World"
-        />
-      )}
-
-      {showRemoveModal && (
-        <Modal
-          buttonText="Remove"
-          onConfirm={removeBulletinBoard}
-          setShowModal={setShowRemoveModal}
-          text="This will remove this instance of the Bulletin Board and all associated data permanently. Are you sure you'd like to continue?"
-          title="Remove from World"
         />
       )}
 
@@ -127,6 +118,16 @@ export function AdminForm({
             Remove all dropped and pending messages?
           </label>
         </Modal>
+      )}
+
+      {showRemoveModal && (
+        <Modal
+          buttonText="Remove"
+          onConfirm={removeBulletinBoard}
+          setShowModal={setShowRemoveModal}
+          text="This will remove this instance of the Bulletin Board and all associated data permanently. Are you sure you'd like to continue?"
+          title="Remove from World"
+        />
       )}
     </>
   );

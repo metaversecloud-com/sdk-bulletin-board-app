@@ -5,6 +5,7 @@ import {
   getPendingMessages,
   getThemeEnvVars,
   getWorldDataObject,
+  World,
 } from "../../utils/index.js";
 import { DataObjectType } from "../../types.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
@@ -28,15 +29,44 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
     if (shouldHardReset) {
       // TODO: decide if this should delete from s3
-      const { anchorAssetImage } = getThemeEnvVars(theme.id);
-
+      const { anchorAssetImage, theme: defaultTheme } = getThemeEnvVars(theme.id);
       const promises = [];
-      for (const droppedAsset of anchorAssets) {
-        // @ts-ignore
-        if (droppedAsset.uniqueName === "anchor" && droppedAsset.bottomLayerURL !== anchorAssetImage) {
-          promises.push(droppedAsset.updateWebImageLayers(anchorAssetImage, ""));
+      if (defaultTheme.type === "image") {
+        for (const droppedAsset of anchorAssets) {
+          if (droppedAsset.uniqueName === "anchor" && droppedAsset.bottomLayerURL !== anchorAssetImage) {
+            promises.push(droppedAsset.updateWebImageLayers(anchorAssetImage, ""));
+          }
         }
+      } else {
+        const droppedAssetIds: string[] = [];
+
+        const backgroundAssets = await world.fetchDroppedAssetsWithUniqueName({
+          uniqueName: `${sceneDropId}-background-`,
+          isPartial: true,
+        });
+
+        if (Object.keys(backgroundAssets).length > 0) {
+          for (const index in backgroundAssets) {
+            droppedAssetIds.push(backgroundAssets[index].id);
+          }
+        }
+
+        const textAssets = await world.fetchDroppedAssetsWithUniqueName({
+          uniqueName: `${sceneDropId}-text-`,
+          isPartial: true,
+        });
+
+        if (Object.keys(textAssets).length > 0) {
+          for (const index in textAssets) {
+            droppedAssetIds.push(textAssets[index].id);
+          }
+        }
+
+        promises.push(
+          World.deleteDroppedAssets(credentials.urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials),
+        );
       }
+
       await Promise.allSettled(promises);
 
       await world.updateDataObject(

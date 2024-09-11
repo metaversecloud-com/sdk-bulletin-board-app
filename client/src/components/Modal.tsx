@@ -7,7 +7,7 @@ export const Modal = ({
   title,
 }: {
   buttonText: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onConfirm: () => void;
   setShowModal: (value: boolean) => void;
   text: string;

@@ -125,6 +125,7 @@ function Admin() {
           handleSubmitForm={handleOnSubmit}
           handleResetScene={handleResetScene}
           isLoading={areButtonsDisabled}
+          setErrorMessage={setErrorMessage}
           theme={currentTheme}
         />
       </Accordion>

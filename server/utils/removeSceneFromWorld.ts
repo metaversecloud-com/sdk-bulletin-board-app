@@ -4,7 +4,7 @@ import { errorHandler, World } from "../utils/index.js";
 
 export const removeSceneFromWorld = async (credentials: Credentials) => {
   try {
-    const { interactivePublicKey, sceneDropId, urlSlug } = credentials;
+    const { sceneDropId, urlSlug } = credentials;
 
     const world = await World.create(urlSlug, { credentials });
     const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({ sceneDropId });
@@ -15,23 +15,11 @@ export const removeSceneFromWorld = async (credentials: Credentials) => {
     if (Object.keys(droppedAssets).length > 0) {
       const droppedAssetIds: string[] = [];
       for (const index in droppedAssets) {
-        // @ts-ignore
-        droppedAssetIds.push(droppedAssets[index].id);
+        droppedAssetIds.push(droppedAssets[index].id!);
       }
-      try {
-        // promises.push(
-        World.deleteDroppedAssets(urlSlug, droppedAssetIds, {
-          interactivePublicKey,
-          interactiveSecret: process.env.INTERACTIVE_SECRET,
-        });
-        // )
-      } catch (error) {
-        errorHandler({
-          error,
-          functionName: "removeSceneFromWorld",
-          message: "Error removing dropped assets from world.",
-        });
-      }
+      promises.push(
+        World.deleteDroppedAssets(credentials.urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials),
+      );
     }
 
     // remove data from world data object
