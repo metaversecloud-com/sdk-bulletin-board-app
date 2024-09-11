@@ -23,22 +23,18 @@ export const ListItem = ({
     <div className="mt-4" key={id}>
       <div className="container mx-auto pb-4">
         <div className="grid gap-4">
-          {imageUrl ?
-            <img src={imageUrl} />
-            :
-            <p className="p2">{message}</p>
-          }
-          {displayName && <div className="p3">from {displayName} {username && username !== displayName && `(${username})`}</div>}
+          {imageUrl ? <img src={imageUrl} /> : <p className="p2">{message}</p>}
+          {displayName && (
+            <div className="p3">
+              from {displayName} {username && username !== displayName && `(${username})`}
+            </div>
+          )}
         </div>
         <div className="card-actions pt-4">
           {onApprove && (
             <div className="tooltip">
               <span className="tooltip-content">Approve</span>
-              <button
-                className="btn btn-icon"
-                onClick={() => onApprove(id)}
-                disabled={areButtonsDisabled}
-              >
+              <button className="btn btn-icon" onClick={() => onApprove(id)} disabled={areButtonsDisabled}>
                 <img src="https://sdk-style.s3.amazonaws.com/icons/check.svg" />
               </button>
             </div>
@@ -46,11 +42,7 @@ export const ListItem = ({
           {onDelete && (
             <div className="tooltip">
               <span className="tooltip-content">Delete</span>
-              <button
-                className="btn btn-icon ml-2"
-                onClick={() => onDelete(id)}
-                disabled={areButtonsDisabled}
-              >
+              <button className="btn btn-icon ml-2" onClick={() => onDelete(id)} disabled={areButtonsDisabled}>
                 <img src="https://sdk-style.s3.amazonaws.com/icons/delete.svg" />
               </button>
             </div>
@@ -60,6 +52,6 @@ export const ListItem = ({
       {hasDivider && <hr />}
     </div>
   );
-}
+};
 
 export default ListItem;
