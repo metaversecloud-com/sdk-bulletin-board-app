@@ -1,6 +1,7 @@
 export * from "./Accordion";
 export * from "./Admin";
 export * from "./AdminForm";
+export * from "./AdminIconButton";
 export * from "./Board";
 export * from "./ListItem";
 export * from "./Loading";

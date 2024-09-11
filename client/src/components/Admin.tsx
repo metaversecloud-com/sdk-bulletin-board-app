@@ -118,7 +118,7 @@ function Admin() {
     <>
       <div className="flex flex-col pb-6">
         <h1 className="h3">Admin</h1>
-        <p className="p1">This is the admin panel. You can approve messages here.</p>
+        <p className="p1 pt-4">This is the admin panel. You can approve messages here.</p>
       </div>
       <Accordion title="Settings">
         <AdminForm

@@ -85,7 +85,7 @@ function Board() {
     <>
       <div className="flex flex-col">
         <h1 className="h3">{theme.title}</h1>
-        <h4 className="h4 pb-4 pt-4">{theme.subtitle}</h4>
+        <h4 className="h4 py-4">{theme.subtitle}</h4>
         <p className="p1">{theme.description}</p>
       </div>
       <div className="flex flex-col mb-8 mt-10">

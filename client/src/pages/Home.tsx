@@ -11,10 +11,11 @@ import { GlobalStateContext } from "@/context/GlobalContext";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { AdminIconButton } from "@/components";
 
 function Home() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("board");
+  const [showSettings, setShowSettings] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,18 +38,9 @@ function Home() {
   return (
     <div className="container p-6 items-center justify-start">
       {isAdmin && (
-        <div className="flex flex-col items-end mb-6">
-          <div className="tab-container">
-            <button className={activeTab === "board" ? "btn" : "btn btn-text"} onClick={() => setActiveTab("board")}>
-              Bulletin Board
-            </button>
-            <button className={activeTab === "admin" ? "btn" : "btn btn-text"} onClick={() => setActiveTab("admin")}>
-              Admin
-            </button>
-          </div>
-        </div>
+        <AdminIconButton setShowSettings={() => setShowSettings(!showSettings)} showSettings={showSettings} />
       )}
-      {activeTab === "admin" ? <Admin /> : <Board />}
+      {showSettings ? <Admin /> : <Board />}
     </div>
   );
 }

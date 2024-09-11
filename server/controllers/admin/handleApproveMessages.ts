@@ -73,11 +73,11 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         });
         await DroppedAsset.drop(textAsset, {
           position: {
-            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textOffsetX) || -0.67),
+            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textOffsetX) || -1),
             y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.textOffsetY) || -26),
           },
           isInteractive: true,
-          isTextTopLayer: true,
+          isTextTopLayer: !droppableAsset.isTextTopLayer || droppableAsset.isTextTopLayer === "true" ? true : false,
           interactivePublicKey,
           sceneDropId,
           text: addHyphenAndNewline(message),
@@ -109,7 +109,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       ),
     );
 
-    promises.push(world.triggerParticle({ position: droppedAsset.position, name: "Flame" }));
+    promises.push(world.triggerParticle({ position: droppedAsset.position, name: "purpleSmoke_puff" }));
 
     addNewRowToGoogleSheets([
       {
