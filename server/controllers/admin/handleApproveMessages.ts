@@ -71,11 +71,23 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         const textAsset = await Asset.create(process.env.TEXT_ASSET_ID || "textAsset", {
           credentials: { interactivePublicKey, urlSlug },
         });
+        let textPosition = { x: 0, y: 0 };
+        if (droppedAsset?.position?.x) textPosition.x = Math.round(droppedAsset.position.x);
+        if (droppedAsset?.position?.y) textPosition.y = Math.round(droppedAsset.position.y);
+        if (droppableAsset.textOffsetX) {
+          if (typeof droppableAsset.textOffsetX === "number") textPosition.x + droppableAsset.textOffsetX;
+          else textPosition.x = textPosition.x + parseInt(droppableAsset.textOffsetX);
+        } else {
+          textPosition.x = textPosition.x - 1;
+        }
+        if (droppableAsset.textOffsetY) {
+          if (typeof droppableAsset.textOffsetY === "number") textPosition.y + droppableAsset.textOffsetY;
+          else textPosition.y = textPosition.y + parseInt(droppableAsset.textOffsetY);
+        } else {
+          textPosition.y = textPosition.y - 26;
+        }
         await DroppedAsset.drop(textAsset, {
-          position: {
-            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.textOffsetX) || -1),
-            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.textOffsetY) || -26),
-          },
+          position: textPosition,
           isInteractive: true,
           isTextTopLayer: !droppableAsset.isTextTopLayer || droppableAsset.isTextTopLayer === "true" ? true : false,
           interactivePublicKey,
