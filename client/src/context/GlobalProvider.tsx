@@ -5,7 +5,9 @@ import { defaultTheme } from "./constants";
 import GlobalState from "./GlobalState";
 
 const initialState: InitialState = {
-  hasInteractiveParams: false, hasSetupBackend: false, theme: defaultTheme
+  hasInteractiveParams: false,
+  hasSetupBackend: false,
+  theme: defaultTheme,
 };
 
 const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

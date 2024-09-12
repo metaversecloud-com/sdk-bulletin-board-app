@@ -28,60 +28,67 @@ function Admin() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    backendAPI.get(`/admin/messages`)
+    backendAPI
+      .get(`/admin/messages`)
       .then((result) => {
-        setMessages(result.data)
-        setMessagesLength(Object.keys(result.data).length)
+        setMessages(result.data);
+        setMessagesLength(Object.keys(result.data).length);
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => setIsLoading(false))
-  }, [])
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const updateState = (data: MessagesType) => {
-    setMessages(data)
-    setMessagesLength(Object.keys(data).length || 0)
-  }
+    setMessages(data);
+    setMessagesLength(Object.keys(data).length || 0);
+  };
 
   const handleOnSubmit = (data: AdminFormValues) => {
-    setAreButtonsDisabled(true)
-    setTheme(data)
-    backendAPI.post("/admin/theme", data)
+    setAreButtonsDisabled(true);
+    setErrorMessage("");
+    backendAPI
+      .post("/admin/theme", { ...data, existingThemeId: theme.id })
       .then(() => {
         dispatch!({
           type: SET_THEME,
           payload: { ...data },
         });
-        setTheme(data)
+        setTheme(data);
       })
       .catch((error) => setErrorMessage(error))
-      .finally(() => { setAreButtonsDisabled(false) })
+      .finally(() => {
+        setAreButtonsDisabled(false);
+      });
   };
 
   const approveMessage = (messageId: string) => {
-    setAreButtonsDisabled(true)
-    setErrorMessage("")
-    backendAPI.post(`/admin/message/approve/${messageId}`)
+    setAreButtonsDisabled(true);
+    setErrorMessage("");
+    backendAPI
+      .post(`/admin/message/approve/${messageId}`)
       .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
-      .finally(() => setAreButtonsDisabled(false))
+      .finally(() => setAreButtonsDisabled(false));
   };
 
   const deleteMessage = (messageId: string) => {
-    setAreButtonsDisabled(true)
-    setErrorMessage("")
-    backendAPI.delete(`/admin/message/${messageId}`)
+    setAreButtonsDisabled(true);
+    setErrorMessage("");
+    backendAPI
+      .delete(`/admin/message/${messageId}`)
       .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error))
-      .finally(() => setAreButtonsDisabled(false))
+      .finally(() => setAreButtonsDisabled(false));
   };
 
   const handleResetScene = async (shouldHardReset: boolean) => {
-    setAreButtonsDisabled(true)
+    setAreButtonsDisabled(true);
     setErrorMessage("");
-    backendAPI.post("/admin/reset", { shouldHardReset })
+    backendAPI
+      .post("/admin/reset", { shouldHardReset })
       .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(error?.response?.data?.message || error.message))
-      .finally(() => setAreButtonsDisabled(false))
+      .finally(() => setAreButtonsDisabled(false));
   };
 
   if (isLoading || !hasSetupBackend) return <Loading />;
@@ -111,24 +118,25 @@ function Admin() {
     <>
       <div className="flex flex-col pb-6">
         <h1 className="h3">Admin</h1>
-        <p className="p1">This is the admin panel. You can approve messages here.</p>
+        <p className="p1 pt-4">This is the admin panel. You can approve messages here.</p>
       </div>
       <Accordion title="Settings">
-        <AdminForm handleSubmitForm={handleOnSubmit} isLoading={areButtonsDisabled} handleResetScene={handleResetScene} theme={currentTheme} />
+        <AdminForm
+          handleSubmitForm={handleOnSubmit}
+          handleResetScene={handleResetScene}
+          isLoading={areButtonsDisabled}
+          setErrorMessage={setErrorMessage}
+          theme={currentTheme}
+        />
       </Accordion>
-      {messages && messagesLength > 0 &&
+      {messages && messagesLength > 0 && (
         <div className="mt-4">
-          <Accordion title="Pending Approval">
-            {getMessagesList()}
-          </Accordion>
+          <Accordion title="Pending Approval">{getMessagesList()}</Accordion>
         </div>
-      }
-      {errorMessage &&
-        <p className="p3 text-error">{`${errorMessage}`}</p>
-      }
+      )}
+      {errorMessage && <p className="p3 text-error">{`${errorMessage}`}</p>}
     </>
   );
 }
 
 export default Admin;
-

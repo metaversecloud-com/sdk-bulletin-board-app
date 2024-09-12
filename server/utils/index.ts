@@ -7,5 +7,6 @@ export * from "./errorHandler.js";
 export * from "./getCredentials.js";
 export * from "./getThemeEnvVars.js";
 export * from "./getVersion.js";
+export * from "./removeSceneFromWorld.js";
 export * from "./uploadToS3.js";
 export * from "./topiaInit.js";

@@ -17,18 +17,21 @@ const defaultThemes: DefaultThemesType = {
     description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
     subtitle: "Leave a message about something you're thankful for.",
     title: "Gratitude Garden",
+    type: "message",
   },
   FRIENDSHIP: {
     id: "FRIENDSHIP",
     description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
     subtitle: "Leave a message about something you're thankful for.",
     title: "Friendship Garden",
+    type: "message",
   },
   CHALK: {
     id: "CHALK",
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     subtitle: "Add a picture to add to the virtual sidewalk.",
     title: "Chalk the Block",
+    type: "image",
   },
 };
 
@@ -38,15 +41,17 @@ export const getThemeEnvVars = (id: string) => {
 
     const anchorAssetImage = process.env[`ANCHOR_ASSET_IMAGE_${id}`];
 
-    const droppableSceneIds = process.env[`DROPPABLE_SCENE_IDS_${id}`]
-      ? process.env[`DROPPABLE_SCENE_IDS_${id}`]!.split(",")
-      : [];
+    let droppableAssets;
+    if (process.env[`DROPPABLE_ASSETS_${id}`]) {
+      const unescapedJson = process.env[`DROPPABLE_ASSETS_${id}`]!.replace(/\\"/g, '"');
+      droppableAssets = JSON.parse(unescapedJson);
+    }
 
     const sceneId = process.env[`SCENE_ID_${id}`];
 
     const theme = defaultThemes[id];
 
-    return { anchorAssetImage, droppableSceneIds, sceneId, theme };
+    return { anchorAssetImage, droppableAssets, sceneId, theme };
   } catch (error) {
     return errorHandler({
       error,

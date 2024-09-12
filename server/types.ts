@@ -28,8 +28,9 @@ export type MessagesType = {
 export type ThemeType = {
   id: string;
   description: string;
-  title: string;
   subtitle: string;
+  title: string;
+  type: string;
 };
 
 export type DataObjectType = {
