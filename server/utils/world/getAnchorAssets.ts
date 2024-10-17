@@ -1,5 +1,5 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { errorHandler } from "../errorHandler";
+import { errorHandler } from "../index.js";
 
 export const getAnchorAssets = async (sceneDropId: string, world: any) => {
   try {
