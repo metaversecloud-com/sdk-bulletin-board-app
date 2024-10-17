@@ -34,9 +34,8 @@ export type ThemeType = {
 };
 
 export type DataObjectType = {
-  anchorAssets: string[];
+  anchorAssets: string[]; // array of dropped asset ids
   messages: MessagesType;
-  placedAssets: string[];
   theme: ThemeType;
-  usedSpaces: string[];
+  usedSpaces: string[]; // list of anchorAssets that have already been used
 };

@@ -12,6 +12,7 @@ import { AdminFormValues } from "@/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 export function AdminForm({
   handleResetScene,
@@ -54,7 +55,7 @@ export function AdminForm({
   const removeBulletinBoard = async () => {
     setErrorMessage("");
     setShowRemoveModal(false);
-    backendAPI.delete("/scene").catch((error) => setErrorMessage(error?.response?.data?.message || error.message));
+    backendAPI.delete("/scene").catch((error) => setErrorMessage(getErrorMessage(error)));
   };
 
   const onResetScene = () => {

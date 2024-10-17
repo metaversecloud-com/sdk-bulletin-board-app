@@ -12,6 +12,7 @@ import { SET_THEME } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 // types
 import { AdminFormValues, MessageI, MessagesType } from "@/types";
@@ -55,7 +56,7 @@ function Admin() {
         });
         setTheme(data);
       })
-      .catch((error) => setErrorMessage(error))
+      .catch((error) => setErrorMessage(getErrorMessage(error)))
       .finally(() => {
         setAreButtonsDisabled(false);
       });
@@ -67,7 +68,7 @@ function Admin() {
     backendAPI
       .post(`/admin/message/approve/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(error))
+      .catch((error) => setErrorMessage(getErrorMessage(error)))
       .finally(() => setAreButtonsDisabled(false));
   };
 
@@ -77,7 +78,7 @@ function Admin() {
     backendAPI
       .delete(`/admin/message/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(error))
+      .catch((error) => setErrorMessage(getErrorMessage(error)))
       .finally(() => setAreButtonsDisabled(false));
   };
 
@@ -87,7 +88,7 @@ function Admin() {
     backendAPI
       .post("/admin/reset", { shouldHardReset })
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(error?.response?.data?.message || error.message))
+      .catch((error) => setErrorMessage(getErrorMessage(error)))
       .finally(() => setAreButtonsDisabled(false));
   };
 

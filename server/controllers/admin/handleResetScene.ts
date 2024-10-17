@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   errorHandler,
+  getAnchorAssets,
   getCredentials,
   getPendingMessages,
   getThemeEnvVars,
@@ -8,7 +9,6 @@ import {
   World,
 } from "../../utils/index.js";
 import { DataObjectType } from "../../types.js";
-import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetScene = async (req: Request, res: Response) => {
   try {
@@ -19,11 +19,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
     const { dataObject, world } = await getWorldDataObject(credentials);
     const { messages, theme } = dataObject as DataObjectType;
 
-    const anchorAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
-      sceneDropId: credentials.sceneDropId,
-      uniqueName: "anchor",
-    });
-    const anchorAssetIds = anchorAssets.map(({ id }) => id);
+    const { anchorAssets, anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
 
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
@@ -73,7 +69,6 @@ export const handleResetScene = async (req: Request, res: Response) => {
         {
           [`scenes.${sceneDropId}.anchorAssets`]: anchorAssetIds,
           [`scenes.${sceneDropId}.messages`]: {},
-          [`scenes.${sceneDropId}.placedAssets`]: [],
           [`scenes.${sceneDropId}.usedSpaces`]: [],
         },
         {
