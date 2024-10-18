@@ -6,6 +6,7 @@ import {
   Asset,
   DroppedAsset,
   errorHandler,
+  getAnchorAssets,
   getCredentials,
   getPendingMessages,
   getThemeEnvVars,
@@ -19,7 +20,8 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     const { displayName, identityId, interactivePublicKey, sceneDropId, urlSlug } = credentials;
 
     const { dataObject, world } = await getWorldDataObject(credentials);
-    const { anchorAssets, messages, usedSpaces, placedAssets, theme } = dataObject as DataObjectType;
+    const { anchorAssets, messages, usedSpaces, theme } = dataObject as DataObjectType;
+    let updateAnchorAssets = anchorAssets;
 
     const thisMessage = messages[messageId];
     if (!thisMessage) throw new Error("Message not found");
@@ -27,16 +29,32 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
 
     const lockId = `${sceneDropId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
-    const emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset));
+    let droppedAsset, droppedAssetId, emptySpaces;
 
-    let droppedAssetId;
-    // if all spaces are taken then update randomly selected already dropped asset
+    // get subset list of anchor asset ids that are not currently in the usedSpaces array
+    emptySpaces = anchorAssets.filter((anchorAsset) => !usedSpaces.includes(anchorAsset));
     if (emptySpaces.length > 0) {
       droppedAssetId = emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
     } else {
-      droppedAssetId = placedAssets[Math.floor(Math.random() * placedAssets.length)];
+      // if all spaces are taken then update randomly selected already dropped asset
+      droppedAssetId = anchorAssets[Math.floor(Math.random() * anchorAssets.length)];
     }
-    const droppedAsset = await DroppedAsset.get(droppedAssetId, urlSlug, { credentials });
+
+    try {
+      droppedAsset = await DroppedAsset.get(droppedAssetId, urlSlug, { credentials });
+    } catch (error) {
+      // dropped asset not found, pull all anchor assets from scene and try again
+      const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
+      updateAnchorAssets = anchorAssetIds;
+
+      emptySpaces = anchorAssetIds.filter((anchorAsset: string) => !usedSpaces.includes(anchorAsset));
+      if (emptySpaces.length > 0) {
+        droppedAssetId = emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
+      } else {
+        droppedAssetId = anchorAssets[Math.floor(Math.random() * anchorAssets.length)];
+      }
+      droppedAsset = await DroppedAsset.get(droppedAssetId, urlSlug, { credentials });
+    }
 
     const promises = [];
 
@@ -46,6 +64,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       promises.push(droppedAsset.updateWebImageLayers(imageUrl, ""));
     } else if (message) {
       if (emptySpaces.length > 0) {
+        // not all spaces have been used, pick empty space at random and drop web and text assets
         const { droppableAssets } = getThemeEnvVars(theme.id);
 
         const random = Math.floor(Math.random() * droppableAssets.length);
@@ -102,6 +121,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           yOrderAdjust: parseInt(droppableAsset.yOrderAdjust) || 1000,
         });
       } else {
+        // all spaces are used, update text asset associated with selected anchor asset
         const textAsset = await DroppedAsset.getWithUniqueName(
           `${sceneDropId}-text-${droppedAssetId}`,
           urlSlug,
@@ -116,7 +136,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       world.updateDataObject(
         {
           [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true,
-          [`scenes.${sceneDropId}.placedAssets`]: placedAssets,
+          [`scenes.${sceneDropId}.anchorAssets`]: updateAnchorAssets,
           [`scenes.${sceneDropId}.usedSpaces`]: usedSpaces,
         },
         {

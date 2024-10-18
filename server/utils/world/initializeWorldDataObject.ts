@@ -1,6 +1,6 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { DroppedAsset, errorHandler, getThemeEnvVars } from "../index.js";
-import { Credentials } from "../../types.js";
+import { DroppedAsset, errorHandler, getAnchorAssets, getThemeEnvVars } from "../index.js";
+import { Credentials, DataObjectType } from "../../types.js";
 
 interface DroppedAssetInterfaceI extends DroppedAssetInterface {
   dataObject: {
@@ -13,11 +13,16 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
     const { assetId, sceneDropId, urlSlug } = credentials;
     await world.fetchDataObject();
 
-    const payload = {
+    const payload: DataObjectType = {
       anchorAssets: [],
       messages: {},
-      placedAssets: [],
-      theme: {},
+      theme: {
+        id: "",
+        description: "",
+        subtitle: "",
+        title: "",
+        type: "",
+      },
       usedSpaces: [],
     };
 
@@ -29,12 +34,8 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
       const { theme } = await getThemeEnvVars(themeId);
       payload.theme = theme;
 
-      const assetsList: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
-        sceneDropId: credentials.sceneDropId,
-        uniqueName: "anchor",
-      });
-      // @ts-ignore
-      payload.anchorAssets = assetsList.map(({ id }) => id);
+      const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
+      payload.anchorAssets = anchorAssetIds;
     }
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;

@@ -14,6 +14,7 @@ import { backendAPI } from "@/utils/backendAPI";
 
 // types
 import { MessageI } from "@/types";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 function Board() {
   const { hasSetupBackend, theme } = useContext(GlobalStateContext);
@@ -61,7 +62,7 @@ function Board() {
         setMessages(result.data);
         setMessagesLength(Object.keys(result.data).length);
       })
-      .catch((error) => setErrorMessage(error))
+      .catch((error) => setErrorMessage(getErrorMessage(error)))
       .finally(() => setAreButtonsDisabled(false));
   };
 

@@ -29,7 +29,6 @@ Bulletin Board is a message board style application. Users can submit messages a
 - World: the data object attached to the world will store all information for each dropped scene indexed by `dropSceneId`. Data structure:
   - anchorAssets: an array of all of the dropped asset ids populated the first time the Key Asset is clicked,
   - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and username`,
-  - placedAssets: an array of all of the dropped asset ids added to the scene once a message has been approved,
   - theme: theme settings which include `id ("CHALK", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,
   - usedSpaces: an array of all of the anchorAssets that have been used to place an approved message thus far
 
