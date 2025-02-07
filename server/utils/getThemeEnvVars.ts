@@ -14,22 +14,22 @@ type DefaultThemesType = {
 const defaultThemes: DefaultThemesType = {
   GRATITUDE: {
     id: "GRATITUDE",
-    description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the garden.",
     subtitle: "Leave a message about something you're thankful for.",
     title: "Gratitude Garden",
     type: "message",
   },
   FRIENDSHIP: {
     id: "FRIENDSHIP",
-    description: "Enter a messages below and click Submit. Once it's approved it will be added to the garden.",
-    subtitle: "Leave a message about something you're thankful for.",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the garden.",
+    subtitle: "Leave a message for your friends.",
     title: "Friendship Garden",
     type: "message",
   },
   CHALK: {
     id: "CHALK",
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
-    subtitle: "Add a picture to add to the virtual sidewalk.",
+    subtitle: "Add a picture to the virtual sidewalk.",
     title: "Chalk the Block",
     type: "image",
   },
