@@ -5,6 +5,12 @@ import { Credentials, DataObjectType } from "../../types.js";
 interface DroppedAssetInterfaceI extends DroppedAssetInterface {
   dataObject: {
     themeId?: string;
+    theme?: {
+      description?: string;
+      subtitle?: string;
+      title?: string;
+      type?: string;
+    };
   };
 }
 
@@ -33,6 +39,13 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
       const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
       const { theme } = await getThemeEnvVars(themeId);
       payload.theme = theme;
+      payload.theme = {
+        id: themeId,
+        description: keyAsset.dataObject?.theme?.description || theme.description || "",
+        subtitle: keyAsset.dataObject?.theme?.subtitle || theme.subtitle || "",
+        title: keyAsset.dataObject?.theme?.title || theme.title || "",
+        type: keyAsset.dataObject?.theme?.type || theme.type || "",
+      };
 
       const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
       payload.anchorAssets = anchorAssetIds;
