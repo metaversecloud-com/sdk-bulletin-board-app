@@ -5,6 +5,7 @@ enum ThemeIds {
   GRATITUDE = "GRATITUDE",
   FRIENDSHIP = "FRIENDSHIP",
   CHALK = "CHALK",
+  CAR = "CAR",
 }
 
 type DefaultThemesType = {
@@ -31,6 +32,13 @@ const defaultThemes: DefaultThemesType = {
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     subtitle: "Add a picture to the virtual sidewalk.",
     title: "Chalk the Block",
+    type: "image",
+  },
+  CAR: {
+    id: "CAR",
+    description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
+    subtitle: "Add a picture to the virtual parking lot.",
+    title: "Decorate your car",
     type: "image",
   },
 };

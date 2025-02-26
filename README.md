@@ -29,7 +29,7 @@ Bulletin Board is a message board style application. Users can submit messages a
 - World: the data object attached to the world will store all information for each dropped scene indexed by `dropSceneId`. Data structure:
   - anchorAssets: an array of all of the dropped asset ids populated the first time the Key Asset is clicked,
   - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and username`,
-  - theme: theme settings which include `id ("CHALK", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,
+  - theme: theme settings which include `id ("CHALK", "CAR", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,
   - usedSpaces: an array of all of the anchorAssets that have been used to place an approved message thus far
 
 #### Theme Defaults:
@@ -43,6 +43,18 @@ Below are the defaults for each theme. If you want to change the theme options w
     "description": "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     "subtitle": "Add a picture to the virtual sidewalk.",
     "title": "Chalk the Block",
+    "type": "image"
+  }
+}
+```
+
+```json
+{
+  "themeId": "CAR",
+  "theme": {
+    "description": "Upload an image below and click submit. Once it's approved, it will be added to the world.",
+    "subtitle": "Add a picture to the virtual parking lot.",
+    "title": "Decorate your car",
     "type": "image"
   }
 }

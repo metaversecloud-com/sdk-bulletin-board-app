@@ -46,7 +46,7 @@ export function MessageForm({
   return (
     <>
       <form onSubmit={onSubmit}>
-        {themeId === "CHALK" ? (
+        {themeId === "CHALK" || themeId === "CAR" ? (
           <>
             <label>Upload your image:</label>
             <p className="p3">(.png, max file size: ___)</p>
