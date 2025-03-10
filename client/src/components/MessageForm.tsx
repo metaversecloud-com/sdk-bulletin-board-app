@@ -49,7 +49,7 @@ export function MessageForm({
         {themeId === "CHALK" ? (
           <>
             <label>Upload your image:</label>
-            <p className="p3">(.png, max file size: ___)</p>
+            <p className="p3">(.png, max file size: 1mb)</p>
             <input accept="image/png" className="input" type="file" {...register("images", { required: true })} />
           </>
         ) : (
