@@ -36,4 +36,5 @@ export const ThemeIds: { [key: string]: string } = {
   GRATITUDE: "Gratitude Garden",
   FRIENDSHIP: "Friendship Garden",
   CHALK: "Chalk the Block",
+  CAR: "Decorate your car",
 };

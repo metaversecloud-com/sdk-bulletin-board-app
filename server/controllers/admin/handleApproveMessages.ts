@@ -24,7 +24,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     let updateAnchorAssets = anchorAssets;
 
     const thisMessage = messages[messageId];
-    if (!thisMessage) throw new Error("Message not found");
+    if (!thisMessage) throw "Message not found";
     const { imageUrl, message } = thisMessage;
 
     const lockId = `${sceneDropId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
@@ -69,6 +69,9 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
 
         const random = Math.floor(Math.random() * droppableAssets.length);
         const droppableAsset = droppableAssets[random];
+        if (!droppableAsset?.layer0 && !droppableAsset.layer1) {
+          throw "Droppable asset layers not found. Please check environment variables.";
+        }
 
         const webImageAsset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
           credentials: { interactivePublicKey, urlSlug },

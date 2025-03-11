@@ -27,8 +27,13 @@ export function MessageForm({
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
-          canvas.width = 141;
-          canvas.height = 123;
+          if (themeId === "CHALK") {
+            canvas.width = 141;
+            canvas.height = 123;
+          } else {
+            canvas.width = 300;
+            canvas.height = 150;
+          }
           if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           dataURL = canvas.toDataURL("image/png");
           handleSubmitForm({ imageData: dataURL });
@@ -46,7 +51,7 @@ export function MessageForm({
   return (
     <>
       <form onSubmit={onSubmit}>
-        {themeId === "CHALK" ? (
+        {themeId === "CHALK" || themeId === "CAR" ? (
           <>
             <label>Upload your image:</label>
             <p className="p3">(.png, max file size: 1mb)</p>
