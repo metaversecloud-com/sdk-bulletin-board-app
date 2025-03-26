@@ -4,6 +4,7 @@ import { ThemeType } from "../types";
 enum ThemeIds {
   GRATITUDE = "GRATITUDE",
   FRIENDSHIP = "FRIENDSHIP",
+  BULLETIN = "BULLETIN",
   CHALK = "CHALK",
   CAR = "CAR",
 }
@@ -25,6 +26,13 @@ const defaultThemes: DefaultThemesType = {
     description: "Enter a message below and click Submit. Once it's approved it will be added to the garden.",
     subtitle: "Leave a message for your friends.",
     title: "Friendship Garden",
+    type: "message",
+  },
+  BULLETIN: {
+    id: "BULLETIN",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the board.",
+    subtitle: "Leave a message.",
+    title: "Bulletin Board",
     type: "message",
   },
   CHALK: {
