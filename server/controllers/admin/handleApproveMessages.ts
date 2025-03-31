@@ -69,7 +69,23 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
 
         const random = Math.floor(Math.random() * droppableAssets.length);
         const droppableAsset = droppableAssets[random];
-        if (!droppableAsset?.layer0 && !droppableAsset.layer1) {
+        const {
+          layer0,
+          layer1,
+          imageOffsetX,
+          imageOffsetY,
+          textOffsetX,
+          textOffsetY,
+          isTextTopLayer,
+          textColor,
+          textSize,
+          textWidth,
+          yOrderAdjust,
+        } = droppableAsset;
+
+        const { position } = droppedAsset;
+
+        if (!layer0 && !layer1) {
           throw "Droppable asset layers not found. Please check environment variables.";
         }
 
@@ -78,50 +94,51 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         });
         await DroppedAsset.drop(webImageAsset, {
           position: {
-            x: (droppedAsset?.position?.x || 0) + (parseInt(droppableAsset.imageOffsetX) || 0),
-            y: (droppedAsset?.position?.y || 0) + (parseInt(droppableAsset.imageOffsetY) || 0),
+            x: (position?.x || 0) + (parseInt(imageOffsetX) || 0),
+            y: (position?.y || 0) + (parseInt(imageOffsetY) || 0),
           },
           isInteractive: true,
           interactivePublicKey,
-          layer0: droppableAsset.layer0,
-          layer1: droppableAsset.layer1,
+          layer0,
+          layer1,
           sceneDropId,
           uniqueName: `${sceneDropId}-background-${droppedAssetId}`,
           urlSlug,
         });
 
-        const textAsset = await Asset.create(process.env.TEXT_ASSET_ID || "textAsset", {
-          credentials: { interactivePublicKey, urlSlug },
-        });
         let textPosition = { x: 0, y: 0 };
-        if (droppedAsset?.position?.x) textPosition.x = Math.round(droppedAsset.position.x);
-        if (droppedAsset?.position?.y) textPosition.y = Math.round(droppedAsset.position.y);
-        if (droppableAsset.textOffsetX) {
-          if (typeof droppableAsset.textOffsetX === "number") textPosition.x + droppableAsset.textOffsetX;
-          else textPosition.x = textPosition.x + parseInt(droppableAsset.textOffsetX);
+        if (position?.x) textPosition.x = Math.round(position.x);
+        if (position?.y) textPosition.y = Math.round(position.y);
+        if (textOffsetX) {
+          if (typeof textOffsetX === "number") textPosition.x + textOffsetX;
+          else textPosition.x = textPosition.x + parseInt(textOffsetX);
         } else {
           textPosition.x = textPosition.x - 1;
         }
-        if (droppableAsset.textOffsetY) {
-          if (typeof droppableAsset.textOffsetY === "number") textPosition.y + droppableAsset.textOffsetY;
-          else textPosition.y = textPosition.y + parseInt(droppableAsset.textOffsetY);
+        if (textOffsetY) {
+          if (typeof textOffsetY === "number") textPosition.y + textOffsetY;
+          else textPosition.y = textPosition.y + parseInt(textOffsetY);
         } else {
           textPosition.y = textPosition.y - 26;
         }
+
+        const textAsset = await Asset.create(process.env.TEXT_ASSET_ID || "textAsset", {
+          credentials: { interactivePublicKey, urlSlug },
+        });
         await DroppedAsset.drop(textAsset, {
           position: textPosition,
           isInteractive: true,
-          isTextTopLayer: !droppableAsset.isTextTopLayer || droppableAsset.isTextTopLayer === "true" ? true : false,
+          isTextTopLayer: !isTextTopLayer || isTextTopLayer === "true" ? true : false,
           interactivePublicKey,
           sceneDropId,
           text: addHyphenAndNewline(message),
-          textColor: droppableAsset.textColor || "white",
-          textSize: 16,
+          textColor: textColor || "white",
+          textSize: parseInt(textSize) || 16,
           textWeight: "normal",
-          textWidth: 190,
+          textWidth: parseInt(textWidth) || 190,
           uniqueName: `${sceneDropId}-text-${droppedAssetId}`,
           urlSlug,
-          yOrderAdjust: parseInt(droppableAsset.yOrderAdjust) || 1000,
+          yOrderAdjust: parseInt(yOrderAdjust) || 1000,
         });
       } else {
         // all spaces are used, update text asset associated with selected anchor asset

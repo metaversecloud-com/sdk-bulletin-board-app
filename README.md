@@ -84,6 +84,18 @@ Below are the defaults for each theme. If you want to change the theme options w
 }
 ```
 
+```json
+{
+  "themeId": "BULLETIN",
+  "theme": {
+    "description": "Enter a message below and click Submit. Once it's approved it will be added to the board.",
+    "subtitle": "Leave a message.",
+    "title": "Bulletin Board",
+    "type": "message"
+  }
+}
+```
+
 ## Developers:
 
 ### Getting Started
