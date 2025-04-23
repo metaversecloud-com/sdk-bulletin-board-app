@@ -14,7 +14,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
   try {
     const { shouldHardReset } = req.body;
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials;
+    const { sceneDropId, urlSlug } = credentials;
 
     const { dataObject, world } = await getWorldDataObject(credentials);
     const { messages, theme } = dataObject as DataObjectType;
@@ -59,7 +59,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
         }
 
         promises.push(
-          World.deleteDroppedAssets(credentials.urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials),
+          World.deleteDroppedAssets(urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials),
         );
       }
 

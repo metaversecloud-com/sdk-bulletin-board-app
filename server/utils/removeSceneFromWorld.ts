@@ -17,9 +17,7 @@ export const removeSceneFromWorld = async (credentials: Credentials) => {
       for (const index in droppedAssets) {
         droppedAssetIds.push(droppedAssets[index].id!);
       }
-      promises.push(
-        World.deleteDroppedAssets(credentials.urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials),
-      );
+      promises.push(World.deleteDroppedAssets(urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials));
     }
 
     // remove data from world data object
