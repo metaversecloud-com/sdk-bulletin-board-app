@@ -90,7 +90,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         }
 
         const webImageAsset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
-          credentials: { interactivePublicKey, urlSlug },
+          credentials,
         });
         await DroppedAsset.drop(webImageAsset, {
           position: {
@@ -123,7 +123,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         }
 
         const textAsset = await Asset.create(process.env.TEXT_ASSET_ID || "textAsset", {
-          credentials: { interactivePublicKey, urlSlug },
+          credentials,
         });
         await DroppedAsset.drop(textAsset, {
           position: textPosition,
