@@ -14,16 +14,23 @@ export const handleRemoveSceneFromWorld = async (req: Request, res: Response) =>
     // close drawer and fire toast
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    promises.push(
-      visitor.closeIframe(assetId),
-      visitor.fireToast({
+    promises.push(visitor.closeIframe(assetId));
+
+    await Promise.all(promises);
+
+    visitor
+      .fireToast({
         groupId: "RemoveScene",
         title: "Bulletin Board Removed",
         text: "You have successfully removed this Bulletin Board from your world.",
       })
-    )
-
-    await Promise.all(promises)
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleEditDroppedAsset",
+          message: "Error firing toast",
+        }),
+      );
 
     return res.json({ success: true });
   } catch (error) {
