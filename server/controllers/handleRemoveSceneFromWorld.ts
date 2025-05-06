@@ -1,4 +1,3 @@
-import { DroppedAssetInterface } from "@rtsdk/topia";
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, removeSceneFromWorld, Visitor, World } from "../utils/index.js";
 
@@ -14,7 +13,13 @@ export const handleRemoveSceneFromWorld = async (req: Request, res: Response) =>
     // close drawer and fire toast
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    promises.push(visitor.closeIframe(assetId));
+    visitor.closeIframe(assetId).catch((error: any) =>
+      errorHandler({
+        error,
+        functionName: "handleRemoveSceneFromWorld",
+        message: "Error closing iframe",
+      }),
+    );
 
     await Promise.all(promises);
 
