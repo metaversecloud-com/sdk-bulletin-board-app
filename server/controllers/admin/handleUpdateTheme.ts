@@ -1,36 +1,79 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject } from "../../utils/index.js";
+import {
+  DroppedAsset,
+  errorHandler,
+  getCredentials,
+  getThemeEnvVars,
+  getWorldDataObject,
+  removeSceneFromWorld,
+  Visitor,
+  World,
+} from "../../utils/index.js";
+import { IDroppedAsset } from "../../types.js";
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
   try {
+    const { existingThemeId, id } = req.body;
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials;
+    const { assetId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    // const { existingThemeId, id } = req.body;
-    // const credentials = getCredentials(req.query);
-    // const { assetId, sceneDropId, urlSlug } = credentials;
+    const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
-    // if (existingThemeId && existingThemeId !== id) {
-    //   const { sceneId } = await getThemeEnvVars(id);
-    //   if (!sceneId) throw `Missing required SCENE_ID_${id} theme environment variables in the .env file`;
+    if (existingThemeId && existingThemeId !== id) {
+      const { sceneId } = await getThemeEnvVars(id);
+      if (!sceneId) throw `Missing required SCENE_ID_${id} theme environment variables in the .env file`;
 
-    //   const { position } = await DroppedAsset.get(assetId, urlSlug, { credentials });
+      const [droppedAsset, world, visitor] = await Promise.all([
+        DroppedAsset.create(assetId, urlSlug, { credentials }),
+        World.create(urlSlug, { credentials }),
+        Visitor.create(visitorId, urlSlug, { credentials }),
+      ]);
 
-    //   await removeSceneFromWorld(credentials);
+      const allDroppedAssets = (await world.fetchDroppedAssetsBySceneDropId({
+        sceneDropId,
+      })) as IDroppedAsset[];
 
-    //   const world = World.create(urlSlug, { credentials });
-    //   await world.dropScene({
-    //     sceneId,
-    //     position: position!,
-    //     assetSuffix: "message",
-    //   });
+      const containerAsset = allDroppedAssets?.find((asset) => {
+        return asset.uniqueName === "bulletin-board-container";
+      });
 
-    //   return res.send({});
-    // }
+      let position = containerAsset?.position;
+      if (!position) {
+        const { dataObject } = await getWorldDataObject(credentials);
+        position = dataObject.sceneDropPosition;
+        if (!position)
+          throw `Now position found. Please add a "bulletin-board-container" dropped asset or set a position in the world data object.`;
+      }
+
+      await removeSceneFromWorld({ credentials, shouldRemoveKeyAsset: false, themeId: existingThemeId });
+
+      visitor.closeIframe(assetId).catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handleUpdateTheme",
+          message: "Error closing iframe",
+        }),
+      );
+
+      await world.dropScene({
+        allowNonAdmins: true,
+        sceneId,
+        position,
+        sceneDropId,
+      });
+
+      droppedAsset.deleteDroppedAsset();
+
+      world.setDataObject(
+        { [`scenes.${sceneDropId}`]: { sceneDropPosition: position } },
+        { lock: { lockId, releaseLock: true } },
+      );
+
+      return res.send({});
+    }
 
     const { world } = await getWorldDataObject(credentials);
 
-    const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
     await world.updateDataObject(
       { [`scenes.${sceneDropId}.theme`]: req.body },
       { lock: { lockId, releaseLock: true } },

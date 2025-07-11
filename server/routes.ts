@@ -10,6 +10,7 @@ import {
   handleResetScene,
   handleUpdateTheme,
   handleDeleteUserMessage,
+  handleRemoveSceneFromWorld,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -57,6 +58,8 @@ router.get("/visitor", handleGetVisitor);
 // admin
 router.post("/admin/theme", handleUpdateTheme);
 router.post("/admin/reset", handleResetScene);
+router.post("/admin/remove", handleRemoveSceneFromWorld);
+
 router.get("/admin/messages", handleGetPendingMessages);
 router.post("/admin/message/approve/:messageId", handleApproveMessages);
 router.delete("/admin/message/:messageId", handleDeleteMessage);

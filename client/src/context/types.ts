@@ -31,11 +31,3 @@ export type ActionType = {
   type: string;
   payload?: object;
 };
-
-export const ThemeIds: { [key: string]: string } = {
-  GRATITUDE: "Gratitude Garden",
-  FRIENDSHIP: "Friendship Garden",
-  BULLETIN: "Bulletin Board",
-  CHALK: "Chalk the Block",
-  CAR: "Decorate your car",
-};

@@ -1,3 +1,5 @@
+import { DroppedAssetInterface } from "@rtsdk/topia";
+
 export interface Credentials {
   assetId: string;
   displayName: string;
@@ -38,4 +40,24 @@ export type DataObjectType = {
   messages: MessagesType;
   theme: ThemeType;
   usedSpaces: string[]; // list of anchorAssets that have already been used
+  sceneDropPosition?: {
+    x: number;
+    y: number;
+  };
 };
+
+export interface IDroppedAsset extends DroppedAssetInterface {
+  dataObject: {
+    themeId?: string;
+    theme?: {
+      description?: string;
+      subtitle?: string;
+      title?: string;
+      type?: string;
+    };
+    sceneDropPosition?: {
+      x: number;
+      y: number;
+    };
+  };
+}
