@@ -6,7 +6,7 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
     const { assetId, sceneDropId, urlSlug } = credentials;
     await world.fetchDataObject();
 
-    if (world.dataObject?.scenes?.[sceneDropId]?.theme) return;
+    if (world.dataObject?.scenes?.[sceneDropId]?.theme?.id) return;
 
     const payload: DataObjectType = {
       anchorAssets: [],
