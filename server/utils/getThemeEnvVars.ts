@@ -53,7 +53,7 @@ const defaultThemes: DefaultThemesType = {
 
 export const getThemeEnvVars = (id: string) => {
   try {
-    if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw "Theme id not found";
+    if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw `Theme id not found: ${id}`;
 
     const anchorAssetImage = process.env[`ANCHOR_ASSET_IMAGE_${id}`];
 

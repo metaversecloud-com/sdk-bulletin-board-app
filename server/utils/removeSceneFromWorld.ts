@@ -35,7 +35,7 @@ export const removeSceneFromWorld = async ({
     if (theme?.id && !position) {
       position = dataObject.sceneDropPosition;
       if (!position) {
-        throw `Now position found. Please add a "bulletin-board-container" dropped asset or set a position in the world data object.`;
+        throw `No position found. Please add a "bulletin-board-container" dropped asset or set a position in the world data object.`;
       }
     }
 
