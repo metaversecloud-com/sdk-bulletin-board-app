@@ -7,6 +7,7 @@ import Modal from "./Modal";
 // types
 import { AdminFormValues } from "@/types";
 import { themes } from "@/context/constants";
+import { ThemeType } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -23,12 +24,7 @@ export function AdminForm({
   handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
   setErrorMessage: (value: string) => void;
-  theme: {
-    id: string;
-    description: string;
-    subtitle: string;
-    title: string;
-  };
+  theme: ThemeType;
 }) {
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showChangeSceneModal, setShowChangeSceneModal] = useState(false);
@@ -80,7 +76,7 @@ export function AdminForm({
                   .filter((t) => t.group === themes[theme.id as keyof typeof themes]?.group)
                   .map((t) => (
                     <option key={t.id} value={t.id}>
-                      {t.id}
+                      {t.title}
                     </option>
                   ));
               })()}

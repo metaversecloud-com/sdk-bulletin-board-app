@@ -55,7 +55,7 @@ Below are the defaults for each theme. If you want to change the theme options w
   "theme": {
     "description": "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     "subtitle": "Add a picture to the virtual parking lot.",
-    "title": "Decorate your car",
+    "title": "Decorate your parking space",
     "type": "image"
   },
   "sceneDropPosition": { "x": 0, "y": 0 }

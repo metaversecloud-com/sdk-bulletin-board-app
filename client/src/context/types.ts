@@ -19,15 +19,17 @@ export type InteractiveParams = {
 export interface InitialState {
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
-  theme: {
-    id: string;
-    description: string;
-    subtitle: string;
-    title: string;
-  };
+  theme: ThemeType;
 }
 
 export type ActionType = {
   type: string;
   payload?: object;
+};
+
+export type ThemeType = {
+  id: string;
+  description: string;
+  subtitle: string;
+  title: string;
 };

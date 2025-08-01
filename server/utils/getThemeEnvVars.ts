@@ -46,7 +46,7 @@ const defaultThemes: DefaultThemesType = {
     id: "CAR",
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     subtitle: "Add a picture to the virtual parking lot.",
-    title: "Decorate your car",
+    title: "Decorate your parking space",
     type: "image",
   },
 };
