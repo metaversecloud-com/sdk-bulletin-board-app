@@ -46,14 +46,14 @@ const defaultThemes: DefaultThemesType = {
     id: "CAR",
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     subtitle: "Add a picture to the virtual parking lot.",
-    title: "Decorate your car",
+    title: "Decorate your parking space",
     type: "image",
   },
 };
 
 export const getThemeEnvVars = (id: string) => {
   try {
-    if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw "Theme id not found";
+    if (!Object.values(ThemeIds).includes(id as ThemeIds)) throw `Theme id not found: ${id}`;
 
     const anchorAssetImage = process.env[`ANCHOR_ASSET_IMAGE_${id}`];
 

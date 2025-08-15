@@ -4,11 +4,10 @@ import { useForm } from "react-hook-form";
 // components
 import Modal from "./Modal";
 
-// context
-import { ThemeIds } from "@/context/types";
-
 // types
 import { AdminFormValues } from "@/types";
+import { themes } from "@/context/constants";
+import { ThemeType } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -25,13 +24,9 @@ export function AdminForm({
   handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
   setErrorMessage: (value: string) => void;
-  theme: {
-    id: string;
-    description: string;
-    subtitle: string;
-    title: string;
-  };
+  theme: ThemeType;
 }) {
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showChangeSceneModal, setShowChangeSceneModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -42,9 +37,8 @@ export function AdminForm({
 
   const onSubmit = handleSubmit((data) => {
     setFormData(data);
-    // if (data.id !== theme.id) setShowChangeSceneModal(true);
-    // else handleSubmitForm(data);
-    handleSubmitForm(data);
+    if (data.id !== theme.id) setShowChangeSceneModal(true);
+    else handleSubmitForm(data);
   });
 
   const confirmSubmit = () => {
@@ -52,43 +46,81 @@ export function AdminForm({
     setShowChangeSceneModal(false);
   };
 
-  const removeBulletinBoard = async () => {
+  const removeScene = async () => {
     setErrorMessage("");
     setShowRemoveModal(false);
-    backendAPI.delete("/scene").catch((error) => setErrorMessage(getErrorMessage(error)));
+    setAreButtonsDisabled(true);
+    backendAPI.post("/admin/remove", { theme }).catch((error) => setErrorMessage(getErrorMessage(error)));
   };
 
-  const onResetScene = () => {
+  const onResetScene = async () => {
+    setAreButtonsDisabled(true);
+    await handleResetScene(shouldHardReset);
     setShowResetModal(false);
-    handleResetScene(shouldHardReset);
+    setAreButtonsDisabled(false);
   };
 
   return (
     <>
       <form onSubmit={onSubmit}>
-        <label>Theme:</label>
-        <select className="input mb-4" {...register("id", { required: true, value: theme.id })}>
-          {Object.keys(ThemeIds).map((id) => (
-            <option key={id} value={id}>
-              {ThemeIds[id]}
-            </option>
-          ))}
-        </select>
-        <label>Title:</label>
-        <input className="input mb-4" {...register("title", { required: true, value: theme.title })} />
-        <label>Subtitle:</label>
-        <input className="input mb-4" {...register("subtitle", { required: true, value: theme.subtitle })} />
-        <label>Description:</label>
-        <textarea className="input mb-4" {...register("description", { value: theme.description })} />
-        <button className="btn my-2" disabled={isLoading} type="submit">
+        <div className="grid gap-4 mb-4">
+          <p>
+            Theme: Update the scene/design of the layout. If you make a change, the existing scene will be removed and
+            the new one will be added to the world.
+          </p>
+          <div>
+            <label>Theme:</label>
+            <select className="input" {...register("id", { required: true, value: theme.id })}>
+              {(() => {
+                return Object.values(themes)
+                  .filter((t) => t.group === themes[theme.id as keyof typeof themes]?.group)
+                  .map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.title}
+                    </option>
+                  ));
+              })()}
+            </select>
+          </div>
+          <p>
+            The following items will be visible to all users on the main page of the app. These settings will not affect
+            the scene or experience within the world itself.
+          </p>
+          <ul className="p2">
+            <li>• Title</li>
+            <li>• Subtitle</li>
+            <li>• Description</li>
+          </ul>
+          <div>
+            <label>Title:</label>
+            <input className="input" {...register("title", { required: true, value: theme.title })} />
+          </div>
+          <div>
+            <label>Subtitle:</label>
+            <input className="input" {...register("subtitle", { required: true, value: theme.subtitle })} />
+          </div>
+          <div>
+            <label>Description:</label>
+            <textarea className="input" {...register("description", { value: theme.description })} />
+          </div>
+        </div>
+        <button className="btn mb-2" disabled={isLoading || areButtonsDisabled} type="submit">
           Submit
         </button>
-        {/* <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowResetModal(true)}>
+        <button
+          className="btn btn-danger-outline mb-2"
+          disabled={isLoading || areButtonsDisabled}
+          onClick={() => setShowResetModal(true)}
+        >
           Reset
-        </button> */}
-        {/* <button className="btn btn-danger" disabled={isLoading} onClick={() => setShowRemoveModal(true)}>
+        </button>
+        <button
+          className="btn btn-danger"
+          disabled={isLoading || areButtonsDisabled}
+          onClick={() => setShowRemoveModal(true)}
+        >
           Remove from world
-        </button> */}
+        </button>
       </form>
 
       {showChangeSceneModal && (
@@ -96,7 +128,7 @@ export function AdminForm({
           buttonText="Replace"
           onConfirm={confirmSubmit}
           setShowModal={setShowChangeSceneModal}
-          text="This will remove this instance of the Bulletin Board and all associated data permanently and then replace it with your newly selected scene. Are you sure you'd like to continue?"
+          text="You’ve selected a new theme for this app. Replacing the scene will permanently delete all existing user submissions. This action cannot be undone. While you can switch back to a previous theme later, the deleted data cannot be recovered. Are you sure you want to continue and replace the scene?"
           title="Replace Scene in World"
         />
       )}
@@ -116,7 +148,7 @@ export function AdminForm({
               type="checkbox"
               onChange={(event) => setShouldHardReset(event.target.checked)}
             />
-            Remove all dropped and pending messages?
+            Remove all user submissions?
           </label>
         </Modal>
       )}
@@ -124,9 +156,9 @@ export function AdminForm({
       {showRemoveModal && (
         <Modal
           buttonText="Remove"
-          onConfirm={removeBulletinBoard}
+          onConfirm={removeScene}
           setShowModal={setShowRemoveModal}
-          text="This will remove this instance of the Bulletin Board and all associated data permanently. Are you sure you'd like to continue?"
+          text="You’re about to remove this app from the world. All associated data will be permanently deleted and cannot be recovered. If you want to use this app again in the future, you’ll need to re-download it. Are you sure you want to continue?"
           title="Remove from World"
         />
       )}

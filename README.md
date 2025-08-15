@@ -44,7 +44,8 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Add a picture to the virtual sidewalk.",
     "title": "Chalk the Block",
     "type": "image"
-  }
+  },
+  "sceneDropPosition": { "x": 0, "y": 0 }
 }
 ```
 
@@ -54,9 +55,10 @@ Below are the defaults for each theme. If you want to change the theme options w
   "theme": {
     "description": "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     "subtitle": "Add a picture to the virtual parking lot.",
-    "title": "Decorate your car",
+    "title": "Decorate your parking space",
     "type": "image"
-  }
+  },
+  "sceneDropPosition": { "x": 0, "y": 0 }
 }
 ```
 
@@ -68,7 +70,8 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message for your friends.",
     "title": "Friendship Garden",
     "type": "message"
-  }
+  },
+  "sceneDropPosition": { "x": 0, "y": 0 }
 }
 ```
 
@@ -80,7 +83,8 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message about something you're thankful for.",
     "title": "Gratitude Garden",
     "type": "message"
-  }
+  },
+  "sceneDropPosition": { "x": 0, "y": 0 }
 }
 ```
 
@@ -92,7 +96,8 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message.",
     "title": "Bulletin Board",
     "type": "message"
-  }
+  },
+  "sceneDropPosition": { "x": 0, "y": 0 }
 }
 ```
 

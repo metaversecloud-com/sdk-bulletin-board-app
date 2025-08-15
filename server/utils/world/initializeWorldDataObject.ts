@@ -1,23 +1,12 @@
-import { DroppedAssetInterface } from "@rtsdk/topia";
 import { DroppedAsset, errorHandler, getAnchorAssets, getThemeEnvVars } from "../index.js";
-import { Credentials, DataObjectType } from "../../types.js";
-
-interface DroppedAssetInterfaceI extends DroppedAssetInterface {
-  dataObject: {
-    themeId?: string;
-    theme?: {
-      description?: string;
-      subtitle?: string;
-      title?: string;
-      type?: string;
-    };
-  };
-}
+import { Credentials, DataObjectType, IDroppedAsset } from "../../types.js";
 
 export const initializeWorldDataObject = async ({ credentials, world }: { credentials: Credentials; world: any }) => {
   try {
     const { assetId, sceneDropId, urlSlug } = credentials;
     await world.fetchDataObject();
+
+    if (world.dataObject?.scenes?.[sceneDropId]?.theme?.id) return;
 
     const payload: DataObjectType = {
       anchorAssets: [],
@@ -32,24 +21,21 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
       usedSpaces: [],
     };
 
-    // TODO: update so that sceneDropId is new when theme is switched
-    if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]?.theme) {
-      const keyAsset = (await DroppedAsset.create(assetId, urlSlug, { credentials })) as DroppedAssetInterfaceI;
-      await keyAsset.fetchDataObject();
-      const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
-      const { theme } = await getThemeEnvVars(themeId);
-      payload.theme = theme;
-      payload.theme = {
-        id: themeId,
-        description: keyAsset.dataObject?.theme?.description || theme.description || "",
-        subtitle: keyAsset.dataObject?.theme?.subtitle || theme.subtitle || "",
-        title: keyAsset.dataObject?.theme?.title || theme.title || "",
-        type: keyAsset.dataObject?.theme?.type || theme.type || "",
-      };
-
-      const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
-      payload.anchorAssets = anchorAssetIds;
+    if (world.dataObject?.scenes?.[sceneDropId]?.sceneDropPosition) {
+      payload.sceneDropPosition = world.dataObject?.scenes?.[sceneDropId].sceneDropPosition;
     }
+
+    const keyAsset = (await DroppedAsset.create(assetId, urlSlug, { credentials })) as IDroppedAsset;
+    await keyAsset.fetchDataObject();
+
+    const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
+    const { theme } = await getThemeEnvVars(themeId);
+    payload.theme = { ...theme, ...keyAsset.dataObject?.theme };
+
+    if (!payload.sceneDropPosition) payload.sceneDropPosition = keyAsset.dataObject?.sceneDropPosition;
+
+    const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
+    payload.anchorAssets = anchorAssetIds;
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     if (!world.dataObject?.scenes) {
@@ -61,7 +47,7 @@ export const initializeWorldDataObject = async ({ credentials, world }: { creden
         },
         { lock: { lockId, releaseLock: true } },
       );
-    } else if (!world.dataObject?.scenes?.[sceneDropId]?.theme) {
+    } else {
       await world.updateDataObject(
         {
           [`scenes.${sceneDropId}`]: { ...payload },

@@ -19,12 +19,7 @@ export type InteractiveParams = {
 export interface InitialState {
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
-  theme: {
-    id: string;
-    description: string;
-    subtitle: string;
-    title: string;
-  };
+  theme: ThemeType;
 }
 
 export type ActionType = {
@@ -32,10 +27,9 @@ export type ActionType = {
   payload?: object;
 };
 
-export const ThemeIds: { [key: string]: string } = {
-  GRATITUDE: "Gratitude Garden",
-  FRIENDSHIP: "Friendship Garden",
-  BULLETIN: "Bulletin Board",
-  CHALK: "Chalk the Block",
-  CAR: "Decorate your car",
+export type ThemeType = {
+  id: string;
+  description: string;
+  subtitle: string;
+  title: string;
 };
