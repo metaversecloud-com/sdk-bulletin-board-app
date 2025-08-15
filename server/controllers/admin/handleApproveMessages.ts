@@ -10,16 +10,21 @@ import {
   getCredentials,
   getPendingMessages,
   getThemeEnvVars,
-  getWorldDataObject,
+  getKeyAssetDataObject,
+  World,
 } from "../../utils/index.js";
 
 export const handleApproveMessages = async (req: Request, res: Response) => {
+  let errorMessage = "Error approving messages.";
   try {
     const { messageId } = req.params;
     const credentials = getCredentials(req.query);
-    const { displayName, identityId, interactivePublicKey, sceneDropId, urlSlug } = credentials;
+    const { assetId, displayName, identityId, interactivePublicKey, sceneDropId, urlSlug } = credentials;
 
-    const { dataObject, world } = await getWorldDataObject(credentials);
+    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
+    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
+
+    const { dataObject, keyAsset } = getKeyAssetResult;
     const { anchorAssets, messages, usedSpaces, theme } = dataObject as DataObjectType;
     let updateAnchorAssets = anchorAssets;
 
@@ -27,7 +32,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     if (!thisMessage) throw "Message not found";
     const { imageUrl, message } = thisMessage;
 
-    const lockId = `${sceneDropId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+    const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     let droppedAsset, droppedAssetId, emptySpaces;
 
@@ -44,7 +49,13 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       droppedAsset = await DroppedAsset.get(droppedAssetId, urlSlug, { credentials });
     } catch (error) {
       // dropped asset not found, pull all anchor assets from scene and try again
-      const { anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
+      const getAnchorsResult = await getAnchorAssets(credentials);
+      if (getAnchorsResult instanceof Error) {
+        errorMessage = getAnchorsResult.message;
+        throw getAnchorsResult;
+      }
+
+      const { anchorAssetIds } = getAnchorsResult;
       updateAnchorAssets = anchorAssetIds;
 
       emptySpaces = anchorAssetIds.filter((anchorAsset: string) => !usedSpaces.includes(anchorAsset));
@@ -65,7 +76,9 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     } else if (message) {
       if (emptySpaces.length > 0) {
         // not all spaces have been used, pick empty space at random and drop web and text assets
-        const { droppableAssets } = getThemeEnvVars(theme.id);
+        const getThemeResult = await getThemeEnvVars(theme.id);
+        if (getThemeResult instanceof Error) throw getThemeResult;
+        const { droppableAssets } = getThemeResult;
 
         const random = Math.floor(Math.random() * droppableAssets.length);
         const droppableAsset = droppableAssets[random];
@@ -153,11 +166,11 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     }
 
     promises.push(
-      world.updateDataObject(
+      keyAsset.updateDataObject(
         {
-          [`scenes.${sceneDropId}.messages.${messageId}.approved`]: true,
-          [`scenes.${sceneDropId}.anchorAssets`]: updateAnchorAssets,
-          [`scenes.${sceneDropId}.usedSpaces`]: usedSpaces,
+          [`messages.${messageId}.approved`]: true,
+          [`anchorAssets`]: updateAnchorAssets,
+          [`usedSpaces`]: usedSpaces,
         },
         {
           analytics: [{ analyticName: `messageApprovals` }, { analyticName: `${theme.id}-messageApprovals` }],
@@ -166,6 +179,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       ),
     );
 
+    const world = World.create(urlSlug, { credentials });
     world.triggerParticle({ position: droppedAsset.position, name: "purpleSmoke_puff" }).catch((error: any) =>
       errorHandler({
         error,
@@ -185,12 +199,12 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
 
     await Promise.all(promises);
 
-    return res.json(await getPendingMessages({ sceneDropId, world }));
+    return res.json(await getPendingMessages({ keyAsset }));
   } catch (error) {
     return errorHandler({
       error,
       functionName: "handleApproveMessages",
-      message: "Error approving messages.",
+      message: errorMessage,
       req,
       res,
     });

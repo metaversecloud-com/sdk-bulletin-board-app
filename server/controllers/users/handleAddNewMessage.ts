@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, getPendingMessages, uploadToS3 } from "../../utils/index.js";
-import { getWorldDataObject } from "../../utils/index.js";
+import { getKeyAssetDataObject } from "../../utils/index.js";
 import { DataObjectType, MessageType } from "../../types.js";
 
 export const handleAddNewMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { displayName, profileId, sceneDropId, urlSlug, username } = credentials;
+    const { displayName, profileId, urlSlug, username } = credentials;
     const { imageData, message } = req.body;
 
-    const { dataObject, world } = await getWorldDataObject(credentials);
+    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
+    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
+
+    const { dataObject, keyAsset } = getKeyAssetResult;
     const { theme } = dataObject as DataObjectType;
 
     const id = `${profileId}-${Date.now()}`;
@@ -23,14 +26,15 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
     };
 
     if (imageData) {
-      const { imageUrl, success } = await uploadToS3(imageData, id);
-      if (!success) throw "Error uploading image.";
-      newMessage.imageUrl = imageUrl;
+      const uploadResult = await uploadToS3(imageData, id);
+      if (uploadResult instanceof Error) throw uploadResult;
+
+      newMessage.imageUrl = uploadResult.imageUrl;
     }
 
-    await world.updateDataObject(
+    await keyAsset.updateDataObject(
       {
-        [`scenes.${sceneDropId}.messages.${newMessage.id}`]: newMessage,
+        [`messages.${newMessage.id}`]: newMessage,
       },
       {
         analytics: [
@@ -40,7 +44,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
       },
     );
 
-    return res.json(await getPendingMessages({ profileId, sceneDropId, world }));
+    return res.json(await getPendingMessages({ profileId, keyAsset }));
   } catch (error) {
     return errorHandler({
       error,

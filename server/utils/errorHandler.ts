@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 export const errorHandler = ({
   error,
   functionName,
@@ -5,14 +7,14 @@ export const errorHandler = ({
   req,
   res,
 }: {
-  error: any;
+  error: AxiosError | Error | any;
   functionName: string;
   message: string;
   req?: any;
   res?: any;
 }) => {
   try {
-    if (process.env.NODE_ENV === "development") console.log("❌ Error:", error);
+    if (process.env.NODE_ENV === "development") console.log("Error:", error);
     else {
       const reqQueryParams = req?.query;
       if (reqQueryParams?.interactiveNonce) delete reqQueryParams.interactiveNonce;
@@ -32,8 +34,9 @@ export const errorHandler = ({
         }),
       );
     }
+
     if (res) return res.status(error.status || 500).send({ error, message, success: false });
-    return { error };
+    return new AxiosError(error);
   } catch (e) {
     console.error("❌ Error printing the logs", e);
     return res.status(500).send({ error: e, message, success: false });

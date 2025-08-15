@@ -68,11 +68,7 @@ export const getThemeEnvVars = (id: string) => {
     const theme = defaultThemes[id];
 
     return { anchorAssetImage, droppableAssets, sceneId, theme };
-  } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "getThemeEnvVars",
-      message: "Error getting theme environment variables",
-    });
+  } catch (error: any) {
+    return new Error(error);
   }
 };

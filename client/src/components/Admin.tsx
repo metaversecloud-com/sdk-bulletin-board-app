@@ -1,32 +1,27 @@
 import { useContext, useEffect, useState } from "react";
 
 // components
-import Accordion from "@/components/Accordion";
-import AdminForm from "@/components/AdminForm";
-import ListItem from "./ListItem";
-import Loading from "@/components/Loading";
+import { Accordion, AdminForm, ListItem } from "@/components";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
-import { SET_THEME } from "@/context/types";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
-import { getErrorMessage } from "@/utils/getErrorMessage";
 
 // types
 import { AdminFormValues, MessageI, MessagesType } from "@/types";
+import { ErrorType, SET_THEME } from "@/context/types";
+import { setErrorMessage } from "@/utils";
 
-function Admin() {
-  const { hasSetupBackend, theme } = useContext(GlobalStateContext);
+export const Admin = () => {
+  const { theme } = useContext(GlobalStateContext);
   const dispatch = useContext(GlobalDispatchContext);
 
   const [currentTheme, setTheme] = useState(theme);
   const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
   const [messagesLength, setMessagesLength] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     backendAPI
@@ -35,28 +30,27 @@ function Admin() {
         setMessages(result.data);
         setMessagesLength(Object.keys(result.data).length);
       })
-      .catch((error) => setErrorMessage(error))
-      .finally(() => setIsLoading(false));
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType));
   }, []);
 
   const updateState = (data: MessagesType) => {
     setMessages(data);
     setMessagesLength(Object.keys(data).length || 0);
+    setErrorMessage(dispatch, "");
   };
 
   const handleOnSubmit = (data: AdminFormValues) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
-      .post("/admin/theme", { ...data, existingThemeId: theme.id })
-      .then(() => {
+      .post("/admin/theme", { ...data, existingThemeId: theme!.id })
+      .then((response) => {
         dispatch!({
           type: SET_THEME,
-          payload: { ...data },
+          payload: { theme: response.data.theme },
         });
         setTheme(data);
       })
-      .catch((error) => setErrorMessage(getErrorMessage(error)))
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => {
         setAreButtonsDisabled(false);
       });
@@ -64,35 +58,38 @@ function Admin() {
 
   const approveMessage = (messageId: string) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
       .post(`/admin/message/approve/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(getErrorMessage(error)))
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => setAreButtonsDisabled(false));
   };
 
   const deleteMessage = (messageId: string) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
       .delete(`/admin/message/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(getErrorMessage(error)))
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => setAreButtonsDisabled(false));
   };
 
   const handleResetScene = async (shouldHardReset: boolean) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
       .post("/admin/reset", { shouldHardReset })
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(getErrorMessage(error)))
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => setAreButtonsDisabled(false));
   };
 
-  if (isLoading || !hasSetupBackend) return <Loading />;
+  const handleRemoveScene = async () => {
+    setAreButtonsDisabled(true);
+    backendAPI
+      .post("/admin/remove")
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
+      .finally(() => setAreButtonsDisabled(false));
+  };
 
   const getMessagesList = () => {
     return (
@@ -127,9 +124,9 @@ function Admin() {
         <AdminForm
           handleSubmitForm={handleOnSubmit}
           handleResetScene={handleResetScene}
+          handleRemoveScene={handleRemoveScene}
           isLoading={areButtonsDisabled}
-          setErrorMessage={setErrorMessage}
-          theme={currentTheme}
+          theme={currentTheme!}
         />
       </Accordion>
       {messages && messagesLength > 0 && (
@@ -137,9 +134,8 @@ function Admin() {
           <Accordion title="Pending Approval">{getMessagesList()}</Accordion>
         </div>
       )}
-      {errorMessage && <p className="p3 text-error">{`${errorMessage}`}</p>}
     </>
   );
-}
+};
 
 export default Admin;

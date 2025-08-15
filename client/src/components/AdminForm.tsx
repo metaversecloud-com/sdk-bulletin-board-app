@@ -9,23 +9,21 @@ import { AdminFormValues } from "@/types";
 import { themes } from "@/context/constants";
 import { ThemeType } from "@/context/types";
 
-// utils
-import { backendAPI } from "@/utils/backendAPI";
-import { getErrorMessage } from "@/utils/getErrorMessage";
-
-export function AdminForm({
+export const AdminForm = ({
   handleResetScene,
+  handleRemoveScene,
   handleSubmitForm,
   isLoading,
-  setErrorMessage,
   theme,
 }: {
   handleResetScene: (shouldHardReset: boolean) => void;
+  handleRemoveScene: () => void;
   handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
-  setErrorMessage: (value: string) => void;
   theme: ThemeType;
-}) {
+}) => {
+  const { id, title, subtitle, description } = theme;
+
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showChangeSceneModal, setShowChangeSceneModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
@@ -37,7 +35,7 @@ export function AdminForm({
 
   const onSubmit = handleSubmit((data) => {
     setFormData(data);
-    if (data.id !== theme.id) setShowChangeSceneModal(true);
+    if (data.id !== id) setShowChangeSceneModal(true);
     else handleSubmitForm(data);
   });
 
@@ -47,10 +45,10 @@ export function AdminForm({
   };
 
   const removeScene = async () => {
-    setErrorMessage("");
     setShowRemoveModal(false);
     setAreButtonsDisabled(true);
-    backendAPI.post("/admin/remove", { theme }).catch((error) => setErrorMessage(getErrorMessage(error)));
+    await handleRemoveScene();
+    setAreButtonsDisabled(false);
   };
 
   const onResetScene = async () => {
@@ -70,10 +68,10 @@ export function AdminForm({
           </p>
           <div>
             <label>Theme:</label>
-            <select className="input" {...register("id", { required: true, value: theme.id })}>
+            <select className="input" {...register("id", { required: true, value: id })}>
               {(() => {
                 return Object.values(themes)
-                  .filter((t) => t.group === themes[theme.id as keyof typeof themes]?.group)
+                  .filter((t) => t.group === themes[id as keyof typeof themes]?.group)
                   .map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.title}
@@ -93,15 +91,15 @@ export function AdminForm({
           </ul>
           <div>
             <label>Title:</label>
-            <input className="input" {...register("title", { required: true, value: theme.title })} />
+            <input className="input" {...register("title", { required: true, value: title })} />
           </div>
           <div>
             <label>Subtitle:</label>
-            <input className="input" {...register("subtitle", { required: true, value: theme.subtitle })} />
+            <input className="input" {...register("subtitle", { required: true, value: subtitle })} />
           </div>
           <div>
             <label>Description:</label>
-            <textarea className="input" {...register("description", { value: theme.description })} />
+            <textarea className="input" {...register("description", { value: description })} />
           </div>
         </div>
         <button className="btn mb-2" disabled={isLoading || areButtonsDisabled} type="submit">
@@ -164,6 +162,6 @@ export function AdminForm({
       )}
     </>
   );
-}
+};
 
 export default AdminForm;

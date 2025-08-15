@@ -5,31 +5,60 @@ import {
   getCredentials,
   getPendingMessages,
   getThemeEnvVars,
-  getWorldDataObject,
+  getKeyAssetDataObject,
   World,
 } from "../../utils/index.js";
 import { DataObjectType } from "../../types.js";
 
 export const handleResetScene = async (req: Request, res: Response) => {
+  let message = "Error resetting scene.";
   try {
     const { shouldHardReset } = req.body;
     const credentials = getCredentials(req.query);
     const { sceneDropId, urlSlug } = credentials;
 
-    const { dataObject, world } = await getWorldDataObject(credentials);
+    const world = World.create(urlSlug, { credentials });
+
+    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
+    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
+
+    const { dataObject, keyAsset } = getKeyAssetResult;
     const { messages, theme } = dataObject as DataObjectType;
 
-    const { anchorAssets, anchorAssetIds } = await getAnchorAssets(sceneDropId, world);
+    const getAnchorsResult = await getAnchorAssets(credentials);
+    if (getAnchorsResult instanceof Error) {
+      message = getAnchorsResult.message;
+      throw getAnchorsResult;
+    }
+
+    const { anchorAssets, anchorAssetIds } = getAnchorsResult;
 
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     if (shouldHardReset) {
-      // TODO: decide if this should delete from s3
-      const { anchorAssetImage, theme: defaultTheme } = getThemeEnvVars(theme.id);
+      const getThemeResult = await getThemeEnvVars(theme.id);
+      if (getThemeResult instanceof Error) throw getThemeResult;
+
+      const { anchorAssetImage, theme: defaultTheme } = getThemeResult;
+
       const promises = [];
+
       if (defaultTheme.type === "image") {
+        // TODO: decide if this should delete from s3
+        /*
+      To do so we'd need to loop through messages and find ones with imageUrl and delete those from s3
+          if (message.imageUrl) {
+            const { success } = await deleteFromS3(message.id);
+            if (!success) throw "Error deleting image.";
+          }
+      */
+
         for (const droppedAsset of anchorAssets) {
-          if (droppedAsset.uniqueName === "anchor" && droppedAsset.bottomLayerURL !== anchorAssetImage) {
+          if (
+            anchorAssetImage &&
+            droppedAsset.uniqueName === "anchor" &&
+            droppedAsset.bottomLayerURL !== anchorAssetImage
+          ) {
             promises.push(droppedAsset.updateWebImageLayers(anchorAssetImage, ""));
           }
         }
@@ -43,7 +72,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
         if (Object.keys(backgroundAssets).length > 0) {
           for (const index in backgroundAssets) {
-            droppedAssetIds.push(backgroundAssets[index].id);
+            droppedAssetIds.push(backgroundAssets[index].id!);
           }
         }
 
@@ -54,7 +83,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
         if (Object.keys(textAssets).length > 0) {
           for (const index in textAssets) {
-            droppedAssetIds.push(textAssets[index].id);
+            droppedAssetIds.push(textAssets[index].id!);
           }
         }
 
@@ -65,11 +94,11 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
       await Promise.allSettled(promises);
 
-      await world.updateDataObject(
+      await keyAsset.updateDataObject(
         {
-          [`scenes.${sceneDropId}.anchorAssets`]: anchorAssetIds,
-          [`scenes.${sceneDropId}.messages`]: {},
-          [`scenes.${sceneDropId}.usedSpaces`]: [],
+          anchorAssets: anchorAssetIds,
+          messages: {},
+          usedSpaces: [],
         },
         {
           analytics: [{ analyticName: `resets` }, { analyticName: `${theme.id}-resets` }],
@@ -79,18 +108,15 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
       return res.json({});
     } else {
-      await world.updateDataObject(
-        { [`scenes.${sceneDropId}.anchorAssets`]: anchorAssetIds },
-        { lock: { lockId, releaseLock: true } },
-      );
+      await world.updateDataObject({ anchorAssets: anchorAssetIds }, { lock: { lockId, releaseLock: true } });
 
-      return res.json(await getPendingMessages({ messages, sceneDropId }));
+      return res.json(await getPendingMessages({ messages }));
     }
   } catch (error) {
     return errorHandler({
       error,
       functionName: "handleResetScene",
-      message: "Error resetting scene.",
+      message,
       req,
       res,
     });

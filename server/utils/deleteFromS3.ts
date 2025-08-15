@@ -14,11 +14,7 @@ export async function deleteFromS3(id: string) {
     await client.send(deleteObject);
 
     return { success: true };
-  } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "deleteFromS3",
-      message: "Error deleting image from S3",
-    });
+  } catch (error: any) {
+    return new Error(error);
   }
 }
