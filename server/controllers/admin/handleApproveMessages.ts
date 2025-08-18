@@ -165,10 +165,11 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       }
     }
 
+    delete messages[messageId];
     promises.push(
       keyAsset.updateDataObject(
         {
-          [`messages.${messageId}.approved`]: true,
+          messages,
           [`anchorAssets`]: updateAnchorAssets,
           [`usedSpaces`]: usedSpaces,
         },
