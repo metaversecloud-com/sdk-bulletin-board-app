@@ -1,26 +1,15 @@
 import { Credentials, IDroppedAsset, ThemeType } from "../types.js";
-import { DroppedAsset, errorHandler, getThemeEnvVars, getWorldDataObject, Visitor, World } from "../utils/index.js";
+import { DroppedAsset, errorHandler, getThemeEnvVars, Visitor, World } from "../utils/index.js";
 
-export const removeSceneFromWorld = async ({
-  credentials,
-  existingThemeId,
-  theme,
-}: {
-  credentials: Credentials;
-  existingThemeId: string;
-  theme?: ThemeType;
-}) => {
+export const removeSceneFromWorld = async ({ credentials, theme }: { credentials: Credentials; theme?: ThemeType }) => {
   try {
     const { assetId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const [droppedAsset, visitor] = await Promise.all([
+    const [keyAsset, visitor, world] = await Promise.all([
       DroppedAsset.create(assetId, urlSlug, { credentials }),
       Visitor.create(visitorId, urlSlug, { credentials }),
+      World.create(urlSlug, { credentials }),
     ]);
-
-    const { dataObject, world } = await getWorldDataObject(credentials);
-
-    const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     const droppedAssets = (await world.fetchDroppedAssetsBySceneDropId({
       sceneDropId,
@@ -33,10 +22,7 @@ export const removeSceneFromWorld = async ({
     let position = containerAsset?.position;
 
     if (theme?.id && !position) {
-      position = dataObject.sceneDropPosition;
-      if (!position) {
-        throw `No position found. Please add a "bulletin-board-container" dropped asset or set a position in the world data object.`;
-      }
+      throw "No position found. Please add a dropped asset with the unique name 'bulletin-board-container' or set a position in the world data object.";
     }
 
     const promises: any[] = [];
@@ -60,40 +46,24 @@ export const removeSceneFromWorld = async ({
     );
 
     if (theme?.id) {
-      const { sceneId } = await getThemeEnvVars(theme.id);
+      const getThemeResult = await getThemeEnvVars(theme.id);
+      if (getThemeResult instanceof Error) throw getThemeResult;
 
-      await Promise.all([
-        world.dropScene({
-          allowNonAdmins: true,
-          sceneId,
-          position,
-          sceneDropId,
-        }),
-        world.updateDataObject(
-          {
-            [`scenes.${sceneDropId}`]: {
-              sceneDropPosition: position,
-            },
-          },
-          { lock: { lockId, releaseLock: true } },
-        ),
-      ]);
-    } else {
-      const { theme: existingTheme } = await getThemeEnvVars(existingThemeId);
-      world.updateDataObject(
-        { [`scenes.${sceneDropId}`]: `${existingTheme.title} removed from world on ${new Date()}` },
-        { lock: { lockId, releaseLock: true } },
-      );
+      const { sceneId } = getThemeResult;
+      if (!sceneId) throw "No sceneId found in theme environment variables.";
+
+      await world.dropScene({
+        allowNonAdmins: true,
+        sceneId,
+        position: position!,
+        sceneDropId,
+      });
     }
 
-    droppedAsset.deleteDroppedAsset();
+    keyAsset.deleteDroppedAsset();
 
     return { success: true };
-  } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "removeSceneFromWorld",
-      message: "Error removing scene from world.",
-    });
+  } catch (error: any) {
+    return new Error(error);
   }
 };

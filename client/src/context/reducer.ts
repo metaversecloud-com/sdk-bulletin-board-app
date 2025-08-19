@@ -1,24 +1,28 @@
-import { ActionType, InitialState, SET_HAS_SETUP_BACKEND, SET_INTERACTIVE_PARAMS, SET_THEME } from "./types";
+import { ActionType, State, SET_HAS_INTERACTIVE_PARAMS, SET_IS_ADMIN, SET_THEME, SET_ERROR } from "./types";
 
-const globalReducer = (state: InitialState, action: ActionType) => {
+const globalReducer = (state: State, action: ActionType) => {
   const { type, payload } = action;
   switch (type) {
-    case SET_INTERACTIVE_PARAMS:
+    case SET_HAS_INTERACTIVE_PARAMS:
       return {
         ...state,
-        ...payload,
-        hasInteractiveParams: true,
+        hasInteractiveParams: payload.hasInteractiveParams,
       };
-    case SET_HAS_SETUP_BACKEND:
+    case SET_IS_ADMIN:
       return {
         ...state,
-        ...payload,
-        hasSetupBackend: true,
+        isAdmin: payload.isAdmin,
       };
     case SET_THEME:
       return {
         ...state,
-        theme: payload,
+        theme: payload.theme,
+        error: "",
+      };
+    case SET_ERROR:
+      return {
+        ...state,
+        error: payload.error,
       };
     default: {
       throw new Error(`Unhandled action type: ${type}`);

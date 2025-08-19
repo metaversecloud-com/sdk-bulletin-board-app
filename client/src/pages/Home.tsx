@@ -1,47 +1,46 @@
 import { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 // components
-import Admin from "@/components/Admin";
-import Board from "@/components/Board";
-import Loading from "@/components/Loading";
+import { Board, PageContainer } from "@/components";
 
 // context
-import { GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { ErrorType, SET_IS_ADMIN, SET_THEME } from "@/context/types";
 
 // utils
-import { backendAPI } from "@/utils/backendAPI";
-import { AdminIconButton } from "@/components";
+import { backendAPI, setErrorMessage } from "@/utils";
 
 function Home() {
-  const navigate = useNavigate();
-  const [showSettings, setShowSettings] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { hasSetupBackend } = useContext(GlobalStateContext);
+  // context
+  const dispatch = useContext(GlobalDispatchContext);
+  const { hasInteractiveParams } = useContext(GlobalStateContext);
 
   useEffect(() => {
-    if (hasSetupBackend) {
+    if (hasInteractiveParams) {
       backendAPI
-        .get("/visitor")
-        .then((result) => {
-          setIsAdmin(result.data.visitor.isAdmin);
+        .get("/game-state")
+        .then((response) => {
+          const { isAdmin, theme } = response.data;
+          dispatch!({
+            type: SET_IS_ADMIN,
+            payload: { isAdmin },
+          });
+          dispatch!({
+            type: SET_THEME,
+            payload: { theme },
+          });
         })
-        .catch(() => navigate("*"))
+        .catch((error) => setErrorMessage(dispatch, error as ErrorType))
         .finally(() => setIsLoading(false));
     }
-  }, [hasSetupBackend]);
-
-  if (isLoading || !hasSetupBackend) return <Loading />;
+  }, [hasInteractiveParams]);
 
   return (
-    <div className="container p-6 items-center justify-start">
-      {isAdmin && (
-        <AdminIconButton setShowSettings={() => setShowSettings(!showSettings)} showSettings={showSettings} />
-      )}
-      {showSettings ? <Admin /> : <Board />}
-    </div>
+    <PageContainer isLoading={isLoading}>
+      <Board />
+    </PageContainer>
   );
 }
 

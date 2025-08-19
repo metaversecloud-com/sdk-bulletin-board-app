@@ -25,8 +25,7 @@ Bulletin Board is a message board style application. Users can submit messages a
 
 ### Data objects
 
-- Key Asset: the data object attached to the dropped key asset can optionally store a theme id if you'd like the initial setup to be something other than Chalk the Block i.e. `{ themeId: "GRATITUDE" }. See Theme Defaults below for additional info and options.
-- World: the data object attached to the world will store all information for each dropped scene indexed by `dropSceneId`. Data structure:
+- Key Asset: the data object attached to the dropped key asset will store the following information and can optionally store a theme id if you'd like the initial setup to be something other than Chalk the Block i.e. `{ themeId: "GRATITUDE" }. See Theme Defaults below for additional info and options.
   - anchorAssets: an array of all of the dropped asset ids populated the first time the Key Asset is clicked,
   - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and username`,
   - theme: theme settings which include `id ("CHALK", "CAR", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,

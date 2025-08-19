@@ -1,23 +1,30 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { MessageFormValues } from "@/types";
 
-export function MessageForm({
+// context
+import { ErrorType } from "@/context/types";
+import { GlobalDispatchContext } from "@/context/GlobalContext";
+
+// utils
+import { setErrorMessage } from "@/utils";
+
+export const MessageForm = ({
   handleSubmitForm,
   isLoading,
-  setErrorMessage,
   themeId,
 }: {
   handleSubmitForm: ({ imageData, message }: { imageData?: string; message?: string }) => void;
   isLoading: boolean;
-  setErrorMessage: (value: string) => void;
   themeId: string;
-}) {
+}) => {
+  const dispatch = useContext(GlobalDispatchContext);
   const { register, handleSubmit, reset } = useForm<MessageFormValues>();
 
   const onSubmit = handleSubmit(async (data) => {
     const file = data.images ? data.images[0] : null;
     if (file?.size && file?.size > 1048576) {
-      setErrorMessage("File is too big!");
+      setErrorMessage(dispatch, "File is too big!" as ErrorType);
     } else if (file) {
       let dataURL;
       const reader = new FileReader();
@@ -75,6 +82,6 @@ export function MessageForm({
       </form>
     </>
   );
-}
+};
 
 export default MessageForm;

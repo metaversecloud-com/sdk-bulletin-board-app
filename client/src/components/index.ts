@@ -7,3 +7,4 @@ export * from "./ListItem";
 export * from "./Loading";
 export * from "./MessageForm";
 export * from "./Modal";
+export * from "./PageContainer";

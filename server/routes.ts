@@ -3,10 +3,9 @@ import {
   handleAddNewMessage,
   handleApproveMessages,
   handleDeleteMessage,
+  handleGetGameState,
   handleGetUserMessages,
   handleGetPendingMessages,
-  handleGetTheme,
-  handleGetVisitor,
   handleResetScene,
   handleUpdateTheme,
   handleDeleteUserMessage,
@@ -52,8 +51,7 @@ router.get("/system/health", (req, res) => {
   });
 });
 
-router.get("/theme", handleGetTheme);
-router.get("/visitor", handleGetVisitor);
+router.get("/game-state", handleGetGameState);
 
 // admin
 router.post("/admin/theme", handleUpdateTheme);

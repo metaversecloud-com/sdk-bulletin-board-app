@@ -1,11 +1,13 @@
 import { createContext } from "react";
 import { defaultTheme } from "./constants";
-import { ActionType, InitialState } from "./types";
+import { ActionType, State } from "./types";
 
-export const GlobalStateContext = createContext<InitialState>({
+export const GlobalStateContext = createContext<State>({
   hasInteractiveParams: false,
   hasSetupBackend: false,
+  isAdmin: false,
   theme: defaultTheme,
+  error: "",
 });
 
 export const GlobalDispatchContext = createContext<React.Dispatch<ActionType> | null>(null);

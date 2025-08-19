@@ -1,10 +1,10 @@
 import { PropsWithChildren } from "react";
 import { GlobalDispatchContext, GlobalStateContext } from "./GlobalContext";
-import { ActionType, InitialState } from "./types";
+import { ActionType, State } from "./types";
 
 const GlobalState: React.FC<
   PropsWithChildren & {
-    initialState: InitialState;
+    initialState: State;
     dispatch: React.Dispatch<ActionType>;
   }
 > = (props) => {

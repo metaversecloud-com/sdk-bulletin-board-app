@@ -1,29 +1,27 @@
 import { useContext, useState, useEffect } from "react";
 
 // components
-import Accordion from "@/components/Accordion";
-import ListItem from "@/components/ListItem";
-import Loading from "@/components/Loading";
-import MessageForm from "@/components/MessageForm";
+import { Accordion, ListItem, MessageForm } from "@/components";
 
 // context
-import { GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 
 // utils
-import { backendAPI } from "@/utils/backendAPI";
+import { backendAPI, setErrorMessage } from "@/utils";
 
 // types
 import { MessageI } from "@/types";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { ErrorType } from "@/context/types";
 
-function Board() {
-  const { hasSetupBackend, theme } = useContext(GlobalStateContext);
-
+export const Board = () => {
   const [messages, setMessages] = useState<{ [key: string]: MessageI }>({});
   const [messagesLength, setMessagesLength] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+
+  // context
+  const dispatch = useContext(GlobalDispatchContext);
+  const { theme } = useContext(GlobalStateContext);
+  const { id, title, subtitle, description } = theme || { id: "CHALK" };
 
   useEffect(() => {
     backendAPI
@@ -32,13 +30,11 @@ function Board() {
         setMessages(result.data);
         setMessagesLength(Object.keys(result.data).length);
       })
-      .catch((error) => setErrorMessage(error))
-      .finally(() => setIsLoading(false));
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType));
   }, []);
 
   const addMessage = async (data: { imageData?: string; message?: string }) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
       .post("/message", data)
       .then((result) => {
@@ -47,7 +43,8 @@ function Board() {
       })
       .catch(() =>
         setErrorMessage(
-          "An error has occurred while trying to submit your message for approval. Please try again later.",
+          dispatch,
+          "An error has occurred while trying to submit your message for approval. Please try again later." as ErrorType,
         ),
       )
       .finally(() => setAreButtonsDisabled(false));
@@ -55,18 +52,15 @@ function Board() {
 
   const removeMessage = (messageId: string) => {
     setAreButtonsDisabled(true);
-    setErrorMessage("");
     backendAPI
       .delete(`/message/${messageId}`)
       .then((result) => {
         setMessages(result.data);
         setMessagesLength(Object.keys(result.data).length);
       })
-      .catch((error) => setErrorMessage(getErrorMessage(error)))
+      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => setAreButtonsDisabled(false));
   };
-
-  if (isLoading || !hasSetupBackend) return <Loading />;
 
   const getMessagesList = (): React.ReactNode[] => {
     return Object.values(messages).map((item, index) => (
@@ -85,18 +79,13 @@ function Board() {
   return (
     <>
       <div className="flex flex-col">
-        <h1 className="h3">{theme.title}</h1>
-        <h4 className="h4 py-4">{theme.subtitle}</h4>
-        <p className="p1">{theme.description}</p>
+        <h1 className="h3">{title}</h1>
+        <h4 className="h4 py-4">{subtitle}</h4>
+        <p className="p1">{description}</p>
       </div>
       <div className="flex flex-col mb-8 mt-10">
         {messagesLength < 3 ? (
-          <MessageForm
-            handleSubmitForm={addMessage}
-            isLoading={areButtonsDisabled}
-            setErrorMessage={setErrorMessage}
-            themeId={theme.id}
-          />
+          <MessageForm handleSubmitForm={addMessage} isLoading={areButtonsDisabled} themeId={id} />
         ) : (
           <p>
             You have reached the limit of maximum messages you can submit for approval. You can either wait for your
@@ -105,9 +94,8 @@ function Board() {
         )}
       </div>
       {messages && messagesLength > 0 && <Accordion title="Pending Approval">{getMessagesList()}</Accordion>}
-      {errorMessage && <p className="p3 text-error">{`${errorMessage}`}</p>}
     </>
   );
-}
+};
 
 export default Board;

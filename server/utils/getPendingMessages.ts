@@ -1,22 +1,20 @@
-import { MessageType } from "../../types.js";
-import { errorHandler } from "../index.js";
+import { IDroppedAsset, MessageType } from "../types.js";
+import { errorHandler } from "./index.js";
 
 export const getPendingMessages = async ({
   messages,
   profileId,
-  sceneDropId,
-  world,
+  keyAsset,
 }: {
   messages?: object;
   profileId?: string;
-  sceneDropId: string;
-  world?: any;
+  keyAsset?: IDroppedAsset;
 }) => {
   try {
     // pass world if data object should be refetched
-    if (world) {
-      await world.fetchDataObject();
-      messages = world.dataObject.scenes[sceneDropId].messages;
+    if (keyAsset) {
+      await keyAsset.fetchDataObject();
+      messages = keyAsset.dataObject.messages;
     }
 
     if (!messages) return {};
@@ -31,11 +29,7 @@ export const getPendingMessages = async ({
     );
 
     return pendingMessages;
-  } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "getPendingMessages",
-      message: "Error getting pending messages.",
-    });
+  } catch (error: any) {
+    return new Error(error);
   }
 };

@@ -1,31 +1,36 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject, removeSceneFromWorld } from "../../utils/index.js";
+import { errorHandler, getCredentials, getKeyAssetDataObject, removeSceneFromWorld } from "../../utils/index.js";
 
 export const handleUpdateTheme = async (req: Request, res: Response) => {
+  let message = "Error updating theme.";
   try {
-    const { existingThemeId, id } = req.body;
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials;
-
-    const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+    const { assetId } = credentials;
+    const theme = req.body;
+    const { existingThemeId, id } = theme;
 
     if (existingThemeId && existingThemeId !== id) {
-      await removeSceneFromWorld({ credentials, existingThemeId, theme: req.body });
+      const removeSceneResult = await removeSceneFromWorld({ credentials, theme });
+      if (removeSceneResult instanceof Error) {
+        message = removeSceneResult.message;
+        throw removeSceneResult;
+      }
     } else {
-      const { world } = await getWorldDataObject(credentials);
+      const getKeyAssetResult = await getKeyAssetDataObject(credentials);
+      if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
 
-      await world.updateDataObject(
-        { [`scenes.${sceneDropId}.theme`]: req.body },
-        { lock: { lockId, releaseLock: true } },
-      );
+      const { keyAsset } = getKeyAssetResult;
+
+      const lockId = `${assetId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+      await keyAsset.updateDataObject({ theme }, { lock: { lockId, releaseLock: true } });
     }
 
-    return res.send(req.body);
+    return res.send({ theme });
   } catch (error) {
     return errorHandler({
       error,
       functionName: "handleUpdateTheme",
-      message: "Error updating theme.",
+      message,
       req,
       res,
     });

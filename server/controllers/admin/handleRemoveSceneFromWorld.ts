@@ -4,9 +4,8 @@ import { errorHandler, getCredentials, removeSceneFromWorld } from "../../utils/
 export const handleRemoveSceneFromWorld = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { theme } = req.body;
 
-    await removeSceneFromWorld({ credentials, existingThemeId: theme.id });
+    await removeSceneFromWorld({ credentials });
 
     return res.json({ success: true });
   } catch (error) {

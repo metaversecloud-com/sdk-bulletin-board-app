@@ -1,44 +1,35 @@
-import { deleteFromS3, errorHandler } from "./index.js";
-import { Credentials, MessagesType } from "../types.js";
+import { deleteFromS3 } from "./index.js";
+import { Credentials, IDroppedAsset, MessagesType } from "../types.js";
 
 export const deleteMessage = async ({
   credentials,
+  keyAsset,
   messageId,
   messages,
-  world,
 }: {
   credentials: Credentials;
+  keyAsset: IDroppedAsset;
   messageId: string;
   messages: MessagesType;
-  world: any;
 }) => {
   try {
-    const { sceneDropId } = credentials;
+    const { assetId } = credentials;
 
     const message = messages[messageId];
     if (!message) throw new Error("Message not found");
 
     if (message.imageUrl) {
-      const { success } = await deleteFromS3(message.id);
-      if (!success) throw "Error deleting image.";
+      const deleteResult = await deleteFromS3(message.id);
+      if (deleteResult instanceof Error) throw deleteResult;
     }
 
     delete messages[messageId];
 
-    const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-    await world.updateDataObject(
-      {
-        [`scenes.${sceneDropId}.messages`]: messages,
-      },
-      { lock: { lockId, releaseLock: true } },
-    );
+    const lockId = `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+    await keyAsset.updateDataObject({ messages }, { lock: { lockId, releaseLock: true } });
 
     return { success: true };
-  } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "deleteMessage",
-      message: "Error deleting message.",
-    });
+  } catch (error: any) {
+    return new Error(error);
   }
 };

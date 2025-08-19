@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
@@ -8,11 +8,10 @@ import Loading from "./components/Loading";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
-import { InteractiveParams, SET_HAS_SETUP_BACKEND, SET_INTERACTIVE_PARAMS, SET_THEME } from "./context/types";
+import { InteractiveParams, SET_HAS_INTERACTIVE_PARAMS } from "./context/types";
 
 // utils
-import { setupBackendAPI } from "./utils/backendAPI";
-import { backendAPI } from "@/utils/backendAPI";
+import { setupBackendAPI } from "@/utils";
 
 import "./index.css";
 
@@ -21,7 +20,6 @@ const App = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
 
   const interactiveParams: InteractiveParams = useMemo(() => {
@@ -40,86 +38,29 @@ const App = () => {
     };
   }, [searchParams]);
 
-  const setInteractiveParams = useCallback(
-    ({
-      assetId,
-      displayName,
-      identityId,
-      interactiveNonce,
-      interactivePublicKey,
-      profileId,
-      sceneDropId,
-      uniqueName,
-      urlSlug,
-      username,
-      visitorId,
-    }: InteractiveParams) => {
-      const isInteractiveIframe = visitorId && interactiveNonce && interactivePublicKey && assetId;
-      dispatch!({
-        type: SET_INTERACTIVE_PARAMS,
-        payload: {
-          assetId,
-          displayName,
-          identityId,
-          interactiveNonce,
-          interactivePublicKey,
-          isInteractiveIframe,
-          profileId,
-          sceneDropId,
-          uniqueName,
-          urlSlug,
-          username,
-          visitorId,
-        },
-      });
-    },
-    [dispatch],
-  );
-
-  const setHasSetupBackend = useCallback(
-    (success: boolean) => {
-      dispatch!({
-        type: SET_HAS_SETUP_BACKEND,
-        payload: { hasSetupBackend: success },
-      });
-    },
-    [dispatch],
-  );
-
-  const setupBackend = () => {
-    setupBackendAPI(interactiveParams)
-      .then(() => setHasSetupBackend(true))
-      .catch(() => navigate("*"))
-      .finally(() => setHasInitBackendAPI(true));
-  };
-
-  const getTheme = () => {
-    backendAPI
-      .get("/theme")
-      .then((result) => {
-        dispatch!({
-          type: SET_THEME,
-          payload: result.data,
-        });
-        setIsLoading(false);
-      })
-      .catch(() => navigate("*"));
-  };
-
   useEffect(() => {
     if (interactiveParams.assetId) {
-      setInteractiveParams({
-        ...interactiveParams,
+      dispatch!({
+        type: SET_HAS_INTERACTIVE_PARAMS,
+        payload: { hasInteractiveParams: true },
       });
     }
-  }, [interactiveParams, setInteractiveParams]);
+  }, [interactiveParams]);
 
   useEffect(() => {
     if (!hasInitBackendAPI) setupBackend();
-    else getTheme();
-  }, [hasInitBackendAPI]);
+  }, [hasInitBackendAPI, interactiveParams]);
 
-  if (isLoading || !hasInitBackendAPI) return <Loading />;
+  const setupBackend = () => {
+    setupBackendAPI(interactiveParams)
+      .catch((error) => {
+        console.error(error?.response?.data?.message);
+        navigate("*");
+      })
+      .finally(() => setHasInitBackendAPI(true));
+  };
+
+  if (!hasInitBackendAPI) return <Loading />;
 
   return (
     <div className="app">
