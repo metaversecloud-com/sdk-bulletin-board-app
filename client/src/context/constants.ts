@@ -22,10 +22,25 @@ export const themes = {
     group: 2,
     title: "Bulletin Board",
   },
+  BULLETIN_SKETCH: {
+    id: "BULLETIN_SKETCH",
+    group: 2,
+    title: "Bulletin Board - Sketch",
+  },
   CHALK: {
     id: "CHALK",
     group: 1,
     title: "Chalk the Block",
+  },
+  ART: {
+    id: "ART",
+    group: 1,
+    title: "Art Gallery",
+  },
+  HARVEST: {
+    id: "HARVEST",
+    group: 1,
+    title: "Fall Harvest",
   },
   CAR: {
     id: "CAR",

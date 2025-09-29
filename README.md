@@ -28,7 +28,7 @@ Bulletin Board is a message board style application. Users can submit messages a
 - Key Asset: the data object attached to the dropped key asset will store the following information and can optionally store a theme id if you'd like the initial setup to be something other than Chalk the Block i.e. `{ themeId: "GRATITUDE" }. See Theme Defaults below for additional info and options.
   - anchorAssets: an array of all of the dropped asset ids populated the first time the Key Asset is clicked,
   - messages: a map indexed by messageId for each submitted message which includes the following properties `id, approved, imageUrl, message, userId, and username`,
-  - theme: theme settings which include `id ("CHALK", "CAR", "GRATITUDE", or "FRIENDSHIP), description, title, and subtitle`,
+  - theme: theme settings which include `id (see theme defaults below i.e. "CHALK"), description, title, and subtitle`,
   - usedSpaces: an array of all of the anchorAssets that have been used to place an approved message thus far
 
 #### Theme Defaults:
@@ -43,8 +43,7 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Add a picture to the virtual sidewalk.",
     "title": "Chalk the Block",
     "type": "image"
-  },
-  "sceneDropPosition": { "x": 0, "y": 0 }
+  }
 }
 ```
 
@@ -56,8 +55,31 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Add a picture to the virtual parking lot.",
     "title": "Decorate your parking space",
     "type": "image"
-  },
-  "sceneDropPosition": { "x": 0, "y": 0 }
+  }
+}
+```
+
+```json
+{
+  "themeId": "ART",
+  "theme": {
+    "description": "Upload an image below and click submit. Once it's approved, it will be visible to everyone who visits the gallery.",
+    "subtitle": "Add your artwork to the gallery!",
+    "title": "Art Gallery",
+    "type": "image"
+  }
+}
+```
+
+```json
+{
+  "themeId": "HARVEST",
+  "theme": {
+    "description": "Upload an image below and click submit. Once it's approved, it will be added to the world.",
+    "subtitle": "Share your fall pictures!",
+    "title": "Fall Harvest",
+    "type": "image"
+  }
 }
 ```
 
@@ -69,8 +91,7 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message for your friends.",
     "title": "Friendship Garden",
     "type": "message"
-  },
-  "sceneDropPosition": { "x": 0, "y": 0 }
+  }
 }
 ```
 
@@ -82,8 +103,7 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message about something you're thankful for.",
     "title": "Gratitude Garden",
     "type": "message"
-  },
-  "sceneDropPosition": { "x": 0, "y": 0 }
+  }
 }
 ```
 
@@ -95,8 +115,19 @@ Below are the defaults for each theme. If you want to change the theme options w
     "subtitle": "Leave a message.",
     "title": "Bulletin Board",
     "type": "message"
-  },
-  "sceneDropPosition": { "x": 0, "y": 0 }
+  }
+}
+```
+
+```json
+{
+  "themeId": "BULLETIN_SKETCH",
+  "theme": {
+    "description": "Enter a message below and click Submit. Once it's approved it will be added to the board.",
+    "subtitle": "Leave a message.",
+    "title": "Bulletin Board - Sketch",
+    "type": "message"
+  }
 }
 ```
 

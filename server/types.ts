@@ -41,10 +41,6 @@ export type DataObjectType = {
   theme: ThemeType;
   themeId?: string; // allows for default theme to be set on key asset during implementation
   usedSpaces: string[]; // list of anchorAssets that have already been used
-  sceneDropPosition?: {
-    x: number;
-    y: number;
-  };
 };
 
 export interface IDroppedAsset extends DroppedAssetInterface {
