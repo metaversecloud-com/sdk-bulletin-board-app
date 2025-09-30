@@ -8,6 +8,7 @@ import { GlobalDispatchContext } from "@/context/GlobalContext";
 
 // utils
 import { setErrorMessage } from "@/utils";
+import { themes } from "@/context/constants";
 
 export const MessageForm = ({
   handleSubmitForm,
@@ -16,7 +17,7 @@ export const MessageForm = ({
 }: {
   handleSubmitForm: ({ imageData, message }: { imageData?: string; message?: string }) => void;
   isLoading: boolean;
-  themeId: string;
+  themeId: keyof typeof themes;
 }) => {
   const dispatch = useContext(GlobalDispatchContext);
   const { register, handleSubmit, reset } = useForm<MessageFormValues>();
@@ -58,7 +59,7 @@ export const MessageForm = ({
   return (
     <>
       <form onSubmit={onSubmit}>
-        {themeId === "CHALK" || themeId === "CAR" ? (
+        {themes[themeId].type === "image" ? (
           <>
             <label>Upload your image:</label>
             <p className="p3">(.png, max file size: 1mb)</p>
