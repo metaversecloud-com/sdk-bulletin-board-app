@@ -1,11 +1,13 @@
-import { errorHandler } from "./errorHandler.js";
 import { ThemeType } from "../types";
 
 enum ThemeIds {
   GRATITUDE = "GRATITUDE",
   FRIENDSHIP = "FRIENDSHIP",
   BULLETIN = "BULLETIN",
+  BULLETIN_SKETCH = "BULLETIN_SKETCH",
   CHALK = "CHALK",
+  HARVEST = "HARVEST",
+  ART = "ART",
   CAR = "CAR",
 }
 
@@ -35,11 +37,33 @@ const defaultThemes: DefaultThemesType = {
     title: "Bulletin Board",
     type: "message",
   },
+  BULLETIN_SKETCH: {
+    id: "BULLETIN_SKETCH",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the board.",
+    subtitle: "Leave a message.",
+    title: "Bulletin Board - Sketch",
+    type: "message",
+  },
   CHALK: {
     id: "CHALK",
     description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
     subtitle: "Add a picture to the virtual sidewalk.",
     title: "Chalk the Block",
+    type: "image",
+  },
+  ART: {
+    id: "ART",
+    description:
+      "Upload an image below and click submit. Once it's approved, it will be visible to everyone who visits the gallery.",
+    subtitle: "Add your artwork to the gallery!",
+    title: "Art Gallery",
+    type: "image",
+  },
+  HARVEST: {
+    id: "HARVEST",
+    description: "Upload an image below and click submit. Once it's approved, it will be added to the world.",
+    subtitle: "Share your fall pictures!",
+    title: "Fall Harvest",
     type: "image",
   },
   CAR: {

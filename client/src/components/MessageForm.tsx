@@ -8,6 +8,7 @@ import { GlobalDispatchContext } from "@/context/GlobalContext";
 
 // utils
 import { setErrorMessage } from "@/utils";
+import { themes } from "@/context/constants";
 
 export const MessageForm = ({
   handleSubmitForm,
@@ -16,7 +17,7 @@ export const MessageForm = ({
 }: {
   handleSubmitForm: ({ imageData, message }: { imageData?: string; message?: string }) => void;
   isLoading: boolean;
-  themeId: string;
+  themeId: keyof typeof themes;
 }) => {
   const dispatch = useContext(GlobalDispatchContext);
   const { register, handleSubmit, reset } = useForm<MessageFormValues>();
@@ -34,12 +35,12 @@ export const MessageForm = ({
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
-          if (themeId === "CHALK") {
-            canvas.width = 141;
-            canvas.height = 123;
-          } else {
+          if (themeId === "CAR") {
             canvas.width = 300;
             canvas.height = 150;
+          } else {
+            canvas.width = 141;
+            canvas.height = 123;
           }
           if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           dataURL = canvas.toDataURL("image/png");
@@ -58,7 +59,7 @@ export const MessageForm = ({
   return (
     <>
       <form onSubmit={onSubmit}>
-        {themeId === "CHALK" || themeId === "CAR" ? (
+        {themes[themeId].type === "image" ? (
           <>
             <label>Upload your image:</label>
             <p className="p3">(.png, max file size: 1mb)</p>
