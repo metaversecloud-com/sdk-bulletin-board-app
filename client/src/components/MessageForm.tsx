@@ -35,12 +35,12 @@ export const MessageForm = ({
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
-          if (themeId === "CHALK") {
-            canvas.width = 141;
-            canvas.height = 123;
-          } else {
+          if (themeId === "CAR") {
             canvas.width = 300;
             canvas.height = 150;
+          } else {
+            canvas.width = 141;
+            canvas.height = 123;
           }
           if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           dataURL = canvas.toDataURL("image/png");
