@@ -20,7 +20,7 @@ export const initializeDataObject = async ({
 
     await keyAsset.fetchDataObject();
 
-    if (keyAsset.dataObject?.theme?.id) return;
+    if (keyAsset.dataObject?.theme?.id) return keyAsset.dataObject;
 
     let keyAssetPayload: DataObjectType = {
       anchorAssets: [],
@@ -35,8 +35,6 @@ export const initializeDataObject = async ({
       usedSpaces: [],
     };
 
-    const lockId = `${assetId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-
     const world = World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
@@ -44,11 +42,12 @@ export const initializeDataObject = async ({
     const worldPayload = worldDataObject as any;
     let shouldUpdateWorldDataObject = false;
 
-    if (!worldPayload?.missingScenesDeleted) {
+    if (worldPayload && !worldPayload?.missingScenesDeleted) {
       await world.fetchScenes();
       if (world.scenes) {
         const worldScenes: { [key: string]: any } = world.scenes;
-        for (const sceneId of Object.keys(worldPayload.scenes)) {
+        const sceneKeys = worldPayload.scenes ? Object.keys(worldPayload.scenes) : [];
+        for (const sceneId of sceneKeys) {
           if (!worldScenes[sceneId]) {
             delete worldDataObject.scenes[sceneId];
             shouldUpdateWorldDataObject = true;
@@ -72,6 +71,8 @@ export const initializeDataObject = async ({
       shouldUpdateWorldDataObject = true;
     }
 
+    const lockId = `${assetId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
+
     if (keyAsset.dataObject) {
       await keyAsset.updateDataObject({ ...keyAssetPayload }, { lock: { lockId, releaseLock: true } });
     } else {
@@ -86,7 +87,7 @@ export const initializeDataObject = async ({
       world.updateDataObject(worldPayload, { lock: { lockId, releaseLock: true } });
     }
 
-    return;
+    return keyAsset.dataObject;
   } catch (error: any) {
     return new Error(error);
   }

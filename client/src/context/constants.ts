@@ -1,5 +1,7 @@
+import { ThemeIds } from "./types";
+
 export const defaultTheme = {
-  id: "",
+  id: ThemeIds.CHALK,
   description: "",
   subtitle: "",
   title: "",
