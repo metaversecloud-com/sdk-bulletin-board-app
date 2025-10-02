@@ -9,9 +9,10 @@ export const getKeyAssetDataObject = async (
 
     const keyAsset = (await DroppedAsset.create(assetId, urlSlug, { credentials })) as IDroppedAsset;
 
-    await initializeDataObject({ credentials, keyAsset });
+    const initResult = await initializeDataObject({ credentials, keyAsset });
+    if (initResult instanceof Error) throw initResult;
 
-    return { dataObject: keyAsset.dataObject, keyAsset };
+    return { dataObject: initResult, keyAsset };
   } catch (error: any) {
     return new Error(error);
   }
