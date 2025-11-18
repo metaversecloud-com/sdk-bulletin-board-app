@@ -24,14 +24,15 @@ export const Admin = () => {
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
 
   useEffect(() => {
+    getMessages();
+  }, []);
+
+  const getMessages = () => {
     backendAPI
       .get(`/admin/messages`)
-      .then((result) => {
-        setMessages(result.data);
-        setMessagesLength(Object.keys(result.data).length);
-      })
+      .then((result) => updateState(result.data))
       .catch((error) => setErrorMessage(dispatch, error as ErrorType));
-  }, []);
+  };
 
   const updateState = (data: MessagesType) => {
     setMessages(data);
@@ -48,7 +49,7 @@ export const Admin = () => {
           type: SET_THEME,
           payload: { theme: response.data.theme },
         });
-        setTheme(data);
+        setTheme(response.data.theme);
       })
       .catch((error) => setErrorMessage(dispatch, error as ErrorType))
       .finally(() => {
@@ -61,7 +62,10 @@ export const Admin = () => {
     backendAPI
       .post(`/admin/message/approve/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
+      .catch(async (error) => {
+        setErrorMessage(dispatch, error as ErrorType);
+        await getMessages();
+      })
       .finally(() => setAreButtonsDisabled(false));
   };
 
@@ -70,7 +74,10 @@ export const Admin = () => {
     backendAPI
       .delete(`/admin/message/${messageId}`)
       .then((result) => updateState(result.data))
-      .catch((error) => setErrorMessage(dispatch, error as ErrorType))
+      .catch(async (error) => {
+        setErrorMessage(dispatch, error as ErrorType);
+        await getMessages();
+      })
       .finally(() => setAreButtonsDisabled(false));
   };
 

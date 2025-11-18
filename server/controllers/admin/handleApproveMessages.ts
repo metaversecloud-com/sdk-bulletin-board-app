@@ -29,10 +29,19 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     let updateAnchorAssets = anchorAssets;
 
     const thisMessage = messages[messageId];
-    if (!thisMessage) throw "Message not found";
+    if (!thisMessage) {
+      errorMessage += " Message not found.";
+      throw "Message not found";
+    }
     const { imageUrl, message } = thisMessage;
 
     const lockId = `${assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
+
+    try {
+      await keyAsset.updateDataObject({}, { lock: { lockId } });
+    } catch (error) {
+      return res.status(409).json({ message: "Message is currently being approved by another admin." });
+    }
 
     let droppedAsset, droppedAssetId, emptySpaces;
 
@@ -175,7 +184,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         },
         {
           analytics: [{ analyticName: `messageApprovals` }, { analyticName: `${theme.id}-messageApprovals` }],
-          lock: { lockId, releaseLock: true },
+          lock: { lockId: `success-${lockId}`, releaseLock: true },
         },
       ),
     );

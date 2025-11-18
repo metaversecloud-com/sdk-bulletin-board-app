@@ -14,6 +14,19 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
 
     const { messages, theme } = dataObject as DataObjectType;
 
+    try {
+      await keyAsset.updateDataObject(
+        {},
+        {
+          lock: {
+            lockId: `${credentials.assetId}-${messageId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+          },
+        },
+      );
+    } catch (error) {
+      return res.status(409).json({ message: "Message is currently being deleted by another admin." });
+    }
+
     await deleteMessage({ credentials, keyAsset, messageId, messages });
 
     keyAsset.updateDataObject(
