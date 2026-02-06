@@ -1,10 +1,10 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { World } from "./index.js";
+import { standardizeError, World } from "./index.js";
 import { Credentials } from "../types.js";
 
 export const getAnchorAssets = async (
   credentials: Credentials,
-): Promise<{ anchorAssets: DroppedAssetInterface[]; anchorAssetIds: string[] } | Error> => {
+): Promise<{ anchorAssets: DroppedAssetInterface[]; anchorAssetIds: string[] }> => {
   try {
     const { sceneDropId, urlSlug } = credentials;
 
@@ -19,7 +19,7 @@ export const getAnchorAssets = async (
     if (anchorAssetIds.length === 0) throw "No anchor assets found.";
 
     return { anchorAssets, anchorAssetIds };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 };

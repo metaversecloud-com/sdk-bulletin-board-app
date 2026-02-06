@@ -21,10 +21,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, displayName, identityId, interactivePublicKey, sceneDropId, urlSlug } = credentials;
 
-    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
-
-    const { dataObject, keyAsset } = getKeyAssetResult;
+    const { dataObject, keyAsset } = await getKeyAssetDataObject(credentials);
     const { anchorAssets, messages, usedSpaces, theme } = dataObject as DataObjectType;
     let updateAnchorAssets = anchorAssets;
 
@@ -85,9 +82,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     } else if (message) {
       if (emptySpaces.length > 0) {
         // not all spaces have been used, pick empty space at random and drop web and text assets
-        const getThemeResult = await getThemeEnvVars(theme.id);
-        if (getThemeResult instanceof Error) throw getThemeResult;
-        const { droppableAssets } = getThemeResult;
+        const { droppableAssets } = getThemeEnvVars(theme.id);
 
         const random = Math.floor(Math.random() * droppableAssets.length);
         const droppableAsset = droppableAssets[random];

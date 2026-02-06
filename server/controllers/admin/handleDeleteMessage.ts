@@ -8,9 +8,7 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { messageId } = req.params;
 
-    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
-    const { dataObject, keyAsset } = getKeyAssetResult;
+    const { dataObject, keyAsset } = await getKeyAssetDataObject(credentials);
 
     const { messages, theme } = dataObject as DataObjectType;
 

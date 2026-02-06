@@ -9,10 +9,7 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
     const { displayName, profileId, urlSlug, username } = credentials;
     const { imageData, message } = req.body;
 
-    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
-
-    const { dataObject, keyAsset } = getKeyAssetResult;
+    const { dataObject, keyAsset } = await getKeyAssetDataObject(credentials);
     const { theme } = dataObject as DataObjectType;
 
     const id = `${profileId}-${Date.now()}`;
@@ -26,10 +23,8 @@ export const handleAddNewMessage = async (req: Request, res: Response) => {
     };
 
     if (imageData) {
-      const uploadResult = await uploadToS3(imageData, id);
-      if (uploadResult instanceof Error) throw uploadResult;
-
-      newMessage.imageUrl = uploadResult.imageUrl;
+      const { imageUrl } = await uploadToS3(imageData, id);
+      newMessage.imageUrl = imageUrl;
     }
 
     await keyAsset.updateDataObject(

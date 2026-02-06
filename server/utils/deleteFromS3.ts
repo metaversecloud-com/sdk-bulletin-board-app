@@ -1,7 +1,7 @@
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./index.js";
 
-export async function deleteFromS3(id: string) {
+export async function deleteFromS3(id: string): Promise<{ success: true }> {
   try {
     const credentials = { region: "us-east-1" };
     const client = new S3Client(credentials);
@@ -14,7 +14,7 @@ export async function deleteFromS3(id: string) {
     await client.send(deleteObject);
 
     return { success: true };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 }

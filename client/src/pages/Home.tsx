@@ -5,7 +5,7 @@ import { Board, PageContainer } from "@/components";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
-import { ErrorType, SET_IS_ADMIN, SET_THEME } from "@/context/types";
+import { ErrorType, SET_CAN_SWITCH_SCENES, SET_IS_ADMIN, SET_THEME } from "@/context/types";
 
 // utils
 import { backendAPI, setErrorMessage } from "@/utils";
@@ -22,7 +22,7 @@ function Home() {
       backendAPI
         .get("/game-state")
         .then((response) => {
-          const { isAdmin, theme } = response.data;
+          const { isAdmin, theme, canSwitchScenes } = response.data;
           dispatch!({
             type: SET_IS_ADMIN,
             payload: { isAdmin },
@@ -30,6 +30,10 @@ function Home() {
           dispatch!({
             type: SET_THEME,
             payload: { theme },
+          });
+          dispatch!({
+            type: SET_CAN_SWITCH_SCENES,
+            payload: { canSwitchScenes },
           });
         })
         .catch((error) => setErrorMessage(dispatch, error as ErrorType))

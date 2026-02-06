@@ -1,4 +1,4 @@
-import { deleteFromS3 } from "./index.js";
+import { deleteFromS3, standardizeError } from "./index.js";
 import { Credentials, IDroppedAsset, MessagesType } from "../types.js";
 
 export const deleteMessage = async ({
@@ -11,7 +11,7 @@ export const deleteMessage = async ({
   keyAsset: IDroppedAsset;
   messageId: string;
   messages: MessagesType;
-}) => {
+}): Promise<{ success: true }> => {
   try {
     const { assetId } = credentials;
 
@@ -19,8 +19,7 @@ export const deleteMessage = async ({
     if (!message) throw new Error("Message not found");
 
     if (message.imageUrl) {
-      const deleteResult = await deleteFromS3(message.id);
-      if (deleteResult instanceof Error) throw deleteResult;
+      await deleteFromS3(message.id);
     }
 
     delete messages[messageId];
@@ -29,7 +28,7 @@ export const deleteMessage = async ({
     await keyAsset.updateDataObject({ messages }, { lock: { lockId, releaseLock: true } });
 
     return { success: true };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 };

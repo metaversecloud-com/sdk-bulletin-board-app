@@ -1,4 +1,5 @@
-import { ThemeType } from "../types";
+import { ThemeType } from "../types.js";
+import { standardizeError } from "./index.js";
 
 enum ThemeIds {
   GRATITUDE = "GRATITUDE",
@@ -92,7 +93,7 @@ export const getThemeEnvVars = (id: string) => {
     const theme = defaultThemes[id];
 
     return { anchorAssetImage, droppableAssets, sceneId, theme };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 };

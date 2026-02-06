@@ -1,4 +1,4 @@
-import { getAnchorAssets, getThemeEnvVars, World } from "./index.js";
+import { getAnchorAssets, getThemeEnvVars, standardizeError, World } from "./index.js";
 import { Credentials, DataObjectType, IDroppedAsset } from "../types.js";
 
 type WorldDataObject = {
@@ -58,13 +58,11 @@ export const initializeDataObject = async ({
 
     if (!worldDataObject?.scenes?.[sceneDropId]?.theme) {
       const themeId = keyAsset.dataObject?.themeId || process.env.DEFAULT_THEME || "CHALK";
-      const getThemeResult = await getThemeEnvVars(themeId);
-      if (getThemeResult instanceof Error) throw getThemeResult;
-      keyAssetPayload.theme = getThemeResult.theme;
+      const { theme } = getThemeEnvVars(themeId);
+      keyAssetPayload.theme = theme;
 
-      const getAnchorsResult = await getAnchorAssets(credentials);
-      if (getAnchorsResult instanceof Error) throw getAnchorsResult;
-      keyAssetPayload.anchorAssets = getAnchorsResult.anchorAssetIds;
+      const { anchorAssetIds } = await getAnchorAssets(credentials);
+      keyAssetPayload.anchorAssets = anchorAssetIds;
     } else {
       // existing scene data object found in world, transfer to key asset's data object
       keyAssetPayload = worldDataObject.scenes[sceneDropId];
@@ -88,7 +86,7 @@ export const initializeDataObject = async ({
     }
 
     return keyAsset.dataObject;
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 };
