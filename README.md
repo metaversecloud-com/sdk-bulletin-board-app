@@ -4,12 +4,34 @@
 
 Bulletin Board is a message board style application. Users can submit messages and/or images for approval and an admin can approve the message so that it can be added to the world. Scenes are preconstructed with "anchor" assets used as placeholders to determine where approved messages will be placed. If there are no more un-used spaces, Bulletin Board looks for existing dropped message assets, chooses one in random, and then changes the text and/or image of the dropped asset to the latest message.
 
+## Built With
+
+### Client
+
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+### Server
+
+![Node.js](https://img.shields.io/badge/node.js-%2343853D.svg?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/express-%23000000.svg?style=for-the-badge&logo=express&logoColor=white)
+
 ## Key Features
 
 ### Canvas elements & interactions
 
 - Key Asset: When clicked this asset will open the drawer and allow users and admins to start interacting with the app. Users can submit messages and/or images that, upon approval from an admin, will display in world
 - Anchor Assets: Throughout the scene there are various assets placed with the unique name "anchor". These will help the app identify where to place the approved messages and/or images.
+
+## Implementation Requirements
+
+### Required Assets with Unique Names
+
+| Unique Name | Description |
+|-------------|-------------|
+| `anchor` | Placeholder assets placed throughout the scene that determine where approved messages/images will be displayed. Multiple assets can share this unique name. |
 
 ### Admin features
 
