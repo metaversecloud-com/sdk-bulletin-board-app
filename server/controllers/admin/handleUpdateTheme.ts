@@ -7,22 +7,23 @@ export const handleUpdateTheme = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId } = credentials;
     const theme = req.body;
-    const { existingThemeId, id } = theme;
+    const { existingThemeId, id, title, subtitle, description } = theme;
 
-    if (existingThemeId && existingThemeId !== id) {
+    if (existingThemeId && id && existingThemeId !== id) {
       const removeSceneResult = await removeSceneFromWorld({ credentials, theme });
       if (removeSceneResult instanceof Error) {
         message = removeSceneResult.message;
         throw removeSceneResult;
       }
     } else {
-      const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-      if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
+      const { keyAsset, dataObject } = await getKeyAssetDataObject(credentials);
 
-      const { keyAsset } = getKeyAssetResult;
+      dataObject.theme.description = description;
+      dataObject.theme.title = title;
+      dataObject.theme.subtitle = subtitle;
 
       const lockId = `${assetId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
-      await keyAsset.updateDataObject({ theme }, { lock: { lockId, releaseLock: true } });
+      await keyAsset.updateDataObject(dataObject, { lock: { lockId, releaseLock: true } });
     }
 
     return res.send({ theme });

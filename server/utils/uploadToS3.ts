@@ -1,6 +1,10 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { standardizeError } from "./index.js";
 
-export async function uploadToS3(imageData: any, fileName: string) {
+export async function uploadToS3(
+  imageData: any,
+  fileName: string,
+): Promise<{ imageUrl: string; success: true }> {
   try {
     const base64Data = imageData.split(",")[1];
     const binaryData = atob(base64Data);
@@ -18,7 +22,7 @@ export async function uploadToS3(imageData: any, fileName: string) {
     await client.send(putObjectCommand);
 
     return { imageUrl: `https://${process.env.S3_BUCKET}.s3.amazonaws.com/userUploads/${fileName}.png`, success: true };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 }

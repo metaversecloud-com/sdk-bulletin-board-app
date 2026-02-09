@@ -19,10 +19,7 @@ export const handleResetScene = async (req: Request, res: Response) => {
 
     const world = World.create(urlSlug, { credentials });
 
-    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
-
-    const { dataObject, keyAsset } = getKeyAssetResult;
+    const { dataObject, keyAsset } = await getKeyAssetDataObject(credentials);
     const { messages, theme } = dataObject as DataObjectType;
 
     const getAnchorsResult = await getAnchorAssets(credentials);
@@ -30,16 +27,12 @@ export const handleResetScene = async (req: Request, res: Response) => {
       message = getAnchorsResult.message;
       throw getAnchorsResult;
     }
-
     const { anchorAssets, anchorAssetIds } = getAnchorsResult;
 
     const lockId = `${sceneDropId}-settings-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`;
 
     if (shouldHardReset) {
-      const getThemeResult = await getThemeEnvVars(theme.id);
-      if (getThemeResult instanceof Error) throw getThemeResult;
-
-      const { anchorAssetImage, theme: defaultTheme } = getThemeResult;
+      const { anchorAssetImage, theme: defaultTheme } = getThemeEnvVars(theme.id);
 
       const promises = [];
 

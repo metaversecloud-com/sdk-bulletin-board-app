@@ -15,12 +15,14 @@ export const AdminForm = ({
   handleSubmitForm,
   isLoading,
   theme,
+  canSwitchScenes = false,
 }: {
   handleResetScene: (shouldHardReset: boolean) => void;
   handleRemoveScene: () => void;
   handleSubmitForm: (data: AdminFormValues) => void;
   isLoading: boolean;
   theme: ThemeType;
+  canSwitchScenes?: boolean;
 }) => {
   const { id, title, subtitle, description } = theme;
 
@@ -35,7 +37,7 @@ export const AdminForm = ({
 
   const onSubmit = handleSubmit((data) => {
     setFormData(data);
-    if (data.id !== id) setShowChangeSceneModal(true);
+    if (canSwitchScenes && data.id !== id) setShowChangeSceneModal(true);
     else handleSubmitForm(data);
   });
 
@@ -62,24 +64,28 @@ export const AdminForm = ({
     <>
       <form onSubmit={onSubmit}>
         <div className="grid gap-4 mb-4">
-          <p>
-            Theme: Update the scene/design of the layout. If you make a change, the existing scene will be removed and
-            the new one will be added to the world.
-          </p>
-          <div>
-            <label>Theme:</label>
-            <select className="input" {...register("id", { required: true, value: id })}>
-              {(() => {
-                return Object.values(themes)
-                  .filter((t) => t.group === themes[id as keyof typeof themes]?.group)
-                  .map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.title}
-                    </option>
-                  ));
-              })()}
-            </select>
-          </div>
+          {canSwitchScenes && (
+            <>
+              <p>
+                Theme: Update the scene/design of the layout. If you make a change, the existing scene will be removed
+                and the new one will be added to the world.
+              </p>
+              <div>
+                <label>Theme:</label>
+                <select className="input" {...register("id", { required: true, value: id })}>
+                  {(() => {
+                    return Object.values(themes)
+                      .filter((t) => t.group === themes[id as keyof typeof themes]?.group)
+                      .map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.title}
+                        </option>
+                      ));
+                  })()}
+                </select>
+              </div>
+            </>
+          )}
           <p>
             The following items will be visible to all users on the main page of the app. These settings will not affect
             the scene or experience within the world itself.

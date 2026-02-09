@@ -1,5 +1,5 @@
 import { Credentials, IDroppedAsset, ThemeType } from "../types.js";
-import { DroppedAsset, errorHandler, getThemeEnvVars, Visitor, World } from "../utils/index.js";
+import { DroppedAsset, errorHandler, getThemeEnvVars, standardizeError, Visitor, World } from "../utils/index.js";
 
 export const removeSceneFromWorld = async ({ credentials, theme }: { credentials: Credentials; theme?: ThemeType }) => {
   try {
@@ -46,10 +46,7 @@ export const removeSceneFromWorld = async ({ credentials, theme }: { credentials
     );
 
     if (theme?.id) {
-      const getThemeResult = await getThemeEnvVars(theme.id);
-      if (getThemeResult instanceof Error) throw getThemeResult;
-
-      const { sceneId } = getThemeResult;
+      const { sceneId } = getThemeEnvVars(theme.id);
       if (!sceneId) throw "No sceneId found in theme environment variables.";
 
       await world.dropScene({
@@ -63,7 +60,7 @@ export const removeSceneFromWorld = async ({ credentials, theme }: { credentials
     keyAsset.deleteDroppedAsset();
 
     return { success: true };
-  } catch (error: any) {
-    return new Error(error);
+  } catch (error) {
+    throw standardizeError(error);
   }
 };

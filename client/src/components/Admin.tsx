@@ -15,7 +15,7 @@ import { ErrorType, SET_THEME } from "@/context/types";
 import { setErrorMessage } from "@/utils";
 
 export const Admin = () => {
-  const { theme } = useContext(GlobalStateContext);
+  const { theme, canSwitchScenes } = useContext(GlobalStateContext);
   const dispatch = useContext(GlobalDispatchContext);
 
   const [currentTheme, setTheme] = useState(theme);
@@ -134,6 +134,7 @@ export const Admin = () => {
           handleRemoveScene={handleRemoveScene}
           isLoading={areButtonsDisabled}
           theme={currentTheme!}
+          canSwitchScenes={canSwitchScenes}
         />
       </Accordion>
       {messages && messagesLength > 0 && (

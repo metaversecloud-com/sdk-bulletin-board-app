@@ -7,10 +7,7 @@ export const handleGetUserMessages = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { profileId } = credentials;
 
-    const getKeyAssetResult = await getKeyAssetDataObject(credentials);
-    if (getKeyAssetResult instanceof Error) throw getKeyAssetResult;
-
-    const { dataObject } = getKeyAssetResult;
+    const { dataObject } = await getKeyAssetDataObject(credentials);
     const { messages } = dataObject as DataObjectType;
 
     const myMessages = await getPendingMessages({ messages, profileId });
