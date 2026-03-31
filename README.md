@@ -29,9 +29,10 @@ Bulletin Board is a message board style application. Users can submit messages a
 
 ### Required Assets with Unique Names
 
-| Unique Name | Description                                                                                                                                                 |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `anchor`    | Placeholder assets placed throughout the scene that determine where approved messages/images will be displayed. Multiple assets can share this unique name. |
+| Unique Name              | Description                                                                                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BulletinBoard_keyAsset` | Key asset                                                                                                                                                   |
+| `anchor`                 | Placeholder assets placed throughout the scene that determine where approved messages/images will be displayed. Multiple assets can share this unique name. |
 
 ### Admin features
 
