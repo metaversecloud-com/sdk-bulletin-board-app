@@ -1,22 +1,10 @@
 import { ThemeType } from "../types.js";
 import { standardizeError } from "./index.js";
+import { ThemeIds } from "@shared/types/ThemeTypes.js";
 
-/**
- * Every theme the app knows about. Exported so other server modules
- * (e.g. handleGetGameState) can enumerate themes without duplicating the
- * list. Mirrored client-side in `client/src/context/types.ts`.
- */
-export enum ThemeIds {
-  GRATITUDE = "GRATITUDE",
-  FRIENDSHIP = "FRIENDSHIP",
-  BULLETIN = "BULLETIN",
-  BULLETIN_SKETCH = "BULLETIN_SKETCH",
-  CHALK = "CHALK",
-  HARVEST = "HARVEST",
-  ART = "ART",
-  CAR = "CAR",
-  PARKING = "PARKING",
-}
+// Re-export so existing server-side callers (`import { ThemeIds } from "../utils/index.js"`)
+// keep working through the utils barrel.
+export { ThemeIds };
 
 type DefaultThemesType = {
   [key: string]: ThemeType;

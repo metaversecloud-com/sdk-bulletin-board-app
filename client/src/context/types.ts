@@ -5,17 +5,11 @@ export const SET_CAN_SWITCH_SCENES = "SET_CAN_SWITCH_SCENES";
 export const SET_AVAILABLE_THEME_IDS = "SET_AVAILABLE_THEME_IDS";
 export const SET_ERROR = "SET_ERROR";
 
-export enum ThemeIds {
-  CHALK = "CHALK",
-  GRATITUDE = "GRATITUDE",
-  FRIENDSHIP = "FRIENDSHIP",
-  BULLETIN = "BULLETIN",
-  BULLETIN_SKETCH = "BULLETIN_SKETCH",
-  ART = "ART",
-  HARVEST = "HARVEST",
-  CAR = "CAR",
-  PARKING = "PARKING",
-}
+// Canonical theme enum lives in shared/ so client and server can't drift.
+// Re-exported here so the many `@/context/types` consumers don't need to
+// change their imports.
+export { ThemeIds } from "@shared/types/ThemeTypes";
+import { ThemeIds } from "@shared/types/ThemeTypes";
 
 export type InteractiveParams = {
   assetId: string;
