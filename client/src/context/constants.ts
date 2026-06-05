@@ -57,4 +57,10 @@ export const themes = {
     title: "Parking Lot",
     type: "image",
   },
+  PARKING: {
+    id: "PARKING",
+    group: 2,
+    title: "Parking Lot - Text",
+    type: "message",
+  },
 };

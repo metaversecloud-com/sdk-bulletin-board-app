@@ -1,7 +1,12 @@
 import { ThemeType } from "../types.js";
 import { standardizeError } from "./index.js";
 
-enum ThemeIds {
+/**
+ * Every theme the app knows about. Exported so other server modules
+ * (e.g. handleGetGameState) can enumerate themes without duplicating the
+ * list. Mirrored client-side in `client/src/context/types.ts`.
+ */
+export enum ThemeIds {
   GRATITUDE = "GRATITUDE",
   FRIENDSHIP = "FRIENDSHIP",
   BULLETIN = "BULLETIN",
@@ -10,6 +15,7 @@ enum ThemeIds {
   HARVEST = "HARVEST",
   ART = "ART",
   CAR = "CAR",
+  PARKING = "PARKING",
 }
 
 type DefaultThemesType = {
@@ -74,6 +80,13 @@ const defaultThemes: DefaultThemesType = {
     title: "Decorate your parking space",
     type: "image",
   },
+  PARKING: {
+    id: "PARKING",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the parking lot.",
+    subtitle: "Leave a message.",
+    title: "Post your First Day of School tips",
+    type: "message",
+  },
 };
 
 export const getThemeEnvVars = (id: string) => {
@@ -88,11 +101,17 @@ export const getThemeEnvVars = (id: string) => {
       droppableAssets = JSON.parse(unescapedJson);
     }
 
+    let droppableText;
+    if (process.env[`DROPPABLE_TEXT_${id}`]) {
+      const unescapedJson = process.env[`DROPPABLE_TEXT_${id}`]!.replace(/\\"/g, '"');
+      droppableText = JSON.parse(unescapedJson);
+    }
+
     const sceneId = process.env[`SCENE_ID_${id}`];
 
     const theme = defaultThemes[id];
 
-    return { anchorAssetImage, droppableAssets, sceneId, theme };
+    return { anchorAssetImage, droppableAssets, droppableText, sceneId, theme };
   } catch (error) {
     throw standardizeError(error);
   }

@@ -81,47 +81,60 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
       promises.push(droppedAsset.updateWebImageLayers(imageUrl, ""));
     } else if (message) {
       if (emptySpaces.length > 0) {
-        // not all spaces have been used, pick empty space at random and drop web and text assets
-        const { droppableAssets } = getThemeEnvVars(theme.id);
+        // not all spaces have been used, pick empty space at random and drop the assets
+        const { droppableAssets, droppableText } = getThemeEnvVars(theme.id);
 
-        const random = Math.floor(Math.random() * droppableAssets.length);
-        const droppableAsset = droppableAssets[random];
-        const {
-          layer0,
-          layer1,
-          imageOffsetX,
-          imageOffsetY,
-          textOffsetX,
+        // Two theme shapes:
+        //   1. Background + text (e.g. BULLETIN, BULLETIN_SKETCH) — DROPPABLE_ASSETS_<id> is
+        //      a JSON array; we pick one at random, drop its web image as a background,
+        //      then drop the text on top. Text styling comes from the same array entry.
+        //   2. Text-only (e.g. PARKING) — the anchor asset already has the web image baked
+        //      into the scene, so we skip the background drop entirely. DROPPABLE_TEXT_<id>
+        //      is a single JSON object that carries only the text styling.
+        const isTextOnlyTheme = !droppableAssets && droppableText;
+
+        let textOffsetX,
           textOffsetY,
           isTextTopLayer,
           textColor,
           textSize,
           textWidth,
-          yOrderAdjust,
-        } = droppableAsset;
+          yOrderAdjust;
 
         const { position } = droppedAsset;
 
-        if (!layer0 && !layer1) {
-          throw "Droppable asset layers not found. Please check environment variables.";
-        }
+        if (isTextOnlyTheme) {
+          ({ textOffsetX, textOffsetY, isTextTopLayer, textColor, textSize, textWidth, yOrderAdjust } = droppableText);
+        } else {
+          if (!droppableAssets || droppableAssets.length === 0) {
+            throw "Droppable assets not found. Please check environment variables.";
+          }
+          const random = Math.floor(Math.random() * droppableAssets.length);
+          const droppableAsset = droppableAssets[random];
+          const { layer0, layer1, imageOffsetX, imageOffsetY } = droppableAsset;
+          ({ textOffsetX, textOffsetY, isTextTopLayer, textColor, textSize, textWidth, yOrderAdjust } = droppableAsset);
 
-        const webImageAsset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
-          credentials,
-        });
-        await DroppedAsset.drop(webImageAsset, {
-          position: {
-            x: (position?.x || 0) + (parseInt(imageOffsetX) || 0),
-            y: (position?.y || 0) + (parseInt(imageOffsetY) || 0),
-          },
-          isInteractive: true,
-          interactivePublicKey,
-          layer0,
-          layer1,
-          sceneDropId,
-          uniqueName: `${sceneDropId}-background-${droppedAssetId}`,
-          urlSlug,
-        });
+          if (!layer0 && !layer1) {
+            throw "Droppable asset layers not found. Please check environment variables.";
+          }
+
+          const webImageAsset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+            credentials,
+          });
+          await DroppedAsset.drop(webImageAsset, {
+            position: {
+              x: (position?.x || 0) + (parseInt(imageOffsetX) || 0),
+              y: (position?.y || 0) + (parseInt(imageOffsetY) || 0),
+            },
+            isInteractive: true,
+            interactivePublicKey,
+            layer0,
+            layer1,
+            sceneDropId,
+            uniqueName: `${sceneDropId}-background-${droppedAssetId}`,
+            urlSlug,
+          });
+        }
 
         let textPosition = { x: 0, y: 0 };
         if (position?.x) textPosition.x = Math.round(position.x);

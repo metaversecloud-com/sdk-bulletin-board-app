@@ -158,18 +158,18 @@ Below are the defaults for each theme. If you want to change the theme options w
 
 Create a `.env` file in the root directory. See `.env-example` for a template.
 
-| Variable                    | Description                                                                                                                                       | Required |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| `NODE_ENV`                  | Node environment                                                                                                                                  | No       |
-| `SKIP_PREFLIGHT_CHECK`      | Skip CRA preflight check                                                                                                                          | No       |
-| `INSTANCE_DOMAIN`           | Topia API domain (`api.topia.io` for production, `api-stage.topia.io` for staging)                                                                | Yes      |
-| `INTERACTIVE_KEY`           | Topia interactive app key                                                                                                                         | Yes      |
-| `INTERACTIVE_SECRET`        | Topia interactive app secret                                                                                                                      | Yes      |
-| `S3_BUCKET`                 | S3 bucket name for storing user-generated content                                                                                                 | Yes      |
-| `DEFAULT_THEME`             | Default bulletin board theme (e.g., `CHALK`). Options: `CHALK`, `GRATITUDE`, `FRIENDSHIP`, `BULLETIN`, `BULLETIN_SKETCH`, `HARVEST`, `ART`, `CAR` | Yes      |
-| `GOOGLESHEETS_CLIENT_EMAIL` | Google service account email for analytics                                                                                                        | No       |
-| `GOOGLESHEETS_SHEET_ID`     | Google Sheet ID for analytics                                                                                                                     | No       |
-| `GOOGLESHEETS_PRIVATE_KEY`  | Google service account private key                                                                                                                | No       |
+| Variable                    | Description                                                                                                                                                  | Required |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- |
+| `NODE_ENV`                  | Node environment                                                                                                                                             | No       |
+| `SKIP_PREFLIGHT_CHECK`      | Skip CRA preflight check                                                                                                                                     | No       |
+| `INSTANCE_DOMAIN`           | Topia API domain (`api.topia.io` for production, `api-stage.topia.io` for staging)                                                                           | Yes      |
+| `INTERACTIVE_KEY`           | Topia interactive app key                                                                                                                                    | Yes      |
+| `INTERACTIVE_SECRET`        | Topia interactive app secret                                                                                                                                 | Yes      |
+| `S3_BUCKET`                 | S3 bucket name for storing user-generated content                                                                                                            | Yes      |
+| `DEFAULT_THEME`             | Default bulletin board theme (e.g., `CHALK`). Options: `CHALK`, `GRATITUDE`, `FRIENDSHIP`, `BULLETIN`, `BULLETIN_SKETCH`, `HARVEST`, `ART`, `CAR`, `PARKING` | Yes      |
+| `GOOGLESHEETS_CLIENT_EMAIL` | Google service account email for analytics                                                                                                                   | No       |
+| `GOOGLESHEETS_SHEET_ID`     | Google Sheet ID for analytics                                                                                                                                | No       |
+| `GOOGLESHEETS_PRIVATE_KEY`  | Google service account private key                                                                                                                           | No       |
 
 Each theme requires a `SCENE_ID_{THEME}` and either `DROPPABLE_ASSETS_{THEME}` (JSON config) or `ANCHOR_ASSET_IMAGE_{THEME}` (image URL).
 

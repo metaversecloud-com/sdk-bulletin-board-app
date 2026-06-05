@@ -16,6 +16,7 @@ export const AdminForm = ({
   isLoading,
   theme,
   canSwitchScenes = false,
+  availableThemeIds,
 }: {
   handleResetScene: (shouldHardReset: boolean) => void;
   handleRemoveScene: () => void;
@@ -23,6 +24,10 @@ export const AdminForm = ({
   isLoading: boolean;
   theme: ThemeType;
   canSwitchScenes?: boolean;
+  /** Theme IDs whose required env vars (`SCENE_ID_<id>`) are configured on
+   * the server. If `undefined` we don't filter — backward-compat for callers
+   * that haven't been updated to fetch this. If `[]` we show nothing. */
+  availableThemeIds?: string[];
 }) => {
   const { id, title, subtitle, description } = theme;
 
@@ -76,6 +81,7 @@ export const AdminForm = ({
                   {(() => {
                     return Object.values(themes)
                       .filter((t) => t.group === themes[id as keyof typeof themes]?.group)
+                      .filter((t) => !availableThemeIds || availableThemeIds.includes(t.id) || t.id === id)
                       .map((t) => (
                         <option key={t.id} value={t.id}>
                           {t.title}
