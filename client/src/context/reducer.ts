@@ -5,6 +5,7 @@ import {
   SET_IS_ADMIN,
   SET_THEME,
   SET_CAN_SWITCH_SCENES,
+  SET_AVAILABLE_THEME_IDS,
   SET_ERROR,
 } from "./types";
 
@@ -32,6 +33,11 @@ const globalReducer = (state: State, action: ActionType) => {
         ...state,
         canSwitchScenes: payload.canSwitchScenes,
         error: "",
+      };
+    case SET_AVAILABLE_THEME_IDS:
+      return {
+        ...state,
+        availableThemeIds: payload.availableThemeIds,
       };
     case SET_ERROR:
       return {

@@ -1,16 +1,10 @@
 import { ThemeType } from "../types.js";
 import { standardizeError } from "./index.js";
+import { ThemeIds } from "@shared/types/ThemeTypes.js";
 
-enum ThemeIds {
-  GRATITUDE = "GRATITUDE",
-  FRIENDSHIP = "FRIENDSHIP",
-  BULLETIN = "BULLETIN",
-  BULLETIN_SKETCH = "BULLETIN_SKETCH",
-  CHALK = "CHALK",
-  HARVEST = "HARVEST",
-  ART = "ART",
-  CAR = "CAR",
-}
+// Re-export so existing server-side callers (`import { ThemeIds } from "../utils/index.js"`)
+// keep working through the utils barrel.
+export { ThemeIds };
 
 type DefaultThemesType = {
   [key: string]: ThemeType;
@@ -74,6 +68,13 @@ const defaultThemes: DefaultThemesType = {
     title: "Decorate your parking space",
     type: "image",
   },
+  PARKING: {
+    id: "PARKING",
+    description: "Enter a message below and click Submit. Once it's approved it will be added to the parking lot.",
+    subtitle: "Leave a message.",
+    title: "Post your First Day of School tips",
+    type: "message",
+  },
 };
 
 export const getThemeEnvVars = (id: string) => {
@@ -88,11 +89,17 @@ export const getThemeEnvVars = (id: string) => {
       droppableAssets = JSON.parse(unescapedJson);
     }
 
+    let droppableText;
+    if (process.env[`DROPPABLE_TEXT_${id}`]) {
+      const unescapedJson = process.env[`DROPPABLE_TEXT_${id}`]!.replace(/\\"/g, '"');
+      droppableText = JSON.parse(unescapedJson);
+    }
+
     const sceneId = process.env[`SCENE_ID_${id}`];
 
     const theme = defaultThemes[id];
 
-    return { anchorAssetImage, droppableAssets, sceneId, theme };
+    return { anchorAssetImage, droppableAssets, droppableText, sceneId, theme };
   } catch (error) {
     throw standardizeError(error);
   }
