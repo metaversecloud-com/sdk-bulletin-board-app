@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bboard0-config
+  labels:
+    app.kubernetes.io/name: bboard0
+data:
+  SCENE_ID_PARKING: 'Zrq2skBIoVDOFDFUoUEH'
+  INSTANCE_DOMAIN: 'api.topia.io'
+  INSTANCE_PROTOCOL: 'https'
+  INTERACTIVE_KEY: '6rwaABRocOJdsE8JmeIq'
+  PORT: '3000'
+  SCENES: 'ObrCYwGpWMjtzRaqBTdw,hlXXIoZi3XvnfXuar8bA,n7E1VtIWl1oEMKbrSdbA'
+  S3_BUCKET: 'topia-dev-test'
+  DEFAULT_THEME: 'CHALK'
+  ANCHOR_ASSET_IMAGE_CHALK: 'https://sdk-bulletin-board.s3.amazonaws.com/PavementDark_Layer0.png'
+  SCENE_ID_GRATITUDE: 'YFCGX7qRBMvzwemxiv0m'
+  SCENE_ID_FRIENDSHIP: 'T3BFuHUBTDKVTqSifupj'
+  SCENE_ID_CHALK: 'aaZNI0NggkDIG19MWire'
+  SCENE_ID_BULLETIN: 'zLTyP67axRUIjGaz3mcV'
+  SCENE_ID_BULLETIN_SKETCH: 'n0CbquE3QIr7SePkBRRq'
+  SCENE_ID_CAR: 'DhpP57FGq7YwPmHYanmm'
+  SCENE_ID_ART: 'jgyP7oBPlfko61BlR67m'
+  SCENE_ID_HARVEST: 'P8GhSQurdK4F5YapUFWS'
+  DROPPABLE_TEXT_PARKING: '{"textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"}'
+  DROPPABLE_ASSETS_GRATITUDE: '[{"name":"Lilypad","layer0": "https://sdk-bulletin-board.s3.amazonaws.com/GratitudeLilypad.png","layer1": "","imageOffsetX": "2","imageOffsetY": "-2","textOffsetX": "6","textOffsetY": "-11","yOrderAdjust":"0","isTextTopLayer":"false"},{"name":"Sign 1","layer0":"https://sdk-bulletin-board.s3.amazonaws.com/GratitudeSign1bottom.png","layer1": "https://sdk-bulletin-board.s3.amazonaws.com/GratitudeSign1top.png","imageOffsetX": "3","imageOffsetY": "-1","textOffsetX": "0","textOffsetY": "-27","yOrderAdjust":"1000"},{"name":"Sign 2","layer0": "https://sdk-bulletin-board.s3.amazonaws.com/GratitudeSign2bottom.png","layer1": "https://sdk-bulletin-board.s3.amazonaws.com/GratitudeSign2top.png","imageOffsetX": "1","imageOffsetY": "-1","textOffsetX": "6","textOffsetY": "-11","yOrderAdjust":"1000"}]'
+  DROPPABLE_ASSETS_FRIENDSHIP: '[{"name":"Wood Sign","layer0": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipWoodSignBottom.png","layer1": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipWoodSignTop.png","imageOffsetX": "-1","imageOffsetY": "-1"},{"name":"Sign 1","layer0": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipSign1bottom.png","layer1": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipSign1top.png","imageOffsetX": "1","imageOffsetY": "-2","color": "#0a0a0a"},{"name":"Sign 2","layer0": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipSign2bottom.png","layer1": "https://sdk-bulletin-board.s3.amazonaws.com/FriendshipSign2top.png","imageOffsetX": "1","imageOffsetY": "-2","color": "#0a0a0a"}]'
+  DROPPABLE_ASSETS_BULLETIN: '[{"name":"Blue Paper","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/PaperSquareBlue.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Green Paper","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/PaperSquareGreen.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Orange Paper","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/PaperSquareOrange.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Pink Paper","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/PaperSquarePink.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Yellow Paper","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/PaperSquareYellow.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"}]'
+  DROPPABLE_ASSETS_BULLETIN_SKETCH: '[{"name":"Blue Stickie","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/StickieCyan.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Green Stickie","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/StickieGreen.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Orange Stickie","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/StickieOrange.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Pink Stickie","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/StickiePink.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"},{"name":"Yellow Stickie","layer0":"https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/StickieYellow.png","textColor":"black","textSize":"12","textWidth":"150","textOffsetY":"5","yOrderAdjust":"-500"}]'
+  ANCHOR_ASSET_IMAGE_HARVEST: 'https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/FarmPlot_layer0.png'
+  ANCHOR_ASSET_IMAGE_ART: 'https://sdk-bulletin-board.s3.us-east-1.amazonaws.com/ArtCanvas_layer0.png'
