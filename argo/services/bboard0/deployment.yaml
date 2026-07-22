@@ -16,6 +16,8 @@ spec:
       labels:
         app.kubernetes.io/name: bboard0
     spec:
+      # IRSA: assume the per-app role (S3 bucket access) via this ServiceAccount.
+      serviceAccountName: bboard0-sa
       # Suppress Docker-link-style env injection for every Service in the
       # namespace. This app reads config only from its own ConfigMap/Secret.
       enableServiceLinks: false
