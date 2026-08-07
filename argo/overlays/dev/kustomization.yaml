@@ -26,4 +26,4 @@ patches:
 images:
   - name: bboard0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    digest: sha256:a29e462bb773801f0a1cf2e0d8fa09d8453cb1aa2012c4c624e7b34b65a95ee4
+    digest: sha256:353b0df9477a22929040e5c0f8367d356ec2ebe623324d70d24023d59db1fe3a
