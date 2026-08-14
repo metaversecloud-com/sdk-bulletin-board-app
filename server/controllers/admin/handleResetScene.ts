@@ -94,7 +94,10 @@ export const handleResetScene = async (req: Request, res: Response) => {
           usedSpaces: [],
         },
         {
-          analytics: [{ analyticName: `resets` }, { analyticName: `${theme.id}-resets` }],
+          analytics: [
+            { analyticName: `resets`, urlSlug },
+            { analyticName: `${theme.id}-resets`, urlSlug },
+          ],
           lock: { lockId, releaseLock: true },
         },
       );

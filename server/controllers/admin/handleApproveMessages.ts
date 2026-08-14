@@ -93,13 +93,7 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
         //      is a single JSON object that carries only the text styling.
         const isTextOnlyTheme = !droppableAssets && droppableText;
 
-        let textOffsetX,
-          textOffsetY,
-          isTextTopLayer,
-          textColor,
-          textSize,
-          textWidth,
-          yOrderAdjust;
+        let textOffsetX, textOffsetY, isTextTopLayer, textColor, textSize, textWidth, yOrderAdjust;
 
         const { position } = droppedAsset;
 
@@ -191,7 +185,10 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
           [`usedSpaces`]: usedSpaces,
         },
         {
-          analytics: [{ analyticName: `messageApprovals` }, { analyticName: `${theme.id}-messageApprovals` }],
+          analytics: [
+            { analyticName: `messageApprovals`, urlSlug },
+            { analyticName: `${theme.id}-messageApprovals`, urlSlug },
+          ],
           lock: { lockId: `success-${lockId}`, releaseLock: true },
         },
       ),
