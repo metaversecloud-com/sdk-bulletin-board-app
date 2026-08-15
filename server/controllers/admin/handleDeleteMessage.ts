@@ -6,6 +6,7 @@ import { deleteMessage } from "../../utils/deleteMessage.js";
 export const handleDeleteMessage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
+    const { urlSlug } = credentials;
     const { messageId } = req.params;
 
     const { dataObject, keyAsset } = await getKeyAssetDataObject(credentials);
@@ -30,7 +31,10 @@ export const handleDeleteMessage = async (req: Request, res: Response) => {
     keyAsset.updateDataObject(
       {},
       {
-        analytics: [{ analyticName: `messageRejects` }, { analyticName: `${theme.id}-messageRejects` }],
+        analytics: [
+          { analyticName: `messageRejects`, urlSlug },
+          { analyticName: `${theme.id}-messageRejects`, urlSlug },
+        ],
       },
     );
 

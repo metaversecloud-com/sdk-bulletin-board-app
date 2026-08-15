@@ -27,7 +27,7 @@
       "@context/*": ["./src/context/*"],
       "@pages/*": ["./src/pages/*"],
       "@utils/*": ["./src/utils/*"],
-      "@shared/*": ["../shared/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": ["src", "../shared"],
