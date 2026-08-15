@@ -27,3 +27,4 @@ images:
   - name: bboard0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
     digest: sha256:11599df367afa1467b978b5bc30c480a53620af38b0876e2c8eb5cfc99527fbf
+    newTag: sdk-bulletin-board-app
