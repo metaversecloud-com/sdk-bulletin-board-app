@@ -63,4 +63,10 @@ export const themes = {
     title: "Parking Lot - Text",
     type: "message",
   },
+  GALLERY: {
+    id: "GALLERY",
+    group: 1,
+    title: "Art Gallery",
+    type: "image",
+  },
 };
