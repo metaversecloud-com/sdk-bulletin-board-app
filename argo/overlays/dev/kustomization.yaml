@@ -26,5 +26,5 @@ patches:
 images:
   - name: bboard0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    digest: sha256:b4cf4d9614253d2bc62ed0cec06432d157028c8bc295c57dc587deac1e05fd2f
+    digest: sha256:0e57b3e8b2a0b49248ee076878084a9778f3d59d45f01fac202e18bc7be8480e
     newTag: sdk-bulletin-board-app
