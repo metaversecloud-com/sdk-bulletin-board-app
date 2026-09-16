@@ -195,13 +195,15 @@ export const handleApproveMessages = async (req: Request, res: Response) => {
     );
 
     const world = World.create(urlSlug, { credentials });
-    world.triggerParticle({ position: droppedAsset.position, name: "purpleSmoke_puff" }).catch((error: any) =>
-      errorHandler({
-        error,
-        functionName: "handleApproveMessages",
-        message: "Error triggering particle effects",
-      }),
-    );
+    world
+      .triggerParticle({ position: droppedAsset.position, name: "purpleSmoke_puff", duration: 2 })
+      .catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handleApproveMessages",
+          message: "Error triggering particle effects",
+        }),
+      );
 
     addNewRowToGoogleSheets([
       {

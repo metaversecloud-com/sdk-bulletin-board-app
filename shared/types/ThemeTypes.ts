@@ -19,4 +19,5 @@ export enum ThemeIds {
   ART = "ART",
   CAR = "CAR",
   PARKING = "PARKING",
+  GALLERY = "GALLERY",
 }

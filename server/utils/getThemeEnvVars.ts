@@ -75,6 +75,14 @@ const defaultThemes: DefaultThemesType = {
     title: "Post your First Day of School tips",
     type: "message",
   },
+  GALLERY: {
+    id: "GALLERY",
+    description:
+      "Upload an image below and click submit. Once it's approved, it will be visible to everyone who visits the gallery.",
+    subtitle: "Add your artwork to the gallery!",
+    title: "Easel Gallery",
+    type: "image",
+  },
 };
 
 export const getThemeEnvVars = (id: string) => {
