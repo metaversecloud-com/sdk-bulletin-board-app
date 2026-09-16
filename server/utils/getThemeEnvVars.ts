@@ -80,7 +80,7 @@ const defaultThemes: DefaultThemesType = {
     description:
       "Upload an image below and click submit. Once it's approved, it will be visible to everyone who visits the gallery.",
     subtitle: "Add your artwork to the gallery!",
-    title: "Art Gallery",
+    title: "Easel Gallery",
     type: "image",
   },
 };

@@ -66,7 +66,7 @@ export const themes = {
   GALLERY: {
     id: "GALLERY",
     group: 1,
-    title: "Art Gallery",
+    title: "Easel Gallery",
     type: "image",
   },
 };
