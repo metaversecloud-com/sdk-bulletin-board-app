@@ -86,7 +86,7 @@ test.describe("pending messages", () => {
     expect(await world.keyAssetData()).toMatchObject({ messages: {}, usedSpaces: ["anchor-1"] });
     await expect
       .poll(() => world.events("particles"))
-      .toEqual([expect.objectContaining({ name: "purpleSmoke_puff", position: { x: 100, y: 200 }, duration: 2 })]);
+      .toEqual([expect.objectContaining({ particleName: "purpleSmoke_puff", position: { x: 100, y: 200 }, duration: 2 })]);
   });
 
   test("approving on a text-only theme drops just the text", async ({ page, world }) => {
@@ -317,7 +317,13 @@ test.describe("settings", () => {
     await expect
       .poll(() => world.events("drop-scene"))
       .toEqual([expect.objectContaining({ sceneId: "scene-art", sceneDropId: "scene-1", position: { x: 700, y: 800 }, allowNonAdmins: true })]);
-    await expect.poll(async () => (await world.assets()).map((a) => a.id)).toEqual(["elsewhere"]);
+    // The old scene's assets are gone; mock-topia stands one placeholder asset in for the new scene's.
+    await expect
+      .poll(() => world.assets())
+      .toEqual([
+        expect.objectContaining({ id: "elsewhere" }),
+        expect.objectContaining({ sceneId: "scene-art", sceneDropId: "scene-1" }),
+      ]);
     expect(await world.events("close-iframe")).toEqual([expect.objectContaining({ droppedAssetId: KEY_ASSET_ID })]);
   });
 

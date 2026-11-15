@@ -44,7 +44,7 @@ test.describe("first open", () => {
     await world.seed({
       extraAssets: anchors(2),
       worldData: { scenes: { "scene-1": legacy } },
-      scenes: { "scene-1": { id: "scene-1" } },
+      droppedScenes: { "scene-1": { id: "scene-1" } },
     });
     await page.goto(world.url("/"));
 
