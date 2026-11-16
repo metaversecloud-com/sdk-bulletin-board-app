@@ -120,7 +120,6 @@ test.describe("submission rules are enforced by the server", () => {
 });
 
 test("a failed approval doesn't send the interactive secret to the browser", async ({ page, world }) => {
-  test.fail(true, "EXP-432: the SDK error from getWithUniqueName (params.interactiveSecret) is returned as-is");
   // Every anchor is taken, so approval looks up the existing text asset by unique name; it's gone.
   await world.seed({
     isAdmin: true,
